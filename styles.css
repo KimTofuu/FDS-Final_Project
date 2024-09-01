@@ -1,0 +1,209 @@
+body{
+    background-color: grey;
+    display: grid;
+    place-items: center;
+    height: 100vh;
+    overflow: hidden;
+    padding: 0 10px;
+    margin: 0;
+    position: relative;
+}
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 0, 0, 0.5);
+    animation: move 10s linear infinite;
+}
+@keyframes move {
+    0% {
+        transform: translateX(0) translateY(0);
+    }
+    50% {
+        transform: translateX(100vw) translateY(100vh);
+    }
+    100% {
+        transform: translateX(0) translateY(0);
+    }
+}
+.shape1 {
+    width: 100px;
+    height: 100px;
+    top: 10%;
+    left: 20%;
+    background-color: #f44336;
+    animation-duration: 12s;
+    opacity: 0.8;
+}
+.shape2 {
+    width: 150px;
+    height: 150px;
+    top: 30%;
+    left: 60%;
+    background-color: #f44336;
+    animation-duration: 15s;
+    opacity: 0.8;
+}
+.shape3 {
+    width: 200px;
+    height: 200px;
+    top: 50%;
+    left: 80%;
+    background-color: #f44336;
+    animation-duration: 20s;
+    opacity: 0.8;
+}
+form {
+    background-color: #f44336;
+    border: 3px solid #f1f1f1;
+    border-radius: 10px;
+    max-width: 25%;
+    min-width: 300px;
+    height: auto;
+    margin: 0;
+    text-align: center;
+    box-shadow: 5px 5px 5px black;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0px;
+    z-index: 1;
+}
+  
+input[type=text], input[type=password] {
+    width: 35%;
+    padding: 8px 20px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+}
+
+.options{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 1;
+}
+
+.options ul{
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.options ul li{
+    background-color: #fff;
+    margin: 20px; 
+    display: flex;
+    padding: 15px;
+    border-radius: 50px;
+    min-width: 50px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+button {
+    background-color: #04AA6D;
+    color: white;
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    min-width: 100px;
+}
+
+.loginbtn{
+    width: auto;
+    padding: 10px 18px;
+    margin-right: 30px;
+    background-color: #04AA6D;
+}
+
+.loginbtn:hover{
+    color: #04AA6D;
+    background-color: beige;
+    border: 3px solid;
+    border-color: #04AA6D;
+    padding: 7px;
+}
+
+.cancelbtn {
+    width: auto;
+    padding: 10px 18px;
+    background-color: #f44336;
+    float: left;
+}
+  
+.cancelbtn:hover{
+    color: #f44336;
+    background-color: #fff;
+    border: 3px solid;
+    border-color: #f44336;
+    padding: 7px;
+}
+
+.imgcontainer {
+    text-align: center;
+    margin: 24px 0 12px 0;
+}
+  
+img.avatar {
+    min-width: 10%;
+    max-width: 30%;
+    border-radius: 50%;
+}
+
+.container {
+    padding: 16px;
+}
+
+.cancelContainer {
+    border-radius: 0 0 5px 5px;
+    height: 10%;
+    padding: 16px;
+}
+  
+span.psw {
+    float: right;
+    padding-top: 16px;
+}
+  
+@media screen and (max-width: 600px) {
+    form {
+        max-width: 100%;
+    }
+
+    input[type=text], input[type=password] {
+        width: 35%;
+    }
+
+    .options ul li {
+        margin: 10px 5px; 
+        padding: 10px 5px;
+    }
+
+    button {
+        width: 100%; 
+        padding: 12px;
+    }
+
+    .cancelContainer {
+        padding: 10px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+
+    .options ul li {
+        margin: 5px 3px;
+        padding: 10px 3px;
+    }
+
+    button {
+        padding: 10px;
+    }
+
+    .imgcontainer img.avatar {
+        max-width: 80px;
+    }
+}
