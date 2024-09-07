@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Olypus Gym Club</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <?php
@@ -15,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 
     if (empty($username) || empty($password)) die("All fields are required");
 
-    $sqlComm = "SELECT Password FROM `adminauth` WHERE AdminName = ?;";
+    $sqlComm = "SELECT Password FROM `authentication` WHERE Username = ?;";
     
     if ($statement = $connect->prepare($sqlComm)){
         $statement->bind_param("s", $username);
