@@ -14,9 +14,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    if (empty($username) || empty($password)) die("All fields are required");
+    if (empty($username) || empty($password)) echo("All fields are required");
 
-    $sqlComm = "SELECT Password FROM `authentication` WHERE Username = ?;";
+    $sqlComm = "SELECT Password FROM `memberauth` WHERE Username = ?;";
     
     if ($statement = $connect->prepare($sqlComm)){
         $statement->bind_param("s", $username);
@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                 }
         }
         else{
-            echo "Error: Parsing the SQL command";  
+            echo "Invalid Username and Password. Please try again.";
         }
         $statement->close();
     }
