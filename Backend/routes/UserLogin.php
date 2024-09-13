@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 
     if (empty($username) || empty($password)) echo("All fields are required");
 
-    $sqlComm = "SELECT Password FROM `memberauth` WHERE Username = ?;";
+    $sqlComm = "SELECT Password FROM `main` WHERE Username = ?;";
     
     if ($statement = $connect->prepare($sqlComm)){
         $statement->bind_param("s", $username);

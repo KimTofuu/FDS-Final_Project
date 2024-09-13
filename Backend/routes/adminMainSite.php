@@ -11,6 +11,7 @@
          Email: <input type="text" name="email">
          Username: <input type="text" name="username">
          Password: <input type="password" name="password">
+         Subscription Status: <input type="text" name="subStat">
          <button type="submit">Create Account</button>
     </form>
 
@@ -32,36 +33,80 @@
 <?php
 
 //create members
-function create(){
+function SubscripStat($status){
+    if(strtolower($status) === 'vip'){
+        return 1;
+    }
+    else{
+        return 0;
+    }
+}
+
+function create() {
+    // Retrieve form data
     $Email = $_POST['email'];
-    $Username =  $_POST['username'];
+    $Username = $_POST['username'];
     $Password = $_POST['password'];
+    $SubripStat = $_POST['subStat'];
+    
+    $SubripStat = SubscripStat($SubripStat);
+
+    // Hash the password
     $hashedPass = password_hash($Password, PASSWORD_BCRYPT);
 
-    if (!isset($_POST['email'], $_POST['username'], $_POST['password'])){
+    // Check if all required fields are set
+    if (!isset($Email, $Username, $Password, $SubripStat)) {
         echo "Please fill in all fields";
         return;
     }
-    require_once "..\Services\mysql_connect_service.php";
 
-    if(!$connect){
+    // Establish database connection
+    require_once "../Services/mysql_connect_service.php";
+
+    if (!$connect) {
         echo "Connection Failed";
         return;
     }
 
-    $sqlCommand= "INSERT INTO `main`(`Email`, `Username`, `Password`, `Status`) VALUES (?, ?, ?, DEFAULT);";
+    // Sanitize inputs to prevent SQL injection
+    $Email = mysqli_real_escape_string($connect, $Email);
+    $Username = mysqli_real_escape_string($connect, $Username);
+    $hashedPass = mysqli_real_escape_string($connect, $hashedPass);
+    $SubripStat = mysqli_real_escape_string($connect, $SubripStat);
 
-    if ($statement = $connect->prepare($sqlCommand)){
-        $statement->bind_param('sss', $Email, $Username, $hashedPass);
-        $statement->execute();
+    $connect->begin_transaction();
+
+    try {
+        // Insert user data into `main` table
+        $sqlInsertUser = "
+            INSERT INTO `main`(`Email`, `Username`, `Password`, `Status`) 
+            VALUES ('$Email', '$Username', '$hashedPass', DEFAULT);
+        ";
+        $connect->query($sqlInsertUser);
+
+        // Get the last inserted user ID
+        $userID = $connect->insert_id;
+
+        // Insert subscription status into `subscriptionstatus` table
+        $sqlInsertSubStatus = "
+            INSERT INTO `subscriptionstatus`(`User_ID`, `SubscriptionStat`) 
+            VALUES ($userID, '$SubripStat');
+        ";
+        $connect->query($sqlInsertSubStatus);
+
+        // Commit the transaction
+        $connect->commit();
         echo 'Account successfully created!';
-    }
-    else{
-        echo 'Command Error' . $connect->error;
+    } catch (Exception $e) {
+        // Rollback the transaction on error
+        $connect->rollback();
+        echo 'Error boss, try again mo nalang<<3';
     }
 
+    // Close the connection
     $connect->close();
 }
+
 
 function retrieveAll(){
     require_once "..\Services\mysql_connect_service.php";
