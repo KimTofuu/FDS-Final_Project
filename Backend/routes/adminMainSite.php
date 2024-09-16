@@ -57,7 +57,7 @@ function create(){
         echo 'Account successfully created!';
     }
     else{
-        echo 'Command Error' . $connect->error;
+        echo 'Command Error';
     }
 
     $connect->close();
