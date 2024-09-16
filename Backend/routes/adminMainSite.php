@@ -245,4 +245,6 @@ if ($_SERVER["REQUEST_METHOD"] == 'GET'){
         retrieveOne($Username);
     }
 }
+
+echo ('wag mo to pansinin paul, for demo lang to <3 <3 mwa');
 ?>
