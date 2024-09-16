@@ -246,5 +246,4 @@ if ($_SERVER["REQUEST_METHOD"] == 'GET'){
     }
 }
 
-echo ('wag mo to pansinin paul, for demo lang to <3 <3 mwa');
 ?>
