@@ -10,12 +10,11 @@ date_default_timezone_set("Asia/Manila");
 set_time_limit(1000);
 
 $rootPath = $_SERVER["DOCUMENT_ROOT"];
-$apiPath = $rootPath . "/phpAPI_temp";
+$apiPath = $rootPath . "/Olympus/Backend";
 
 require_once($apiPath .'/configs/Connection.php');
 
 //Models
-require_once($apiPath .'/model/try.model.php');
 require_once($apiPath .'/model/Global.model.php');
 require_once($apiPath .'/model/Admin.model.php');
 require_once($apiPath .'/model/Auth.model.php');
