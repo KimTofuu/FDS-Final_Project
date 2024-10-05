@@ -6,32 +6,48 @@
 html, body {
     height: 100%;
     overflow: hidden;
+    font-family: 'Figtree', sans-serif;
 }
 
 body {
     background-image: url('images/gymbg.png');
-    background-size: 100%; 
-    background-repeat: no-repeat; 
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 header {
     display: flex;
     align-items: center;
     padding: 10px;
-    position: fixed; 
+    position: fixed;
     width: 100%;
-    z-index: 1000; 
+    z-index: 1000;
 }
 
 .logo {
-    height: 100px; 
+    height: 100px;
     margin-right: 325px;
-    margin-left: 135px; 
+    margin-left: 135px;
+}
+
+@media (max-width: 1024px) {
+    .logo {
+        margin-right: 100px;
+        height: 80px;
+    }
+}
+
+@media (max-width: 640px) {
+    .logo {
+        margin-left: 50px;
+        height: 60px;
+    }
 }
 
 .navbar {
     display: flex;
-    flex-grow: 2; 
+    flex-grow: 2;
 }
 
 .navbar ul {
@@ -49,21 +65,41 @@ header {
 .navbar a {
     text-decoration: none;
     color: #ded9d9;
-    font-family: 'Figtree', serif;
     font-size: 16px;
     transition: color 0.3s;
 }
 
 .navbar a:hover {
-    color: #ac0700; 
+    color: #ac0700;
+}
+
+@media (max-width: 1024px) {
+    .navbar ul {
+        gap: 10px;
+    }
+
+    .navbar a {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 640px) {
+    .navbar ul {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .navbar a {
+        font-size: 12px;
+    }
 }
 
 .main {
-    margin-top: 70px; 
+    margin-top: 70px;
     width: 90%;
     background-position: center;
     background-size: cover;
-    height: calc(100vh - 120px); 
+    height: calc(100vh - 120px);
     display: flex;
     justify-content: left;
     padding-left: 15%;
@@ -80,7 +116,6 @@ header {
 }
 
 .form h2 {
-    font-family: 'Figtree', serif;
     color: #ffffff;
     font-size: 30px;
     margin: 2px;
@@ -90,21 +125,51 @@ header {
 .form button {
     width: 70%;
     height: 50px;
-    background-color: #ac0700; 
+    background-color: #ac0700;
     border: none;
     border-radius: 40px;
-    color: #fff;
+    color: #ffffff;
     cursor: pointer;
     font-size: 22px;
-    padding: 10px 30px;
+    padding: 10px 20px;
     transition: 0.4s ease;
-    margin-bottom: 20px; 
-    font-family: 'Figtree', serif;
+    margin-bottom: 20px;
 }
 
 .form button:hover {
     background-color: #fff;
     color: #313c1c;
+}
+
+@media (max-width: 1024px) {
+    .form {
+        width: 300px;
+        padding: 8px;
+    }
+
+    .form h2 {
+        font-size: 25px;
+    }
+
+    .form button {
+        width: 80%;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 640px) {
+    .form {
+        width: 250px;
+    }
+
+    .form h2 {
+        font-size: 20px;
+    }
+
+    .form button {
+        width: 90%;
+        font-size: 16px;
+    }
 }
 
 .return-button {
@@ -113,15 +178,26 @@ header {
     left: 18%;
     transform: translate(-50%, -50%);
     text-align: center;
-  }
-  
-  .return-button a {
+}
+
+.return-button a {
     text-decoration: none;
     color: #fff;
     font-size: 18px;
-    font-family: 'Figtree', serif;
-  }
-  
-  .return-button a:hover {
+}
+
+.return-button a:hover {
     color: #ac0700;
-  }
+}
+
+@media (max-width: 1024px) {
+    .return-button a {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 640px) {
+    .return-button a {
+        font-size: 14px;
+    }
+}
