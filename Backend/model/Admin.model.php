@@ -9,33 +9,56 @@ class adminControls implements adminInterface {
         $this->gm = $gm;
     }
 
-    public function createAcc($data){
-        $sql = 'INSERT INTO main(Email, Username, Password, Status) VALUES(?, ?, ?, ?)';
-        
-        $option = [
-            "cost" => 11 
-        ];
-        $hashedPass = password_hash($data->Password, PASSWORD_BCRYPT, $option);
-
-        if (!isset($data->Email) || !isset($data->Username) || !isset($data->Password)) {
-            return $this->gm->responsePayload(null, 'failed', 'Fill up all required fields.', 400);
+    public function subscription($data){
+        if(strtolower($data) === 'vip'){
+            return 1;
         }
-
-        try {
-            $stmt = $this->pdo->prepare($sql);
-            if ($stmt->execute([$data->Email, $data->Username, $hashedPass, $data->Status])) {
-                $lastID = $this->pdo->lastInsertId();
-                return $this->gm->responsePayload($this->getOneAcc((object)['User_ID' => $lastID]), 'success', 'Account created succesfully.', 201);
-            } else {
-                return $this->gm->responsePayload(null, 'failed', 'Account creation unsuccessful.', 500);
-            }
-        } catch (PDOException $e) {
-            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+        else if(strtolower($data) === 'non-vip'){
+            return 0;
         }
     }
 
+    public function createAcc($data) {
+        $sqlUser = 'INSERT INTO main(Email, Username, Password, Status) VALUES(?, ?, ?, DEFAULT)';
+        $sqlSubStatus = 'INSERT INTO subscriptionstatus(User_ID, SubscriptionStat) VALUES(?, ?)';
+    
+        $option = ["cost" => 11];
+        $hashedPass = password_hash($data->Password, PASSWORD_BCRYPT, $option);
+    
+        if (empty($data->Email) || empty($data->Username) || empty($data->Password) || empty($data->SubscriptionStat)) {
+            return $this->gm->responsePayload(null, 'failed', 'Fill up all required fields.', 400);
+        }
+    
+        try {
+            $this->pdo->beginTransaction();
+    
+            $stmtUser = $this->pdo->prepare($sqlUser);
+            if ($stmtUser->execute([$data->Email, $data->Username, $hashedPass])) {
+
+                $lastID = $this->pdo->lastInsertId();
+            $subStat = $this->subscription($data->SubscriptionStat);
+
+                $stmtSubStatus = $this->pdo->prepare($sqlSubStatus);
+                if ($stmtSubStatus->execute([$lastID, $subStat])) {
+                    $this->pdo->commit();
+                    return $this->gm->responsePayload($this->getOneAcc((object)['User_ID' => $lastID]), 'success', 'Account created successfully.', 201);
+                } else {
+                    $this->pdo->rollBack();
+                    return $this->gm->responsePayload(null, 'failed', 'Subscription status insert failed.', 500);
+                }
+            } else {
+                $this->pdo->rollBack();
+                return $this->gm->responsePayload(null, 'failed', 'Account creation unsuccessful.', 500);
+            }
+        } catch (PDOException $e) {
+            $this->pdo->rollBack();
+            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+        }
+    }
+    
+
     public function getAllAcc() {
-        $sql = "SELECT Email, Username, Status FROM main";
+        $sql = "SELECT Email, Username,  Status FROM main";
         try {
             $stmt = $this->pdo->prepare($sql);
             if ($stmt->execute()) {
@@ -52,7 +75,10 @@ class adminControls implements adminInterface {
     }
 
     public function getOneAcc($data) {
-        $sql = "SELECT Email, Username, Status FROM main WHERE User_ID = ?";
+        $sql = "SELECT m.Email, m.Username, m.Status, s.SubscriptionStat 
+            FROM main m
+            LEFT JOIN subscriptionstatus s ON m.User_ID = s.User_ID
+            WHERE m.User_ID = ?";
         try {
             $stmt = $this->pdo->prepare($sql);
             if ($stmt->execute([$data->User_ID])) {
