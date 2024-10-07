@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=utf-8");
@@ -15,7 +19,6 @@ $apiPath = $rootPath . "/Olympus/Backend";
 require_once($apiPath .'/configs/Connection.php');
 
 //Models
-require_once($apiPath .'/model/try.model.php');
 require_once($apiPath .'/model/Global.model.php');
 require_once($apiPath .'/model/Admin.model.php');
 require_once($apiPath .'/model/Auth.model.php');
@@ -30,28 +33,45 @@ $auth = new Auth($pdo, $rm);
 
 $data = json_decode(file_get_contents("php://input"));
 
+if (json_last_error() !== JSON_ERROR_NONE) {
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'JSON parse error: ' . json_last_error_msg()
+    ]);
+    return;
+}
+
+if (empty($data)) {
+    echo json_encode(['status' => 'error', 'message' => 'No data received.']);
+    return;
+}
+
+
 $req = [];
 if (isset($_REQUEST['request']))
     $req = explode('/', rtrim($_REQUEST['request'], '/'));
 else $req = array("errorcatcher");
 
 switch ($_SERVER['REQUEST_METHOD']) {
-    case 'GET':
+    case 'GET':      
         if($req[0]=='Get'){
-            if($req[1]=='One') {echo json_encode($adminCon->getOneAcc($data));return;} 
-            if($req[1]=='All') {echo json_encode($adminCon->getAllAcc());return;} 
+            $tokenRes = $auth->verifyToken('admin');
+            if ($tokenRes['is_valid'] !== true){      
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                if($req[1]=='One') {echo json_encode($adminCon->getOneAcc($data));return;} 
+                if($req[1]=='All') {echo json_encode($adminCon->getAllAcc());return;} 
+            }
         }
         
         $rm->notFound();
         break;
 
     case 'POST':
-        if($req[0] == 'Create'){
-            if($req[1] == 'Admin'){echo json_encode($auth->adminReg($data)); return;}
-            echo json_encode($adminCon->createAcc($data)); 
-            return;}
+        if($req[0] == 'Create'){echo json_encode($adminCon->createAcc($data));return;}
+        if($req[0] == 'Create' && $req[1] == 'Admin'){echo json_encode($auth->adminReg($data)); return;}
+            
         if($req[0]== 'Login') {
-            if($req[1]== 'Admin') {echo json_encode($auth->adminLogin($data));return;}
+            if($req[1]== 'Admin'){echo json_encode($auth->adminLogin($data));return;}
             if($req[1]== 'Member') {echo json_encode($auth->memLogin($data));return;}
         }
 

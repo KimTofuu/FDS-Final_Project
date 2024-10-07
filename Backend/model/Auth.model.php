@@ -2,8 +2,8 @@
 
 require_once($apiPath . '/interfaces/Auth.php');
 
-class Auth implements AuthInterface
-{
+class Auth implements AuthInterface{
+    
     protected $pdo,$gm;
 
     public function __construct(\PDO $pdo, ResponseMethodsProj $gm)
@@ -67,7 +67,7 @@ class Auth implements AuthInterface
                     $stmt->closeCursor();
                     if (password_verify($data->Password, $res['Password'])) {
                         $token = $this->tokenGen(['user_type' => $userType, 'User_ID' => $res['User_ID']]);
-                        return $this->gm->responsePayload(array("token" => $token), "success", "Logged in", 200);
+                        return $this->gm->responsePayload(array("token" => $token, "user_type" => $userType), "success", "Logged in", 200);
                     } else {
                         return $this->gm->responsePayload(null, "failed", "Username and password do not match", 400);
                     }
@@ -107,23 +107,37 @@ class Auth implements AuthInterface
         );
     }
 
-    public function verifyToken()
-    {
-        $jwt = explode(' ', $_SERVER['HTTP_AUTHORIZATION']);
-        if ($jwt[0] != 'Bearer') {
-            return $this->tokenPayload(null);
-        } else {
-            $decoded = explode(".", $jwt[1]);
-            $payload = json_decode(str_replace(['+', '/', '='], ['-', '_', ''], base64_decode($decoded[1])));
-            $signature = hash_hmac('sha256', $decoded[0] . "." . $decoded[1], SECRET_KEY, true);
-            $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-            if ($base64UrlSignature === $decoded[2]) {
-                return $this->tokenPayload($payload, true);
-            } else {
-                return $this->tokenPayload(null);
+public function verifyToken($requiredUserType = null)
+{
+    $jwt = explode(' ', $_SERVER['HTTP_AUTHORIZATION']);
+    
+    if ($jwt[0] != 'Bearer') {
+        return $this->tokenPayload(null, false);
+    } else {
+        // Decode the token payload
+        $decoded = explode(".", $jwt[1]);
+        $payload = json_decode(base64_decode($decoded[1]));
+        
+        // Verify the token signature
+        $signature = hash_hmac('sha256', $decoded[0] . "." . $decoded[1], SECRET_KEY, true);
+        $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+        
+        if ($base64UrlSignature === $decoded[2]) {
+            // Token is valid, check if user type matches (if provided)
+            if ($requiredUserType) {
+                if (isset($payload->token_data->user_type) && $payload->token_data->user_type === $requiredUserType) {
+                    return $this->tokenPayload($payload, true); // Valid token and correct user type
+                } else {
+                    return $this->gm->responsePayload(null, 'failed', 'Access denied. User type mismatch.', 403);
+                }
             }
+            // No user type check required, return valid payload
+            return $this->tokenPayload($payload, true);
+        } else {
+            return $this->tokenPayload(null, false); // Invalid token signature
         }
     }
+}
 
 
 }
