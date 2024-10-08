@@ -6,4 +6,5 @@ interface adminInterface{
     public function getAllAcc();
     public function delAcc($data);
     public function archStat($data);
+    public function coachCreate($data);
 }

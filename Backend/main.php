@@ -22,6 +22,7 @@ require_once($apiPath .'/configs/Connection.php');
 require_once($apiPath .'/model/Global.model.php');
 require_once($apiPath .'/model/Admin.model.php');
 require_once($apiPath .'/model/Auth.model.php');
+require_once($apiPath .'/model/Member.model.php');
 
 $db = new ConnectionFinProj();
 $pdo = $db->connect();
@@ -68,6 +69,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
     case 'POST':
         if($req[0] == 'Create'){echo json_encode($adminCon->createAcc($data));return;}
+        if($req[0] == 'Create' && $req[1] == 'Coach'){echo json_encode($adminCon->coachCreate($data));return;}
         if($req[0] == 'Create' && $req[1] == 'Admin'){echo json_encode($auth->adminReg($data)); return;}
             
         if($req[0]== 'Login') {
