@@ -21,6 +21,7 @@ class adminControls implements adminInterface {
     public function createAcc($data) {
         $sqlUser = 'INSERT INTO main(Email, Username, Password, Status) VALUES(?, ?, ?, DEFAULT)';
         $sqlSubStatus = 'INSERT INTO subscriptionstatus(User_ID, SubscriptionStat) VALUES(?, ?)';
+        $sqlMemberInfo = 'INSERT INTO member_info(user_id) VALUES(?)';
     
         $option = ["cost" => 11];
         $hashedPass = password_hash($data->Password, PASSWORD_BCRYPT, $option);
@@ -36,16 +37,19 @@ class adminControls implements adminInterface {
             if ($stmtUser->execute([$data->Email, $data->Username, $hashedPass])) {
 
                 $lastID = $this->pdo->lastInsertId();
-            $subStat = $this->subscription($data->SubscriptionStat);
+                $subStat = $this->subscription($data->SubscriptionStat);
 
                 $stmtSubStatus = $this->pdo->prepare($sqlSubStatus);
-                if ($stmtSubStatus->execute([$lastID, $subStat])) {
+                $stmtMemberInfo = $this->pdo->prepare($sqlMemberInfo);
+
+                if ($stmtSubStatus->execute([$lastID, $subStat]) && $stmtMemberInfo->execute([$lastID])) {
                     $this->pdo->commit();
                     return $this->gm->responsePayload($this->getOneAcc((object)['User_ID' => $lastID]), 'success', 'Account created successfully.', 201);
                 } else {
                     $this->pdo->rollBack();
                     return $this->gm->responsePayload(null, 'failed', 'Subscription status insert failed.', 500);
                 }
+                
             } else {
                 $this->pdo->rollBack();
                 return $this->gm->responsePayload(null, 'failed', 'Account creation unsuccessful.', 500);
@@ -55,6 +59,29 @@ class adminControls implements adminInterface {
             return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
         }
     }
+
+    public function coachCreate($data){
+        $sql = 'INSERT INTO coach(coachName, coachEmail, coachNum, coachPass) VALUES(?, ?, ?, ?)';
+
+        $option = ["cost" => 11];
+        $hashedPass = password_hash($data->coachPass, PASSWORD_BCRYPT, $option);
+    
+        if (empty($data->coachName) || empty($data->coachEmail) || empty($data->coachNum) || empty($data->coachPass)) {
+            return $this->gm->responsePayload(null, 'failed', 'Fill up all required fields.', 400);
+        }
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+
+            if($stmt->execute([$data->coachName, $data->coachEmail, $data->coachNum, $hashedPass])) {
+                return $this->gm->responsePayload($data->coachName, 'success', 'Account created.', 200);
+            }else{
+                return $this->gm->responsePayload(null, 'failed', 'Account creation failed', 403);
+            }
+        }catch (PDOException $e) {
+            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+        }
+    }    
     
 
     public function getAllAcc() {

@@ -54,6 +54,11 @@ class Auth implements AuthInterface{
     public function memLogin($data){
         $sql = "SELECT * FROM main WHERE Username=?";
         return $this->login($sql, $data, 'member');
+    } 
+
+    public function coachLogin($data){
+        $sql = 'SELECT * FROM coachauth WHERE Username=?';
+        return $this->login($sql, $data, 'coach');
     }
 
     public function login($sql, $data, $userType) {
