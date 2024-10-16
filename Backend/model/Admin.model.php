@@ -22,6 +22,7 @@ class adminControls implements adminInterface {
         $sqlUser = 'INSERT INTO main(Email, Username, Password, Status) VALUES(?, ?, ?, DEFAULT)';
         $sqlSubStatus = 'INSERT INTO subscriptionstatus(User_ID, SubscriptionStat) VALUES(?, ?)';
         $sqlMemberInfo = 'INSERT INTO member_info(user_id) VALUES(?)';
+        $sqlCheckUser = 'SELECT COUNT(*) FROM main WHERE LOWER(Username) = LOWER(?)';
     
         $option = ["cost" => 11];
         $hashedPass = password_hash($data->Password, PASSWORD_BCRYPT, $option);
@@ -31,6 +32,12 @@ class adminControls implements adminInterface {
         }
     
         try {
+            $stmtCheckUser = $this->pdo->prepare($sqlCheckUser);
+            $stmtCheckUser->execute([$data->Username]);
+            $userExists = $stmtCheckUser->fetchColumn();
+
+            if ($userExists > 0) {return $this->gm->responsePayload(null, 'failed', 'Username already exists.', 409);}
+            
             $this->pdo->beginTransaction();
     
             $stmtUser = $this->pdo->prepare($sqlUser);

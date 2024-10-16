@@ -21,15 +21,24 @@
             <h2>Welcome, Member!</h2>
             <p>You have access to the following features:</p>
             <ul>
-                <li><a href="view_profile.php">View Profile</a></li>
-                <li><a href="update_profile.php">Update Profile</a></li>
-                <li><a href="submit_request.php">Submit Request</a></li>
+                <li><a href="#" onclick="viewProfile()">View Profile</a></li> <!-- Call JS function -->
+                <li><a href="memberprofile.php">Update Profile</a></li>
+                <li><a href="submit_request.html">Submit Request</a></li>
             </ul>
+        </section>
+
+        <section id="profile-info" style="display:none;">
+            <h2>Your Profile</h2>
+            <div id="profile-details">
+                <!-- Profile information will be populated here using JavaScript -->
+            </div>
         </section>
     </main>
 
     <footer>
         <p>&copy; 2024 Olympus System. All rights reserved.</p>
     </footer>
+    
+    <script src="memberDashboard.js"></script>]
 </body>
 </html>

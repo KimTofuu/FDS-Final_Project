@@ -13,6 +13,7 @@ class Auth implements AuthInterface{
     }
 
     public function adminReg($data){
+
         $checkRows = 'SELECT COUNT(*) AS numrows FROM adminauth';
         $sql = 'INSERT INTO adminauth(Username, Password) VALUES(?, ?)';
 
@@ -47,16 +48,19 @@ class Auth implements AuthInterface{
     }
 
     public function adminLogin($data){
+
         $sql = "SELECT * FROM adminauth WHERE Username=?";
         return $this->login($sql, $data, 'admin');
     }
 
     public function memLogin($data){
+
         $sql = "SELECT * FROM main WHERE Username=?";
         return $this->login($sql, $data, 'member');
     } 
 
     public function coachLogin($data){
+
         $sql = 'SELECT * FROM coachauth WHERE Username=?';
         return $this->login($sql, $data, 'coach');
     }
@@ -65,14 +69,17 @@ class Auth implements AuthInterface{
         try {
             $stmt = $this->pdo->prepare($sql);
             
-            if (isset($data->Username)) { // Check if the property exists
-                $stmt->execute([$data->Username]); // Use the correct property
+            if (isset($data->Username)) { 
+                $stmt->execute([$data->Username]); 
                 if ($stmt->rowCount() > 0) {
                     $res = $stmt->fetchAll()[0];
                     $stmt->closeCursor();
                     if (password_verify($data->Password, $res['Password'])) {
                         $token = $this->tokenGen(['user_type' => $userType, 'User_ID' => $res['User_ID']]);
-                        return $this->gm->responsePayload(array("token" => $token, "user_type" => $userType), "success", "Logged in", 200);
+                        setcookie('User_ID', $res['User_ID'], time() + (86400 * 7), '/', '', true, true);
+                        // $redirectUrl = $url . $res['User_ID'];
+                        // header('Location: $apipath');
+                        return $this->gm->responsePayload(array("token" => $token['token'], "user_type" => $userType, "User_ID" => $res['User_ID']), "success", "Logged in", 200);
                     } else {
                         return $this->gm->responsePayload(null, "failed", "Username and password do not match", 400);
                     }
@@ -86,8 +93,8 @@ class Auth implements AuthInterface{
             echo $e->getMessage();
         }
     }
-    
-    
+
+
 
     public function logout(){
         //Logout functionality
@@ -97,11 +104,15 @@ class Auth implements AuthInterface{
     {
         $header = json_encode(['typ' => 'JWT', 'alg' => 'HS256']);
         $payload = json_encode(['token_data' => $tokenData, 'exp' => date("Y-m-d", strtotime('+7 days'))]);
+        
         $base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
         $base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
+        
         $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, SECRET_KEY, true);
         $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+        
         $jwt = $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
+        
         return array("token" => $jwt);
     }
 
@@ -112,37 +123,32 @@ class Auth implements AuthInterface{
         );
     }
 
-public function verifyToken($requiredUserType = null)
-{
-    $jwt = explode(' ', $_SERVER['HTTP_AUTHORIZATION']);
-    
-    if ($jwt[0] != 'Bearer') {
-        return $this->tokenPayload(null, false);
-    } else {
-        // Decode the token payload
-        $decoded = explode(".", $jwt[1]);
-        $payload = json_decode(base64_decode($decoded[1]));
+    public function verifyToken($requiredUserType = null)
+    {
+        $jwt = explode(' ', $_SERVER['HTTP_AUTHORIZATION']);
         
-        // Verify the token signature
-        $signature = hash_hmac('sha256', $decoded[0] . "." . $decoded[1], SECRET_KEY, true);
-        $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-        
-        if ($base64UrlSignature === $decoded[2]) {
-            // Token is valid, check if user type matches (if provided)
-            if ($requiredUserType) {
-                if (isset($payload->token_data->user_type) && $payload->token_data->user_type === $requiredUserType) {
-                    return $this->tokenPayload($payload, true); // Valid token and correct user type
-                } else {
-                    return $this->gm->responsePayload(null, 'failed', 'Access denied. User type mismatch.', 403);
-                }
-            }
-            // No user type check required, return valid payload
-            return $this->tokenPayload($payload, true);
+        if ($jwt[0] != 'Bearer') {
+            return $this->tokenPayload(null, false);
         } else {
-            return $this->tokenPayload(null, false); // Invalid token signature
+            $decoded = explode(".", $jwt[1]);
+            $payload = json_decode(base64_decode($decoded[1]));
+            
+            $signature = hash_hmac('sha256', $decoded[0] . "." . $decoded[1], SECRET_KEY, true);
+            $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+            
+            if ($base64UrlSignature === $decoded[2]) {
+                if ($requiredUserType) {
+                    if (isset($payload->token_data->user_type) && $payload->token_data->user_type === $requiredUserType) {
+                        return $this->tokenPayload($payload, true); 
+                    } else {
+                        return $this->gm->responsePayload(null, 'failed', 'Access denied. User type mismatch.', 403);
+                    }
+                }
+                return $this->tokenPayload($payload, true);
+            } else {
+                return $this->tokenPayload(null, false); 
+            }
         }
     }
-}
-
 
 }
