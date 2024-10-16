@@ -17,6 +17,17 @@
         <button type="submit">Login as Member</button>
     </form>
 
+    <h2>Coach Login</h2>
+    <form id="coachLoginForm">
+        <label for="coachUsername">Username:</label>
+        <input type="text" id="coachUsername" name="coachUsername" required><br><br>
+
+        <label for="coachPassword">Password:</label>
+        <input type="password" id="coachPassword" name="coachPassword" required><br><br>
+
+        <button type="submit">Login as Coach</button>
+    </form>
+
     <h2>Admin Login</h2>
     <form id="adminLoginForm">
         <label for="adminUsername">Username:</label>
@@ -38,6 +49,8 @@
 
         <button type="submit">Register as Admin</button>
     </form>
+
+    <p id="error-message" style="color: red;"></p>
 
     <script src="test.js"></script>
 </body>

@@ -7,7 +7,7 @@ class ResponseMethodsProj implements ResponseInterfacePHPTemp
     public function responsePayload($payload, $remarks, $message, $code){
         $status = array("remarks" => $remarks, "message" => $message);
         http_response_code($code);
-        return array("status" => $status, "payload" => $payload, "timestamp" => date_create(), "prepared_by" => "Olympus Dev. Team");
+        return array("status" => $status, "payload" => $payload, "timestamp" => date('Y-m-d H:i:s'), "prepared_by" => "Olympus Dev. Team");
     }
 
     public function notFound(){
