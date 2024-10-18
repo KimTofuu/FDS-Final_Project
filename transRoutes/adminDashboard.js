@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
             Username: document.getElementById('username').value,
             Password: document.getElementById('password').value,
             SubscriptionStat: document.getElementById('subscriptionStat').value,
+            subPlan: document.getElementById('subPlan').value
         };
 
         const response = await fetch('http://localhost/Olympus/Backend/Create', { // Adjust the path to your actual API endpoint

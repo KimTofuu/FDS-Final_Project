@@ -7,4 +7,7 @@ interface adminInterface{
     public function delAcc($data);
     public function archStat($data);
     public function coachCreate($data);
+    // public function delCoach($data);
+    // public function getCoach($data);
+    public function setMemSubPlan($data);
 }
