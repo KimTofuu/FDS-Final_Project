@@ -10,17 +10,46 @@ class adminControls implements adminInterface {
     }
 
     public function subscription($data){
-        if(strtolower($data) === 'vip'){
+        if(strtolower($data) === 'paid'){
             return 1;
         }
-        else if(strtolower($data) === 'non-vip'){
-            return 0;
+        return 0;
+    }
+
+    public function subPlan($data){
+        if(strtolower($data) === 'basic plan'){
+            return 'Basic Plan';
+        }
+        if(strtolower($data) === 'advance plan'){
+            return 'Advanced Plan';
+        }
+        if(strtolower($data) === 'master plan'){
+            return 'Master Plan';
+        }
+        return NULL;
+    }
+
+    public function setMemSubPlan($data){
+        $subPlan = $this->subPlan($data);
+
+        $sql = "UPDATE subscriptionstatus SET subPlan = $subPlan";
+
+        try{
+            $stmt = $this->pdo->prepare($sql);
+            if($stmt->execute()){
+                return $this->gm->responsePayload(get_object_vars($data), 'success', 'Data updated', 200);
+            }else{
+                return $this->gm->responsePayload(null, 'failed', 'Update failed', 403);
+            }
+        }catch(PDOException $e){
+            $this->pdo->rollBack();
+            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
         }
     }
 
     public function createAcc($data) {
-        $sqlUser = 'INSERT INTO main(Email, Username, Password, Status) VALUES(?, ?, ?, DEFAULT)';
-        $sqlSubStatus = 'INSERT INTO subscriptionstatus(User_ID, SubscriptionStat) VALUES(?, ?)';
+        $sqlUser = 'INSERT INTO main(Email, Username, Password, ArchiveStatus) VALUES(?, ?, ?, DEFAULT)';
+        $sqlSubStatus = 'INSERT INTO subscriptionstatus(User_ID, SubscriptionStat, subPlan) VALUES(?, ?, ?)';
         $sqlMemberInfo = 'INSERT INTO member_info(user_id) VALUES(?)';
         $sqlCheckUser = 'SELECT COUNT(*) FROM main WHERE LOWER(Username) = LOWER(?)';
     
@@ -45,11 +74,12 @@ class adminControls implements adminInterface {
 
                 $lastID = $this->pdo->lastInsertId();
                 $subStat = $this->subscription($data->SubscriptionStat);
+                $subPlan = $this->subPlan($data->subPlan);
 
                 $stmtSubStatus = $this->pdo->prepare($sqlSubStatus);
                 $stmtMemberInfo = $this->pdo->prepare($sqlMemberInfo);
 
-                if ($stmtSubStatus->execute([$lastID, $subStat]) && $stmtMemberInfo->execute([$lastID])) {
+                if ($stmtSubStatus->execute([$lastID, $subStat, $subPlan]) && $stmtMemberInfo->execute([$lastID])) {
                     $this->pdo->commit();
                     return $this->gm->responsePayload($this->getOneAcc((object)['User_ID' => $lastID]), 'success', 'Account created successfully.', 201);
                 } else {
@@ -68,7 +98,9 @@ class adminControls implements adminInterface {
     }
 
     public function coachCreate($data){
-        $sql = 'INSERT INTO coach(coachName, coachEmail, coachNum, coachPass) VALUES(?, ?, ?, ?)';
+        $sqlCheckUser = 'SELECT COUNT(*) FROM coach WHERE LOWER(coachName) = LOWER(?)';
+        $sqlCoachInfo = 'INSERT INTO coach_info(Coach_ID) VALUES(?)';
+        $sql = 'INSERT INTO coach(coachName, coachEmail, coachPass) VALUES(?, ?, ?)';
 
         $option = ["cost" => 11];
         $hashedPass = password_hash($data->coachPass, PASSWORD_BCRYPT, $option);
@@ -78,10 +110,27 @@ class adminControls implements adminInterface {
         }
 
         try {
-            $stmt = $this->pdo->prepare($sql);
+            $stmtCheckUser = $this->pdo->prepare($sqlCheckUser);
+            $stmtCheckUser->execute([$data->Username]);
+            $userExists = $stmtCheckUser->fetchColumn();
 
+            if ($userExists > 0) {return $this->gm->responsePayload(null, 'failed', 'Username already exists.', 409);}
+            
+            $this->pdo->beginTransaction();
+
+            $stmt = $this->pdo->prepare($sql);
             if($stmt->execute([$data->coachName, $data->coachEmail, $data->coachNum, $hashedPass])) {
-                return $this->gm->responsePayload($data->coachName, 'success', 'Account created.', 200);
+                $lastID = $this->pdo->lastInsertId();
+
+                $stmtCoachInfo = $this->pdo->prepare($sqlCoachInfo);
+                
+                if($stmtCoachInfo->execute([$lastID])){
+                    $this->pdo->commit();
+                    return $this->gm->responsePayload(array("Name" => $data->coachName, "Email" => $data->coachEmail, "Contact Number" => $data->coachNum), 'success', 'Account created.', 200);
+                }else{
+                    $this->pdo->rollBack();
+                    return $this->gm->responsePayload(null, 'failed', 'Account creation failed', 403);
+                }
             }else{
                 return $this->gm->responsePayload(null, 'failed', 'Account creation failed', 403);
             }
@@ -109,7 +158,7 @@ class adminControls implements adminInterface {
     }
 
     public function getOneAcc($data) {
-        $sql = "SELECT m.Email, m.Username, m.Status, s.SubscriptionStat 
+        $sql = "SELECT m.Email, m.Username, m.ArchiveStatus, s.SubscriptionStat 
             FROM main m
             LEFT JOIN subscriptionstatus s ON m.User_ID = s.User_ID
             WHERE m.User_ID = ?";

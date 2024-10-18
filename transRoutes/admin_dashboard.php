@@ -42,6 +42,9 @@
                 <label for="subscriptionStat">Subscription Status:</label>
                 <input type="text" id="subscriptionStat" name="subscriptionStat" required>
                 
+                <label for="subPlan">Subscription Plan:</label>
+                <input type="text" id="subPlan" name="subPlan" required>
+                
                 <button type="submit">Create Account</button>
             </form>
             <div id="responseMessage"></div>

@@ -55,6 +55,13 @@
 
             <div id="responseMessage"></div>
         </section>
+        <section>
+            <form id="getID">
+            <h1>Retrieve User ID</h1>
+            <button type="button">Get User ID</button>
+            <p id="userID">User ID will be displayed here</p>
+            </form>
+        </section>
     </main>
     <script src="memberprofile.js"></script>
 </body>
