@@ -21,7 +21,6 @@ require_once($apiPath . '/model/Global.model.php');
 require_once($apiPath . '/model/Admin.model.php');
 require_once($apiPath . '/model/Auth.model.php');
 require_once($apiPath . '/model/Member.model.php');
-require_once($apiPath . '/model/sessVar.php');
 
 $db = new ConnectionFinProj();
 $pdo = $db->connect();
@@ -69,7 +68,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
         }
 
         if ($req[0] == 'VerifyToken') {
-            $tokenRes = $auth->verifyToken(); // Verify the token without requiring a specific user type
+            $tokenRes = $auth->verifyToken(); 
             echo json_encode($tokenRes);
             return;
         }
@@ -99,7 +98,6 @@ switch ($_SERVER['REQUEST_METHOD']) {
             return;
         }
 
-        //to yung di ko parin mapagana nang may session variable
         if ($req[0] == 'Member') {
             $tokenResMem = $auth->verifyToken('member');
             if ($tokenResMem['is_valid'] !== true) {

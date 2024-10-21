@@ -125,34 +125,6 @@ class Auth implements AuthInterface{
         );
     }
 
-    // public function verifyToken($requiredUserType = null)
-    // {
-    //     $jwt = explode(' ', $_SERVER['HTTP_AUTHORIZATION']);
-        
-    //     if ($jwt[0] != 'Bearer') {
-    //         return $this->tokenPayload(null, false);
-    //     } else {
-    //         $decoded = explode(".", $jwt[1]);
-    //         $payload = json_decode(base64_decode($decoded[1]));
-            
-    //         $signature = hash_hmac('sha256', $decoded[0] . "." . $decoded[1], SECRET_KEY, true);
-    //         $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-            
-    //         if ($base64UrlSignature === $decoded[2]) {
-    //             if ($requiredUserType) {
-    //                 if (isset($payload->token_data->user_type) && $payload->token_data->user_type === $requiredUserType) {
-    //                     return $this->tokenPayload($payload, true); 
-    //                 } else {
-    //                     return $this->gm->responsePayload(null, 'failed', 'Access denied. User type mismatch.', 403);
-    //                 }
-    //             }
-    //             return $this->tokenPayload($payload, true);
-    //         } else {
-    //             return $this->tokenPayload(null, false); 
-    //         }
-    //     }
-    // }
-
     public function verifyToken($requiredUserType = null){
     // Retrieve JWT from Authorization header or cookie
     $jwt = isset($_SERVER['HTTP_AUTHORIZATION']) ? explode(' ', $_SERVER['HTTP_AUTHORIZATION']) : (isset($_COOKIE['Authorization']) ? explode(' ', $_COOKIE['Authorization']) : null);
