@@ -141,7 +141,7 @@ class adminControls implements adminInterface {
     
 
     public function getAllAcc() {
-        $sql = "SELECT Email, Username,  Status FROM main";
+        $sql = "SELECT Email, Username, Status FROM main";
         try {
             $stmt = $this->pdo->prepare($sql);
             if ($stmt->execute()) {
@@ -158,7 +158,7 @@ class adminControls implements adminInterface {
     }
 
     public function getOneAcc($data) {
-        $sql = "SELECT m.Email, m.Username, m.ArchiveStatus, s.SubscriptionStat 
+        $sql = "SELECT m.Email, m.Username, m.ArchiveStatus, s.SubscriptionStat, s.subPlan
             FROM main m
             LEFT JOIN subscriptionstatus s ON m.User_ID = s.User_ID
             WHERE m.User_ID = ?";
