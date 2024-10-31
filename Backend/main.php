@@ -16,11 +16,11 @@ $rootPath = $_SERVER["DOCUMENT_ROOT"];
 $apiPath = $rootPath . "/Olympus/Backend";
 
 require_once($apiPath . '/configs/Connection.php');
-
 require_once($apiPath . '/model/Global.model.php');
 require_once($apiPath . '/model/Admin.model.php');
 require_once($apiPath . '/model/Auth.model.php');
 require_once($apiPath . '/model/Member.model.php');
+require_once($apiPath . '/model/mailer.model.php');
 
 $db = new ConnectionFinProj();
 $pdo = $db->connect();
@@ -29,42 +29,43 @@ $rm = new ResponseMethodsProj();
 $adminCon = new adminControls($pdo, $rm);
 $auth = new Auth($pdo, $rm);
 $member = new member($pdo, $rm);
+$mailer = new mailer($pdo, $rm);
 
 $data = json_decode(file_get_contents("php://input"));
 
-if (json_last_error() !== JSON_ERROR_NONE) {
-    $error_code = json_last_error();
-    $error_message = json_last_error_msg();
+// if (json_last_error() !== JSON_ERROR_NONE) {
+//     $error_code = json_last_error();
+//     $error_message = json_last_error_msg();
 
-    // Additional error descriptionsl
-    $error_details = [
-        JSON_ERROR_DEPTH => 'The maximum stack depth has been exceeded.',
-        JSON_ERROR_STATE_MISMATCH => 'Invalid or malformed JSON.',
-        JSON_ERROR_CTRL_CHAR => 'Control character error, possibly incorrectly encoded.',
-        JSON_ERROR_SYNTAX => 'Syntax error, malformed JSON.',
-        JSON_ERROR_UTF8 => 'Malformed UTF-8 characters, possibly incorrectly encoded.',
-        JSON_ERROR_RECURSION => 'One or more recursive references in the value to be encoded.',
-        JSON_ERROR_INF_OR_NAN => 'One or more NAN or INF values in the value to be encoded.',
-        JSON_ERROR_UNSUPPORTED_TYPE => 'A value of a type that cannot be encoded was given.',
-        JSON_ERROR_INVALID_PROPERTY_NAME => 'A property name that cannot be encoded was given.',
-        JSON_ERROR_UTF16 => 'Malformed UTF-16 characters, possibly incorrectly encoded.'
-    ];
+//     // Additional error descriptionsl
+//     $error_details = [
+//         JSON_ERROR_DEPTH => 'The maximum stack depth has been exceeded.',
+//         JSON_ERROR_STATE_MISMATCH => 'Invalid or malformed JSON.',
+//         JSON_ERROR_CTRL_CHAR => 'Control character error, possibly incorrectly encoded.',
+//         JSON_ERROR_SYNTAX => 'Syntax error, malformed JSON.',
+//         JSON_ERROR_UTF8 => 'Malformed UTF-8 characters, possibly incorrectly encoded.',
+//         JSON_ERROR_RECURSION => 'One or more recursive references in the value to be encoded.',
+//         JSON_ERROR_INF_OR_NAN => 'One or more NAN or INF values in the value to be encoded.',
+//         JSON_ERROR_UNSUPPORTED_TYPE => 'A value of a type that cannot be encoded was given.',
+//         JSON_ERROR_INVALID_PROPERTY_NAME => 'A property name that cannot be encoded was given.',
+//         JSON_ERROR_UTF16 => 'Malformed UTF-16 characters, possibly incorrectly encoded.'
+//     ];
 
-    // Prepare the detailed error response
-    echo json_encode([
-        'status' => 'error',
-        'error_code' => $error_code,
-        'message' => $error_message,
-        'details' => isset($error_details[$error_code]) ? $error_details[$error_code] : 'Unknown error'
-    ]);
-    return;
-}
+//     // Prepare the detailed error response
+//     echo json_encode([
+//         'status' => 'error',
+//         'error_code' => $error_code,
+//         'message' => $error_message,
+//         'details' => isset($error_details[$error_code]) ? $error_details[$error_code] : 'Unknown error'
+//     ]);
+//     return;
+// }
 
 
-if (empty($data)) {
-    echo json_encode(['status' => 'error', 'message' => 'No data received.']);
-    return;
-}
+// if (empty($data)) {
+//     echo json_encode(['status' => 'error', 'message' => 'No data received.']);
+//     return;
+// }
 
 $req = [];
 if (isset($_REQUEST['request']))
@@ -98,9 +99,12 @@ switch ($_SERVER['REQUEST_METHOD']) {
         break;
 
     case 'POST':
-        if ($req[0] == 'Create') {echo json_encode($adminCon->createAcc($data));return;}
-        if ($req[0] == 'Create' && $req[1] == 'Coach') {echo json_encode($adminCon->coachCreate($data));return;}
-        if ($req[0] == 'Create' && $req[1] == 'Admin') {echo json_encode($auth->adminReg($data));return;}
+        if ($req[0] == 'Create') {
+            if ($req[1] == 'Member') {echo json_encode($adminCon->createAcc($data));return;}
+            if ($req[1] == 'Coach') {echo json_encode($adminCon->coachCreate($data));return;}
+            if ($req[1] == 'Admin') {echo json_encode($auth->adminReg($data));return;}
+        }
+        
 
         if ($req[0] == 'Login') {
             if ($req[1] == 'Admin'){echo json_encode($auth->adminLogin($data));return;}
@@ -110,7 +114,20 @@ switch ($_SERVER['REQUEST_METHOD']) {
         
         if ($req[0] == 'logout') {echo json_encode($auth->logout());return;}
 
-        $rm->notFound();
+        if($req[0] == 'Member'){
+            $tokenResMem = $auth->verifyToken('member');
+            if ($tokenResMem['is_valid'] !== true){
+                if($req[1] == 'setAlarm'){echo json_encode($member->setAlarm($data));return;}
+                if($req[1] == 'setSession'){echo json_encode($member->setSession($data));return;}
+            }   
+        }
+
+        if($req[0] == 'Send'){
+            if($req[1] == 'Expiry'){echo json_encode($mailer->Expiry());return;}            
+            if($req[1] == 'Session'){echo json_encode($mailer->Session());return;}
+            if($req[1] == 'Alarm'){echo json_encode($mailer->Alarm());return;}
+        }
+
         break;
 
     case 'PUT':
