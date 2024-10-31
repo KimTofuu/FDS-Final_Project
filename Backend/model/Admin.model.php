@@ -177,11 +177,15 @@ class adminControls implements adminInterface {
 
     public function getAllAcc() {
         $sql = "SELECT Email, Username, Status FROM main";
+        $data = array(); 
+        
         try {
             $stmt = $this->pdo->prepare($sql);
             if ($stmt->execute()) {
-                $data = $stmt->fetchAll();
-                if ($stmt->rowCount() > 0) {
+                if ($stmt->rowCount() > 0){
+                    foreach($stmt->fetchAll() as $d){
+                        array_push($data, $d);
+                    }
                     return $this->gm->responsePayload($data, 'success', 'Data retrieved successfully.', 200);
                 } else {
                     return $this->gm->responsePayload(null, 'failed', 'No data present.', 404);
