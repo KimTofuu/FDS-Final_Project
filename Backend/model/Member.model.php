@@ -9,38 +9,6 @@ class member implements memberInterface {
         $this->gm = $gm;
     }
 
-    // private function getIDFromToken(){
-    //     if (isset($_COOKIE['Authorization'])) {
-    //         $jwt = explode(' ', $_COOKIE['Authorization']);
-            
-    //         if ($jwt[0] === 'Bearer' && isset($jwt[1])) {
-    //             $token = $jwt[1];
-                
-    //             $decoded = explode(".", $token);
-                
-    //             $payload = json_decode(base64_decode($decoded[1]));
-                
-    //             $signature = hash_hmac('sha256', $decoded[0] . "." . $decoded[1], SECRET_KEY, true);
-    //             $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-                
-    //             if ($base64UrlSignature === $decoded[2]) {
-    //                 if (isset($payload->token_data->User_ID)) {
-    //                     $this->userID = $payload->token_data->User_ID;
-    //                 } else {
-    //                     return $this->gm->responsePayload(null, 'error', 'User_ID not found in the token', 404);
-    //                 }
-    //             } else {
-    //                 return $this->gm->responsePayload(null, 'error', 'Invalid token signature', 401);
-    //             }
-    //         } else {
-    //             return $this->gm->responsePayload(null, 'error', 'Invalid token format', 401);
-    //         }
-    //     } else {
-    //         return $this->gm->responsePayload(null, 'error', 'Cookie not found', 404);
-    //     }
-    // }
-
-
     public function SexIdentifier($data) {
         if(strtolower($data) === 'male'){
             return 1;
@@ -100,6 +68,38 @@ class member implements memberInterface {
                 }
             }
         } catch (PDOException $e) {
+            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+        }
+    }
+
+    public function setAlarm($data){
+        $userID = $this->gm->getIDFromToken();
+
+        $sql = 'INSERT INTO gymalarm(User_ID, day, time) VALUES(?, ?, ?)';
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            if ($stmt->execute([$userID, $data->day, $data->time])) {
+                return $this->gm->responsePayload($data, 'success', 'Alarm or reminder set', 200);
+            }else{
+                return $this->gm->responsePayload(null, 'failed', 'Alarm or reminder not set', 403);
+            }
+        }catch(PDOException $e){
+            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+        }
+    }
+
+    public function setSession($data){
+        $userID = $this->gm->getIDFromToken();
+
+        $sql = 'INSERT INTO gymsession(User_ID, date, time, Coach_ID) VALUES(?, ?, ?, ?)';
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            if ($stmt->execute([$userID, date('Y-m-d'), $data->time, $data->Coach_ID])) {
+                return $this->gm->responsePayload($data, 'success', 'Alarm or reminder set', 200);
+            }else{
+                return $this->gm->responsePayload(null, 'failed', 'Alarm or reminder not set', 403);
+            }
+        }catch(PDOException $e){
             return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
         }
     }
