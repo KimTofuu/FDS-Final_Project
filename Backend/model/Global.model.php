@@ -28,7 +28,7 @@ class ResponseMethodsProj implements ResponseInterfacePHPTemp
                 
                 $payload = json_decode(base64_decode($decoded[1]));
                 
-                $signature = hash_hmac('sha256', $decoded[0] . "." . $decoded[1], SECRET_KEY, true);
+                $signature = hash_hmac('sha256', $decoded[0] . "." . $decoded[1], $_ENV['SECRET_KEY'], true);
                 $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
                 
                 if ($base64UrlSignature === $decoded[2]) {

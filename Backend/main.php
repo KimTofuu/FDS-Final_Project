@@ -24,7 +24,6 @@ require_once($apiPath . '/model/mailer.model.php');
 
 $db = new ConnectionFinProj();
 $pdo = $db->connect();
-
 $rm = new ResponseMethodsProj();
 $adminCon = new adminControls($pdo, $rm);
 $auth = new Auth($pdo, $rm);
@@ -142,6 +141,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 if ($req[1] == 'UpdateInfo') {echo json_encode($member->editInfo($data));return;}
             }
         }
+
+        if ($req[0] == 'ChangeSubStat'){echo json_encode($adminCon->changePaymentStatus());return;}
         break;
 
     case 'DELETE':

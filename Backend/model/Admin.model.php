@@ -29,7 +29,7 @@ class adminControls implements adminInterface {
         switch (strtolower($data)) {
             case 'basic plan':
                 $result['plan'] = 'Basic Plan';
-                $result['duration'] = '+ 3 days';
+                $result['duration'] = '+ 14 days';
                 break;
             case 'advanced plan':
                 $result['plan'] = 'Advanced Plan';
@@ -247,6 +247,25 @@ class adminControls implements adminInterface {
             }
         } catch (PDOException $e) {
             return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+        }
+    }
+
+    public function changePaymentStatus(){
+        $sql = 'UPDATE membership_duration
+                SET SubscriptionStat = 0
+                WHERE expiryDate = CURDATE()';
+
+        try{
+            $stmt = $this->pdo->prepare($sql);
+            if($stmt->execute()){
+                return $this->gm->responsePayload(null, 'success', "Accounts' status updated.", 200);
+            }else{
+                return $this->gm->responsePayload(null, 'failed', 'Accounts status update failed.', 404);
+                
+            }
+        }catch(PDOException $e){
+            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+
         }
     }
 }
