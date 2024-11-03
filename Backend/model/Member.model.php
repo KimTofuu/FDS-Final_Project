@@ -94,7 +94,7 @@ class member implements memberInterface {
         $sql = 'INSERT INTO gymsession(User_ID, date, time, Coach_ID) VALUES(?, ?, ?, ?)';
         try {
             $stmt = $this->pdo->prepare($sql);
-            if ($stmt->execute([$userID, date('Y-m-d'), $data->time, $data->Coach_ID])) {
+            if ($stmt->execute([$userID, $data->date, $data->time, $data->Coach_ID])) {
                 return $this->gm->responsePayload($data, 'success', 'Alarm or reminder set', 200);
             }else{
                 return $this->gm->responsePayload(null, 'failed', 'Alarm or reminder not set', 403);
