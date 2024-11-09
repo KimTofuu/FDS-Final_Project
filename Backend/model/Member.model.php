@@ -48,8 +48,6 @@ class member implements memberInterface {
     }
 
     
-    //comment out na muna, di ko talaga mahanap eh
-
     public function viewInfo() {
         $userID = $this->gm->getIDFromToken();
         if (!$userID) {
