@@ -9,6 +9,21 @@ class adminControls implements adminInterface {
         $this->gm = $gm;
     }
 
+    public function SexIdentifier($data) {
+        if(strtolower($data) === 'male'){
+            return 1;
+        }
+        return 0;
+    }
+
+    public function bmi($w, $h) {
+        if ($h == 0) {
+            throw new InvalidArgumentException('Height cannot be zero.');
+        }
+        $bmi = $w / pow($h / 100, 2); 
+        return $bmi;
+    }
+
     public function subscription($data){
         if(strtolower($data) === 'paid'){
             return 1;
@@ -71,8 +86,10 @@ class adminControls implements adminInterface {
     public function createAcc($data) {
         $sqlUser = 'INSERT INTO main(Email, Username, Password, ArchiveStatus) VALUES(?, ?, ?, DEFAULT)';
         $sqlSubStatus = 'INSERT INTO membership_duration(User_ID, SubscriptionStat, subPlan, duration, startingDate, expiryDate) VALUES(?, ?, ?, ?, ?, ?)';
-        $sqlMemberInfo = 'INSERT INTO member_info(user_id) VALUES(?)';
         $sqlCheckUser = 'SELECT COUNT(*) FROM main WHERE LOWER(Username) = LOWER(?)';
+        $sqlMemberInfo = 'INSERT INTO member_info(user_id, name, conNum, eConNum, address, age, sex, gender, weight, height, BMI) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        $sqlUserMedCon = 'INSERT INTO user_conditions(user_id, condition_id) VALUES(?, ?)';
+
     
         $option = ["cost" => 11];
         $hashedPass = password_hash($data->Password, PASSWORD_BCRYPT, $option);
@@ -112,8 +129,22 @@ class adminControls implements adminInterface {
                 $stmtMemberInfo = $this->pdo->prepare($sqlMemberInfo);
     
                 if ($stmtSubStatus->execute([$lastID, $subStat, $subPlan, $memDur, $startingDate, $expiryDate]) &&
-                    $stmtMemberInfo->execute([$lastID])) {
-    
+                    $stmtMemberInfo->execute([$lastID, $data->name, $data->conNum, $data->eConNum, $data->address, $data->age, $this->SexIdentifier($data->sex), $data->gender, $data->weight, $data->height, $this->bmi((int)$data->weight, (int)$data->height)])) {
+                    
+                    // Add the new code blocks here // basta may aayusin dito <<3
+                    if (isset($data->condition_ids) && is_array($data->condition_ids) && count($data->condition_ids) > 0) {
+                        $conditionIds = $data->condition_ids;
+                        $sqlUserMedCon = 'INSERT INTO user_conditions(user_id, condition_id) VALUES(?, ?)';
+                        $stmtUserMedCon = $this->pdo->prepare($sqlUserMedCon);
+                        foreach ($conditionIds as $conditionId) {
+                            $stmtUserMedCon->execute([$lastID, $conditionId]);
+                        }
+                    } else {
+                        $sqlUserMedCon = 'INSERT INTO user_conditions(user_id, condition_id) VALUES(?, 0)';
+                        $stmtUserMedCon = $this->pdo->prepare($sqlUserMedCon);
+                        $stmtUserMedCon->execute([$lastID]);
+                    }
+
                     $this->pdo->commit();
                     return $this->gm->responsePayload($this->getOneAcc((object)['User_ID' => $lastID]), 'success', 'Account created successfully.', 201);
                 } else {

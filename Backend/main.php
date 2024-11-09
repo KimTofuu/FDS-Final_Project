@@ -106,9 +106,15 @@ switch ($_SERVER['REQUEST_METHOD']) {
         
 
         if ($req[0] == 'Login') {
-            if ($req[1] == 'Admin'){echo json_encode($auth->adminLogin($data));return;}
-            if ($req[1] == 'Member'){echo json_encode($auth->memLogin($data));return;}
-            if ($req[1] == 'coach'){echo json_encode($auth->coachLogin($data));return;}
+            $usertype = $rm->getUserTypeFromToken();
+            if(!isset($_COOKIE['Authorization'])){
+                if ($req[1] == 'Admin'){echo json_encode($auth->adminLogin($data));return;}
+                if ($req[1] == 'Member'){echo json_encode($auth->memLogin($data));return;}
+                if ($req[1] == 'coach'){echo json_encode($auth->coachLogin($data));return;}
+            }else{
+                echo json_encode(($rm->responsePayload(null, 'failed', 'Already logged in', 403)));
+                return;
+            }
         }
         
         if ($req[0] == 'logout') {echo json_encode($auth->logout());return;}
