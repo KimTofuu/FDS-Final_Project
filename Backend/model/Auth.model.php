@@ -76,7 +76,7 @@ class Auth implements AuthInterface{
                     $stmt->closeCursor();
                     if (password_verify($data->Password, $res['Password'])) {
                         $token = $this->tokenGen(['user_type' => $userType, 'User_ID' => $res['User_ID']]);
-                        setcookie('Authorization',$token['token'], time() + (86400 * 7), '/', '', true, true);
+                        setcookie('Authorization','Bearer ' . $token['token'], time() + (86400 * 7), '/', '', true, true);
                         // $redirectUrl = $url . $res['User_ID'];
                         // header('Location: $apipath');
                         return $this->gm->responsePayload(array("token" => $token['token'], "user_type" => $userType, "User_ID" => $res['User_ID']), "success", "Logged in", 200);
