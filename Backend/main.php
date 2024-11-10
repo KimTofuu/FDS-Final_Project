@@ -21,12 +21,14 @@ require_once($apiPath . '/model/Admin.model.php');
 require_once($apiPath . '/model/Auth.model.php');
 require_once($apiPath . '/model/Member.model.php');
 require_once($apiPath . '/model/mailer.model.php');
+require_once($apiPath . '/middleware/middleware.php');
 
 $db = new ConnectionFinProj();
 $pdo = $db->connect();
 $rm = new ResponseMethodsProj();
-$adminCon = new adminControls($pdo, $rm);
 $auth = new Auth($pdo, $rm);
+$middleware = new middleware($auth);
+$adminCon = new adminControls($pdo, $rm, $middleware);
 $member = new member($pdo, $rm);
 $mailer = new mailer($pdo, $rm);
 
@@ -124,6 +126,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
             if ($tokenResMem['is_valid'] !== true){
                 if($req[1] == 'setAlarm'){echo json_encode($member->setAlarm($data));return;}
                 if($req[1] == 'setSession'){echo json_encode($member->setSession($data));return;}
+                if($req[1] == 'Daily-Calories'){echo json_encode($member->calcBodCalcNeed($data));return;}
+                if($req[1] == 'Food-Calories'){echo json_encode($member->calcFoodCalor($data));return;}
             }   
         }
 
