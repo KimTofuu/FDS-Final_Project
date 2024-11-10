@@ -1,12 +1,14 @@
 <?php
 require_once($apiPath . '/interfaces/Admin.php');
+require_once($apiPath . '/middleware/middleware.php');
 
 class adminControls implements adminInterface {
-    protected $pdo, $gm;
+    protected $pdo, $gm, $mw;
 
-    public function __construct(\PDO $pdo, ResponseMethodsProj $gm) {
+    public function __construct(\PDO $pdo, ResponseMethodsProj $gm, middleware $mw) {
         $this->pdo = $pdo;
         $this->gm = $gm;
+        $this->mw = $mw;
     }
 
     public function SexIdentifier($data) {
@@ -88,8 +90,6 @@ class adminControls implements adminInterface {
         $sqlSubStatus = 'INSERT INTO membership_duration(User_ID, SubscriptionStat, subPlan, duration, startingDate, expiryDate) VALUES(?, ?, ?, ?, ?, ?)';
         $sqlCheckUser = 'SELECT COUNT(*) FROM main WHERE LOWER(Username) = LOWER(?)';
         $sqlMemberInfo = 'INSERT INTO member_info(user_id, name, conNum, eConNum, address, age, sex, gender, weight, height, BMI) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        $sqlUserMedCon = 'INSERT INTO user_conditions(user_id, condition_id) VALUES(?, ?)';
-
     
         $option = ["cost" => 11];
         $hashedPass = password_hash($data->Password, PASSWORD_BCRYPT, $option);

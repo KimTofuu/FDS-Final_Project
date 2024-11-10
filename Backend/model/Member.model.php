@@ -101,4 +101,81 @@ class member implements memberInterface {
             return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
         }
     }
+
+    public function calcBodCalcNeed($data){
+        $userID = $this->gm->getIDFromToken();
+        $getSex = 'SELECT sex FROM member_info WHERE user_id = ?';
+        $getWeight = 'SELECT weight FROM member_info WHERE user_id = ?';
+        $getHeight = 'SELECT height FROM member_info WHERE user_id = ?';
+        $age = 'SELECT age FROM member_info WHERE user_id = ?';
+    
+        try {
+            $this->pdo->beginTransaction();
+    
+            $stmt1 = $this->pdo->prepare($getSex);
+            $stmt2 = $this->pdo->prepare($getWeight);
+            $stmt3 = $this->pdo->prepare($getHeight);
+            $stmt4 = $this->pdo->prepare($age);
+    
+            if($stmt1->execute([$userID]) && $stmt2->execute([$userID]) && $stmt3->execute([$userID]) && $stmt4->execute([$userID])){
+                $this->pdo->commit();
+    
+                $sex = $stmt1->fetchColumn();
+                $weight = $stmt2->fetchColumn();
+                $height = $stmt3->fetchColumn();
+                $age = $stmt4->fetchColumn();
+    
+                if($sex == 1){
+                    $baseMetabolicRate = 66 + (6.2 * $weight) + (13.7 * $height) - (6.8 * $age);
+                }else if($sex == 0){
+                    $baseMetabolicRate = 655 + (4.35 * $weight) + (4.7 * $height) - (4.7 * $age);
+                }
+    
+                if (!isset($data->activityLevel)) {
+                    return $this->gm->responsePayload(null, 'failed', 'Missing activity level data', 400);
+                }
+    
+                $activityLevel = strtolower($data->activityLevel);
+    
+                if($activityLevel == 'sedentary'){$dailyCaloricNeed = $baseMetabolicRate * 1.2;}
+                else if($activityLevel == 'lightly active'){$dailyCaloricNeed = $baseMetabolicRate * 1.375;}
+                else if($activityLevel == 'moderately active'){$dailyCaloricNeed = $baseMetabolicRate * 1.55;}
+                else if($activityLevel == 'very active'){$dailyCaloricNeed = $baseMetabolicRate * 1.725;}
+                else if($activityLevel == 'extra active'){$dailyCaloricNeed = $baseMetabolicRate * 1.9;}
+
+                if(isset($data->goal) && $data->goal == 'lose weight'){
+                    $dailyCaloricNeed -= 500;
+                    return $this->gm->responsePayload($dailyCaloricNeed, 'success', 'Your daily caloric need for weight loss', 200);
+                }else if(isset($data->goal) && $data->goal == 'gain weight'){
+                    $dailyCaloricNeed += 500;
+                    return $this->gm->responsePayload($dailyCaloricNeed, 'success', 'Your daily caloric need for weight gain', 200);
+                }else if(isset($dailyCaloricNeed) && empty($date->goal)){
+                    return $this->gm->responsePayload($dailyCaloricNeed, 'success', 'Caloric need for maintenance', 200);
+                }else{
+                    return $this->gm->responsePayload(null, 'failed', 'Invalid activity level', 400);
+                }
+                
+            }else{
+                return $this->gm->responsePayload(null, 'failed', 'Caloric Needs not set', 403);
+            }
+        }catch(PDOException $e){
+            $this->pdo->rollBack();
+            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+        }
+    }
+    
+    public function calcFoodCalor($data){
+        if (!isset($data->food) || !isset($data->protein) || !isset($data->carbs) || !isset($data->fats)) {
+            return $this->gm->responsePayload(null, 'failed', 'Missing food or nutrient data', 400);
+        }
+    
+        $food = $data->food;
+        $protein = $data->protein;
+        $carbs = $data->carbs;  
+        $fats = $data->fats;
+    
+        $calories = ($protein * 4) + ($carbs * 4) + ($fats * 9);
+    
+        return $this->gm->responsePayload(array('food' => $food, 'calories' => $calories), 'success', 'Food total calories', 200);
+    }
 }
