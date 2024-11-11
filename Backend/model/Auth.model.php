@@ -61,7 +61,7 @@ class Auth implements AuthInterface{
 
     public function coachLogin($data){
 
-        $sql = 'SELECT * FROM coachauth WHERE Username=?';
+        $sql = 'SELECT * FROM coach WHERE Username=?';
         return $this->login($sql, $data, 'coach');
     }
 
