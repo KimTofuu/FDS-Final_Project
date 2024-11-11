@@ -7,4 +7,5 @@ interface memberInterface{
     public function setSession($data);
     public function calcFoodCalor($data);
     public function calcBodCalcNeed($data);
+    public function getRecomm($data);
 }

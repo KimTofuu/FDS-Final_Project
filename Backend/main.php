@@ -112,7 +112,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             if(!isset($_COOKIE['Authorization'])){
                 if ($req[1] == 'Admin'){echo json_encode($auth->adminLogin($data));return;}
                 if ($req[1] == 'Member'){echo json_encode($auth->memLogin($data));return;}
-                if ($req[1] == 'coach'){echo json_encode($auth->coachLogin($data));return;}
+                if ($req[1] == 'Coach'){echo json_encode($auth->coachLogin($data));return;}
             }else{
                 echo json_encode(($rm->responsePayload(null, 'failed', 'Already logged in', 403)));
                 return;
@@ -123,12 +123,16 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
         if($req[0] == 'Member'){
             $tokenResMem = $auth->verifyToken('member');
-            if ($tokenResMem['is_valid'] !== true){
+            if($tokenResMem['is_valid'] !== true && isset($_COOKIE['Authorization'])) {
                 if($req[1] == 'setAlarm'){echo json_encode($member->setAlarm($data));return;}
                 if($req[1] == 'setSession'){echo json_encode($member->setSession($data));return;}
                 if($req[1] == 'Daily-Calories'){echo json_encode($member->calcBodCalcNeed($data));return;}
                 if($req[1] == 'Food-Calories'){echo json_encode($member->calcFoodCalor($data));return;}
-            }   
+                if($req[1] == 'Get-Recommendation'){echo json_encode($member->getRecomm($data));return;}
+            }else{
+                echo json_encode(($rm->responsePayload(null, 'failed', 'Login first', 403)));
+                return;
+            }
         }
 
         if($req[0] == 'Send'){

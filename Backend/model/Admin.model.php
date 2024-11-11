@@ -89,7 +89,7 @@ class adminControls implements adminInterface {
         $sqlUser = 'INSERT INTO main(Email, Username, Password, ArchiveStatus) VALUES(?, ?, ?, DEFAULT)';
         $sqlSubStatus = 'INSERT INTO membership_duration(User_ID, SubscriptionStat, subPlan, duration, startingDate, expiryDate) VALUES(?, ?, ?, ?, ?, ?)';
         $sqlCheckUser = 'SELECT COUNT(*) FROM main WHERE LOWER(Username) = LOWER(?)';
-        $sqlMemberInfo = 'INSERT INTO member_info(user_id, name, conNum, eConNum, address, age, sex, gender, weight, height, BMI) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        $sqlMemberInfo = 'INSERT INTO member_info(user_id, name, conNum, eConNum, address, age, sex, gender, bodyType, activityLevel, weight, height, BMI) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     
         $option = ["cost" => 11];
         $hashedPass = password_hash($data->Password, PASSWORD_BCRYPT, $option);
@@ -127,9 +127,21 @@ class adminControls implements adminInterface {
                 // Prepare statements for each insert
                 $stmtSubStatus = $this->pdo->prepare($sqlSubStatus);
                 $stmtMemberInfo = $this->pdo->prepare($sqlMemberInfo);
+
+                $validBodyTypes = ['ectomorph', 'mesomorph', 'endomorph'];
+                $validActivityLevels = ['sedentary', 'lightly active', 'moderately active', 'very active', 'extra active'];
+
+                // Check if body type and activity level are valid
+                if (!in_array($data->bodyType, $validBodyTypes)) {
+                    return $this->gm->responsePayload(null, 'failed', 'Invalid body type. Please choose from: ' . implode(', ', $validBodyTypes), 400);
+                }
+
+                if (!in_array(strtolower($data->activityLevel), $validActivityLevels)) {
+                    return $this->gm->responsePayload(null, 'failed', 'Invalid activity level. Please choose from: ' . implode(', ', $validActivityLevels), 400);
+                }
     
                 if ($stmtSubStatus->execute([$lastID, $subStat, $subPlan, $memDur, $startingDate, $expiryDate]) &&
-                    $stmtMemberInfo->execute([$lastID, $data->name, $data->conNum, $data->eConNum, $data->address, $data->age, $this->SexIdentifier($data->sex), $data->gender, $data->weight, $data->height, $this->bmi((int)$data->weight, (int)$data->height)])) {
+                    $stmtMemberInfo->execute([$lastID, $data->name, $data->conNum, $data->eConNum, $data->address, $data->age, $this->SexIdentifier($data->sex), $data->gender, $data->bodyType, $data->activityLevel, $data->weight, $data->height, $this->bmi((int)$data->weight, (int)$data->height)])) {
                     
                     // Add the new code blocks here // basta may aayusin dito <<3
                     if (isset($data->condition_ids) && is_array($data->condition_ids) && count($data->condition_ids) > 0) {
