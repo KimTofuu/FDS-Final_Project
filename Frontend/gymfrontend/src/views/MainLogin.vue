@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="bg">
     <header>
       <router-link to="/LandingPage">
         <img src="../assets/logo.png" alt="Logo" class="logo" />
@@ -52,11 +52,17 @@ header {
   width: 100%;
   z-index: 1000;
 }
-
+#bg {
+  background-image: url("./background.png");
+  background-size: cover;
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-position: center;
+}
 .logo {
   height: 100px;
-  margin-right: 325px;
-  margin-left: 131px;
+  margin-right: 300px;
+  margin-left: 124px;
 }
 .navbar {
   display: flex;
@@ -77,7 +83,7 @@ header {
 
 .navbar a {
   text-decoration: none;
-  color: #ded9d9;
+  color: #ffffff;
   font-size: 16px;
   transition: color 0.3s;
 }
@@ -87,8 +93,7 @@ header {
 }
 
 .main {
-  margin-top: 20px;
-  width: 90%;
+  width: 100%;
   background-position: center;
   background-size: cover;
   height: calc(100vh - 10px);

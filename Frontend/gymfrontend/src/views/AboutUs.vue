@@ -23,7 +23,7 @@
           </div>
           <div class="about-col-2">
             <h1 class="sub-title">About Us</h1>
-            <p>
+            <div class="justified-text">
               Olympus Gym Club is a premium fitness center that aims to offer a
               holistic approach to health and wellness. Inspired by the strength
               and endurance of the gods from ancient mythology, Olympus is
@@ -38,7 +38,7 @@
               camaraderie and support among its members. Whether you're a
               seasoned athlete or new to fitness, Olympus provides the tools and
               inspiration to push your limits and achieve your personal best.
-            </p>
+            </div>
           </div>
         </div>
       </div>
@@ -70,15 +70,12 @@ body {
 
 #header {
   width: 100%;
-  height: 100vh;
-  background-image: url(./assets/background.png);
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+  min-height: 100vh;
+  background-color: #000;
 }
 
 .container {
-  padding: 10px 10%;
+  padding: 0vh 10%;
   display: flex;
   flex-direction: column;
 }
@@ -86,25 +83,17 @@ body {
 .header-container {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
-  margin-top: 50px;
+  justify-content: space-between;
+  margin: 40px 10px 10px;
 }
 
 .logo {
   height: 100px;
-  margin-right: 450px;
-}
-
-.navbar {
-  display: flex;
-  align-items: center;
 }
 
 .navbar ul {
   display: flex;
   list-style-type: none;
-  margin: 0;
-  padding: 0;
   gap: 20px;
 }
 
@@ -135,7 +124,7 @@ body {
 }
 
 .about-col-1 img {
-  width: 80%;
+  width: 92%;
   border-radius: 15px;
 }
 
@@ -143,9 +132,9 @@ body {
   flex-basis: 60%;
 }
 
-.about-col-2 p {
+.justified-text {
+  text-align: justify;
   font-size: 20px;
-  font-weight: 50;
   color: #fff;
   margin-top: 15px;
 }
@@ -157,14 +146,121 @@ body {
   color: #fff;
 }
 
-@keyframes float {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
+@media (max-width: 768px) {
+  .header-container {
+    flex-direction: column;
+    align-items: center;
   }
-  to {
-    transform: translateY(0);
-    opacity: 1;
+
+  .logo {
+    height: 80px;
+    margin-bottom: 20px;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .navbar li {
+    margin: 10px;
+  }
+
+  .sub-title {
+    font-size: 40px;
+    text-align: center;
+  }
+
+  .about-col-1,
+  .about-col-2 {
+    flex-basis: 100%;
+    text-align: center;
+  }
+
+  .about-col-1 img {
+    width: 70%;
+  }
+
+  .justified-text {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 425px) {
+  .logo {
+    height: 70px;
+  }
+
+  .navbar ul {
+    gap: 5px;
+  }
+
+  .navbar li {
+    margin: 5px;
+  }
+
+  .sub-title {
+    font-size: 32px;
+  }
+
+  .about-col-1 img {
+    width: 80%;
+  }
+
+  .justified-text {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 375px) {
+  .header-container {
+    padding: 0 10px;
+  }
+
+  .logo {
+    height: 60px;
+  }
+
+  .navbar ul {
+    gap: 4px;
+  }
+
+  .sub-title {
+    font-size: 28px;
+  }
+
+  .about-col-1 img {
+    width: 90%;
+  }
+
+  .justified-text {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 320px) {
+  .container {
+    padding: 0 5%;
+  }
+
+  .logo {
+    height: 50px;
+  }
+
+  .sub-title {
+    font-size: 24px;
+  }
+
+  .navbar a {
+    font-size: 14px;
+  }
+
+  .about-col-1 img {
+    width: 95%;
+  }
+
+  .justified-text {
+    font-size: 14px;
   }
 }
 </style>

@@ -77,7 +77,7 @@ body {
 }
 
 .container {
-  padding: 10px 10%;
+  padding: 0vh 10%;
   display: flex;
   flex-direction: column;
 }
@@ -85,13 +85,14 @@ body {
 .header-container {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
-  margin-top: 50px;
+  margin-bottom: 10px;
+  margin-top: 40px;
+  margin-left: 10px;
 }
 
 .logo {
   height: 100px;
-  margin-right: 450px;
+  margin-right: 300px;
 }
 
 .navbar {

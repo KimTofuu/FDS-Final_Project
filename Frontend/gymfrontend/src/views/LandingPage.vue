@@ -44,6 +44,7 @@
   padding: 0;
   font-family: "Figtree";
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 html {
@@ -65,7 +66,7 @@ body {
 }
 
 .container {
-  padding: 10px 10%;
+  padding: 0vh 10%;
   display: flex;
   flex-direction: column;
 }
@@ -73,13 +74,14 @@ body {
 .header-container {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
-  margin-top: 50px;
+  margin-bottom: 10px;
+  margin-top: 40px;
+  margin-left: 10px;
 }
 
 .logo {
   height: 100px;
-  margin-right: 450px;
+  margin-right: 300px;
 }
 
 .navbar {
@@ -131,7 +133,7 @@ body {
 .header-text h1 {
   color: white;
   font-family: "Grifter";
-  font-size: 85px;
+  font-size: 80px;
   margin-bottom: -30px;
 }
 
@@ -139,7 +141,7 @@ body {
   color: #ac0700;
   font-size: 15px;
   font-family: "Grifter";
-  font-size: 121px;
+  font-size: 100px;
 }
 
 .header-text p {
@@ -170,70 +172,14 @@ button {
   padding: 10px 50px;
   text-align: center;
   font-weight: bold;
-  border: 2px solid white;
+  border: 2px solid #ac0700;
   border-radius: 40px;
   transition: 0.4s ease;
 }
 button:hover {
   background-color: #fff;
+  border-color: #fff;
   color: #313c1c;
 }
 
-/* -------------------------------SMALL SCREEN-------------------------------------*/
-
-nav .fa-solid {
-  display: none;
-}
-
-@media only screen and (max-width: 600px) {
-  #header {
-    background-image: url(./assets/background-small.jpg);
-  }
-
-  .header-text {
-    font-size: 16px;
-  }
-
-  .header-text h1 {
-    font-size: 30px;
-  }
-
-  nav .fa-solid {
-    display: block;
-    font-size: 25px;
-  }
-
-  nav ul {
-    background: #fbb117;
-    position: fixed;
-    top: 0;
-    right: -200px;
-    width: 200px;
-    height: 100%;
-    padding-top: 50px;
-    z-index: 2;
-    transition: right 0.5s;
-  }
-
-  nav ul li {
-    display: block;
-    margin: 25px;
-  }
-
-  nav ul .fa-solid {
-    position: absolute;
-    top: 25px;
-    left: 25px;
-    cursor: pointer;
-  }
-
-  .options ul li {
-    padding: 10px;
-    border-radius: 30px;
-    text-align: center;
-    list-style: none;
-    margin-left: 25px;
-    background-color: #fbb117;
-  }
-}
 </style>
