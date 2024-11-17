@@ -8,6 +8,10 @@ import AboutUs from "@/views/AboutUs.vue";
 import Services from "@/views/Services.vue";
 import OurTeam from "@/views/OurTeam.vue";
 import Contacts from "@/views/Contacts.vue";
+import MemberDashboard from "@/views/MemberDashboard.vue";
+import MemberProfile from "@/views/MemberProfile.vue";
+import MemberCoaches from "@/views/MemberCoaches.vue";
+import MemberUpgrade from "@/views/MemberUpgrade.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,29 +45,53 @@ const router = createRouter({
       name: "LandingPage",
       component: Landing,
     },
-    
+
     {
       path: "/AboutUs",
       name: "AboutUs",
       component: AboutUs,
     },
-    
+
     {
       path: "/Services",
       name: "Services",
       component: Services,
     },
-    
+
     {
       path: "/OurTeam",
       name: "OurTeam",
       component: OurTeam,
     },
-    
+
     {
       path: "/Contacts",
       name: "Contacts",
       component: Contacts,
+    },
+
+    {
+      path: "/MemberDashboard",
+      name: "Memberdashboard",
+      component: MemberDashboard,
+    },
+
+    {
+      path: "/MemberProfile",
+      name: "MemberProfile",
+      component: MemberProfile,
+    },
+
+    {
+      path: "/MemberCoaches",
+      name: "MemberCoaches",
+      component: MemberCoaches,
+    },
+
+    {
+      path: "/MemberUpgrade",
+      name: "MemberUpgrade",
+      component: MemberUpgrade,
     },
   ],
 });

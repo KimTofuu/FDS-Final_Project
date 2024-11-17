@@ -98,7 +98,7 @@ body {
 }
 
 .container {
-  padding: 10px 10%;
+  padding: 0vh 10%;
   display: flex;
   flex-direction: column;
 }
@@ -106,13 +106,14 @@ body {
 .header-container {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
-  margin-top: 50px;
+  margin-bottom: 10px;
+  margin-top: 40px;
+  margin-left: 10px;
 }
 
 .logo {
   height: 100px;
-  margin-right: 450px;
+  margin-right: 300px;
 }
 
 .navbar {
@@ -163,7 +164,7 @@ body {
 }
 
 .contact-left p {
-  margin-top: 25px;
+  margin-top: 35px;
 }
 
 .contact-left p i {
@@ -178,7 +179,7 @@ body {
 
 .social-icons a {
   text-decoration: none;
-  font-size: 30px;
+  font-size: 35px;
   margin-right: 15px;
   color: #ababab;
   display: inline-block;
@@ -217,7 +218,8 @@ body {
   padding: 25px 0;
   background: #262626;
   font-weight: 300;
-  margin-top: 19%;
   position: fixed;
+  bottom: 0;
+  left: 0;
 }
 </style>

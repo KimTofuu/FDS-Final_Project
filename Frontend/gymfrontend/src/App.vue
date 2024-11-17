@@ -2,7 +2,7 @@
   <RouterView />
 </template>
 
-<style>
+<style scoped>
 * {
   margin: 0;
   padding: 0;
@@ -15,7 +15,7 @@ body {
 }
 
 body {
-  background-image: url("@/assets/gymbg.png");
+  background-image: url("./assets/background.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

@@ -73,21 +73,20 @@ html {
 }
 
 body {
-  background: #080808;
-  color: #fff;
+  background-image: url("./assets/background.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 #header {
   width: 100%;
-  height: 100vh;
-  background-image: url(./assets/background.png);
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+  min-height: 100vh;
+  background-color: #000;
 }
 
 .container {
-  padding: 10px 10%;
+  padding: 0vh 10%;
   display: flex;
   flex-direction: column;
 }
@@ -95,13 +94,14 @@ body {
 .header-container {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
-  margin-top: 50px;
+  margin-bottom: 10px;
+  margin-top: 40px;
+  margin-left: 10px;
 }
 
 .logo {
   height: 100px;
-  margin-right: 450px;
+  margin-right: 300px;
 }
 
 .navbar {
