@@ -67,11 +67,13 @@ class member implements memberInterface {
         }
 
         $sql = "SELECT * FROM member_info WHERE user_id = ?";
+        $updateBMI = 'UPDATE member_info SET BMI = ? WHERE user_id = ?';
         try {
             $stmt = $this->pdo->prepare($sql);
             if ($stmt->execute([$userID])) {
                 $data = $stmt->fetchAll();
                 if ($stmt->rowCount() > 0) {
+                    
                     return $this->gm->responsePayload($data, 'success', 'User data retrieved successfully.', 200);
                 } else {
                     return $this->gm->responsePayload(null, 'failed', 'User data does not exist.', 404);
@@ -86,7 +88,15 @@ class member implements memberInterface {
         $userID = $this->gm->getIDFromToken();
 
         $sql = 'INSERT INTO gymalarm(User_ID, day, time) VALUES(?, ?, ?)';
+        $checkDup = 'SELECT * FROM gymalarm WHERE User_ID = ? AND day = ? AND time = ?'; //gagawin mo to
         try {
+
+            $checkDup = $this->pdo->prepare($checkDup);
+            $checkDup->execute([$userID, $data->day, $data->time]);
+            if($checkDup->rowCount() > 0){
+                return $this->gm->responsePayload(null, 'failed', 'Session already exists',403);
+            }
+
             $stmt = $this->pdo->prepare($sql);
             if ($stmt->execute([$userID, $data->day, $data->time])) {
                 return $this->gm->responsePayload($data, 'success', 'Alarm or reminder set', 200);
@@ -102,7 +112,15 @@ class member implements memberInterface {
         $userID = $this->gm->getIDFromToken();
 
         $sql = 'INSERT INTO gymsession(User_ID, date, time, Coach_ID) VALUES(?, ?, ?, ?)';
+        $checkDup = 'SELECT * FROM gymsession WHERE User_ID = ? AND date = ? AND time = ? AND Coach_ID = ?'; //gagawin mo to
         try {
+
+            $checkDup = $this->pdo->prepare($checkDup);
+            $checkDup->execute([$userID, $data->date, $data->time, $data->Coach_ID]);
+            if($checkDup->rowCount() > 0){
+                return $this->gm->responsePayload(null, 'failed', 'Session already exists',403);
+            }
+
             $stmt = $this->pdo->prepare($sql);
             if ($stmt->execute([$userID, $data->date, $data->time, $data->Coach_ID])) {
                 return $this->gm->responsePayload($data, 'success', 'Alarm or reminder set', 200);
@@ -262,4 +280,37 @@ class member implements memberInterface {
             return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
         }
     }   
+
+    public function enrollClass($data){
+        $userID = $this->gm->getIDFromToken();
+
+        $getCoachID = 'SELECT User_ID FROM coach WHERE Username = LOWER(?)';
+        $enrollClass = 'INSERT INTO coach_classes(coach_id, user_id) VALUES(?, ?)';
+        $checkEnrolled = 'SELECT COUNT(*) FROM coach_classes WHERE coach_id = ? AND user_id = ?';
+
+        try{
+            $this->pdo->beginTransaction();
+
+            $check = $this->pdo->prepare($checkEnrolled);
+            $coachID = $this->pdo->prepare($getCoachID);
+            $enroll = $this->pdo->prepare($enrollClass);
+
+            if($coachID->execute([$data->Username])){
+                $coachID = $coachID->fetchColumn();
+                $check->execute([$coachID, $userID]);
+                if($check->fetchColumn() > 0){
+                    return $this->gm->responsePayload(null, 'failed', 'You are already enrolled in this class', 403);
+                }
+                $enroll->execute([$coachID, $userID]);
+                $this->pdo->commit();
+                return $this->gm->responsePayload(null, 'success', 'You have been enrolled in this class', 200);
+            }else{
+                return $this->gm->responsePayload(null, 'error', 'Invalid parametera', 500);
+            }
+
+        }catch(PDOException $e){
+            $this->pdo->rollback();
+            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+        }
+    }
 }

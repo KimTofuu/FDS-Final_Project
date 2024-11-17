@@ -4,4 +4,5 @@ interface ResponseInterfacePHPTemp{
     public function notFound();
     public function getIDFromToken();
     public function getUserTypeFromToken();
+    public function errorhandling();
 }

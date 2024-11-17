@@ -75,7 +75,7 @@ class Mailer implements phpmailerInterface{
     public function Expiry()
     {
         $sql = "SELECT m.Username, m.Email
-                FROM main m
+                FROM member m
                 JOIN membership_duration md ON m.User_ID = md.User_ID
                 WHERE DATEDIFF(md.expiryDate, NOW()) <= 3
                 AND DATEDIFF(md.expiryDate, NOW()) >= 0;
@@ -119,7 +119,7 @@ class Mailer implements phpmailerInterface{
         $sql = "SELECT m.Username, m.Email, c.CoachName, c.CoachEmail
                 FROM gymsession gs
                 JOIN coach c ON gs.Coach_ID = c.Coach_ID
-                JOIN main m ON gs.User_ID = m.User_ID
+                JOIN member m ON gs.User_ID = m.User_ID
                 WHERE DATEDIFF(gs.date, NOW()) <= 1
                 AND DATEDIFF(gs.date, NOW()) >= 0;
                 ";
@@ -167,7 +167,7 @@ class Mailer implements phpmailerInterface{
 
     public function Alarm() {
         $sql = "SELECT m.Username, m.Email
-                FROM main m
+                FROM member m
                 JOIN gymalarm ga ON m.User_ID = ga.User_ID
                 WHERE 
                 (CASE 
