@@ -21,16 +21,16 @@ require_once($apiPath . '/model/Admin.model.php');
 require_once($apiPath . '/model/Auth.model.php');
 require_once($apiPath . '/model/Member.model.php');
 require_once($apiPath . '/model/mailer.model.php');
-require_once($apiPath . '/middleware/middleware.php');
+require_once($apiPath . '/model/coach.model.php');
 
 $db = new ConnectionFinProj();
 $pdo = $db->connect();
 $rm = new ResponseMethodsProj();
 $auth = new Auth($pdo, $rm);
-$middleware = new middleware($auth);
-$adminCon = new adminControls($pdo, $rm, $middleware);
+$adminCon = new adminControls($pdo, $rm);
 $member = new member($pdo, $rm);
 $mailer = new mailer($pdo, $rm);
+$coach = new coach($pdo, $rm);
 
 $data = json_decode(file_get_contents("php://input"));
 
@@ -119,7 +119,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             }
         }
         
-        if ($req[0] == 'logout') {echo json_encode($auth->logout());return;}
+        if ($req[0] == 'logout') {echo json_encode($auth->logout());return;}                                            
 
         if($req[0] == 'Member'){
             $tokenResMem = $auth->verifyToken('member');
@@ -129,6 +129,17 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 if($req[1] == 'Daily-Calories'){echo json_encode($member->calcBodCalcNeed($data));return;}
                 if($req[1] == 'Food-Calories'){echo json_encode($member->calcFoodCalor($data));return;}
                 if($req[1] == 'Get-Recommendation'){echo json_encode($member->getRecomm($data));return;}
+                if($req[1] == 'Enroll-Class'){echo json_encode($member->enrollClass($data));return;}
+            }else{
+                echo json_encode(($rm->responsePayload(null, 'failed', 'Login first', 403)));
+                return;
+            }
+        }
+
+        if($req[0] == 'Coach'){
+            $tokenResMem = $auth->verifyToken('coach');
+            if($tokenResMem['is_valid'] !== true && isset($_COOKIE['Authorization'])) {
+                
             }else{
                 echo json_encode(($rm->responsePayload(null, 'failed', 'Login first', 403)));
                 return;

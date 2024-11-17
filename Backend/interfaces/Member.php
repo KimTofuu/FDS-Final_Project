@@ -8,4 +8,5 @@ interface memberInterface{
     public function calcFoodCalor($data);
     public function calcBodCalcNeed($data);
     public function getRecomm($data);
+    public function enrollClass($data);
 }

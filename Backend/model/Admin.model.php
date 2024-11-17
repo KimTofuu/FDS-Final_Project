@@ -1,14 +1,12 @@
 <?php
 require_once($apiPath . '/interfaces/Admin.php');
-require_once($apiPath . '/middleware/middleware.php');
 
 class adminControls implements adminInterface {
     protected $pdo, $gm, $mw;
 
-    public function __construct(\PDO $pdo, ResponseMethodsProj $gm, middleware $mw) {
+    public function __construct(\PDO $pdo, ResponseMethodsProj $gm) {
         $this->pdo = $pdo;
         $this->gm = $gm;
-        $this->mw = $mw;
     }
 
     public function SexIdentifier($data) {
@@ -46,7 +44,7 @@ class adminControls implements adminInterface {
         switch (strtolower($data)) {
             case 'basic plan':
                 $result['plan'] = 'Basic Plan';
-                $result['duration'] = '+ 14 days';
+                $result['duration'] = '+ 3 days';
                 break;
             case 'advanced plan':
                 $result['plan'] = 'Advanced Plan';
@@ -86,9 +84,9 @@ class adminControls implements adminInterface {
     }
     
     public function createAcc($data) {
-        $sqlUser = 'INSERT INTO main(Email, Username, Password, ArchiveStatus) VALUES(?, ?, ?, DEFAULT)';
+        $sqlUser = 'INSERT INTO member(Email, Username, Password, ArchiveStatus) VALUES(?, ?, ?, DEFAULT)';
         $sqlSubStatus = 'INSERT INTO membership_duration(User_ID, SubscriptionStat, subPlan, duration, startingDate, expiryDate) VALUES(?, ?, ?, ?, ?, ?)';
-        $sqlCheckUser = 'SELECT COUNT(*) FROM main WHERE LOWER(Username) = LOWER(?)';
+        $sqlCheckUser = 'SELECT COUNT(*) FROM member WHERE LOWER(Username) = LOWER(?) AND LOWER(Email) = LOWER(?)';
         $sqlMemberInfo = 'INSERT INTO member_info(user_id, name, conNum, eConNum, address, age, sex, gender, bodyType, activityLevel, weight, height, BMI) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     
         $option = ["cost" => 11];
@@ -100,7 +98,7 @@ class adminControls implements adminInterface {
     
         try {
             $stmtCheckUser = $this->pdo->prepare($sqlCheckUser);
-            $stmtCheckUser->execute([$data->Username]);
+            $stmtCheckUser->execute([$data->Username, $data->Email]);
             $userExists = $stmtCheckUser->fetchColumn();
     
             if ($userExists > 0) {
@@ -176,20 +174,20 @@ class adminControls implements adminInterface {
     
 
     public function coachCreate($data){
-        $sqlCheckUser = 'SELECT COUNT(*) FROM coach WHERE LOWER(coachName) = LOWER(?)';
+        $sqlCheckUser = 'SELECT COUNT(*) FROM coach WHERE LOWER(Username) = LOWER(?)';
         $sqlCoachInfo = 'INSERT INTO coach_info(Coach_ID) VALUES(?)';
-        $sql = 'INSERT INTO coach(coachName, coachEmail, coachPass) VALUES(?, ?, ?)';
+        $sql = 'INSERT INTO coach(Username, coachEmail, Password) VALUES(?, ?, ?)';
 
         $option = ["cost" => 11];
-        $hashedPass = password_hash($data->coachPass, PASSWORD_BCRYPT, $option);
+        $hashedPass = password_hash($data->Password, PASSWORD_BCRYPT, $option);
     
-        if (empty($data->coachName) || empty($data->coachEmail) || empty($data->coachPass)) {
+        if (empty($data->Username) || empty($data->coachEmail) || empty($data->Password)) {
             return $this->gm->responsePayload(null, 'failed', 'Fill up all required fields.', 400);
         }
 
         try {
             $stmtCheckUser = $this->pdo->prepare($sqlCheckUser);
-            $stmtCheckUser->execute([$data->coachName]);
+            $stmtCheckUser->execute([$data->Username]);
             $userExists = $stmtCheckUser->fetchColumn();
 
             if ($userExists > 0) {return $this->gm->responsePayload(null, 'failed', 'Username already exists.', 409);}
@@ -197,14 +195,14 @@ class adminControls implements adminInterface {
             $this->pdo->beginTransaction();
 
             $stmt = $this->pdo->prepare($sql);
-            if($stmt->execute([$data->coachName, $data->coachEmail, $hashedPass])) {
+            if($stmt->execute([$data->Username, $data->coachEmail, $hashedPass])) {
                 
                 $lastID = $this->pdo->lastInsertId();
                 $stmtCoachInfo = $this->pdo->prepare($sqlCoachInfo);
 
                 if($stmtCoachInfo->execute([$lastID])){
                     $this->pdo->commit();
-                    return $this->gm->responsePayload(array("Name" => $data->coachName, "Email" => $data->coachEmail), 'success', 'Account created.', 200);
+                    return $this->gm->responsePayload(array("Name" => $data->Username, "Email" => $data->coachEmail), 'success', 'Account created.', 200);
                 }else{
                     $this->pdo->rollBack();
                     return $this->gm->responsePayload(null, 'failed', 'Account creation failed', 403);
@@ -219,7 +217,7 @@ class adminControls implements adminInterface {
     
 
     public function getAllAcc() {
-        $sql = "SELECT Email, Username, Status FROM main";
+        $sql = "SELECT Email, Username, Status FROM member";
         $data = array(); 
         
         try {
@@ -241,7 +239,7 @@ class adminControls implements adminInterface {
 
     public function getOneAcc($data) {
         $sql = "SELECT m.Email, m.Username, m.ArchiveStatus, s.SubscriptionStat, s.subPlan
-            FROM main m
+            FROM member m
             LEFT JOIN membership_duration s ON m.User_ID = s.User_ID
             WHERE m.User_ID = ?";
         try {
@@ -260,7 +258,7 @@ class adminControls implements adminInterface {
     }
 
     public function archStat($data) {
-        $sql = "UPDATE main SET Status = CASE WHEN Status = 0 then 1 WHEN Status = 1 then 0 END WHERE User_ID = ?";
+        $sql = "UPDATE member SET Status = CASE WHEN Status = 0 then 1 WHEN Status = 1 then 0 END WHERE User_ID = ?";
 
         try {
             $stmt = $this->pdo->prepare($sql);
@@ -277,7 +275,7 @@ class adminControls implements adminInterface {
     }
 
     public function delAcc($data) {
-        $sql = "DELETE FROM main WHERE User_ID = ?";
+        $sql = "DELETE FROM member WHERE User_ID = ?";
 
         try {
             $stmt = $this->pdo->prepare($sql);
