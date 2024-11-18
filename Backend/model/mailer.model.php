@@ -212,6 +212,22 @@ class Mailer implements phpmailerInterface{
         }
     }
 
+
+    public function coachSendMail($subject, $htmlBody, $altBody, $recipientEmail, $recipientName) {
+        try {
+            $this->mail->addAddress($recipientEmail, $recipientName);
+            $this->mail->isHTML(true);
+            $this->mail->Subject = $subject;
+            $this->mail->Body = $htmlBody;
+            $this->mail->AltBody = $altBody;
+            $this->mail->send();
+            $this->mail->clearAddresses();
+            return $this->gm->responsePayload(null, 'success', 'Message sent successfully', 200);
+        } catch (Exception $e) {
+            $this->mail->clearAddresses();
+            return $this->gm->responsePayload(null, 'error', "Message could not be sent. Mailer Error: {$this->mail->ErrorInfo}", 500);
+        }
+    }
 }
 
 
