@@ -30,7 +30,7 @@ $auth = new Auth($pdo, $rm);
 $adminCon = new adminControls($pdo, $rm);
 $member = new member($pdo, $rm);
 $mailer = new mailer($pdo, $rm);
-$coach = new coach($pdo, $rm);
+$coach = new coach($pdo, $rm, $mailer);
 
 $data = json_decode(file_get_contents("php://input"));
 
@@ -96,6 +96,14 @@ switch ($_SERVER['REQUEST_METHOD']) {
             return;
         }
 
+        if($req[0] == 'Coach'){
+            $tokenResMem = $auth->verifyToken('coach');
+            if ($tokenResMem['is_valid'] !== true) {
+                if ($req[1] == 'View-Clients') {echo json_encode($coach->getAllClients());return;}
+                if ($req[1] == 'View-one-Client') {echo json_encode($coach->seeMemDet($data));return;}
+            }
+        }
+
         $rm->notFound();
         break;
 
@@ -139,7 +147,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
         if($req[0] == 'Coach'){
             $tokenResMem = $auth->verifyToken('coach');
             if($tokenResMem['is_valid'] !== true && isset($_COOKIE['Authorization'])) {
-                
+                if($req[1] == "Send-Message"){echo json_encode($coach->sendMessage($data));return;}
             }else{
                 echo json_encode(($rm->responsePayload(null, 'failed', 'Login first', 403)));
                 return;

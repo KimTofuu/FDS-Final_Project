@@ -61,4 +61,8 @@ class ResponseMethodsProj implements ResponseInterfacePHPTemp
             }
         }
     }
+
+    public function errorhandling(){
+        
+    }
 }
