@@ -1,9 +1,24 @@
 <IfModule mod_rewrite.c>
 
     RewriteEngine On
+    
+    # Exclude PHP files from being rewritten
+    RewriteCond %{REQUEST_URI} !^/backend/transRoutes/.*\.php$ [NC]
+    
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^(.*)$ main.php?request=$1 [L,QSA]
+
     RewriteRule .* - [e=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 </IfModule>
+
+# <IfModule mod_rewrite.c>
+
+#     RewriteEngine On
+#     RewriteCond %{REQUEST_FILENAME} !-d
+#     RewriteCond %{REQUEST_FILENAME} !-f
+#     RewriteRule ^(.*)$ main.php?request=$1 [L,QSA]
+#     RewriteRule .* - [e=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# </IfModule>
