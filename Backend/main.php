@@ -3,11 +3,18 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-header("Access-Control-Allow-Origin: *"); 
-header("Content-Type: application/json; charset=utf-8");
-header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: X-Requested-With, Origin, Content-Type, Authorization");
-header("Access-Control-Max-Age: 86400");
+header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN'] ?? '*');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Credentials: true');
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN'] ?? '*');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    header('Access-Control-Max-Age: 86400');
+    exit;
+}
 
 date_default_timezone_set("Asia/Manila");
 set_time_limit(1000);
@@ -15,14 +22,6 @@ set_time_limit(1000);
 $rootPath = $_SERVER["DOCUMENT_ROOT"];
 $apiPath = $rootPath . "/Olympus/Backend";
 
-<<<<<<< HEAD
-require_once($apiPath .'/configs/Connection.php');
-
-//Models
-require_once($apiPath .'/model/Global.model.php');
-require_once($apiPath .'/model/Admin.model.php');
-require_once($apiPath .'/model/Auth.model.php');
-=======
 require_once($apiPath . '/configs/Connection.php');
 require_once($apiPath . '/model/Global.model.php');
 require_once($apiPath . '/model/Admin.model.php');
@@ -30,7 +29,6 @@ require_once($apiPath . '/model/Auth.model.php');
 require_once($apiPath . '/model/Member.model.php');
 require_once($apiPath . '/model/mailer.model.php');
 require_once($apiPath . '/model/coach.model.php');
->>>>>>> fcb1c76fb21bce59ef2df4adeb48af0466108280
 
 $db = new ConnectionFinProj();
 $pdo = $db->connect();
@@ -126,13 +124,13 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
         if ($req[0] == 'Login') {
             $usertype = $rm->getUserTypeFromToken();
-            if(!isset($_COOKIE['Authorization'])){
+            if(isset($_COOKIE['Authorization']) && $_COOKIE['Authorization'] !== ''){
+                echo json_encode(($rm->responsePayload(null, 'failed', 'Already logged in', 403)));
+                return;
+            }else{
                 if ($req[1] == 'Admin'){echo json_encode($auth->adminLogin($data));return;}
                 if ($req[1] == 'Member'){echo json_encode($auth->memLogin($data));return;}
                 if ($req[1] == 'Coach'){echo json_encode($auth->coachLogin($data));return;}
-            }else{
-                echo json_encode(($rm->responsePayload(null, 'failed', 'Already logged in', 403)));
-                return;
             }
         }
         
