@@ -3,11 +3,18 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-header("Access-Control-Allow-Origin: *"); 
-header("Content-Type: application/json; charset=utf-8");
-header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: X-Requested-With, Origin, Content-Type, Authorization");
-header("Access-Control-Max-Age: 86400");
+header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN'] ?? '*');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Credentials: true');
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN'] ?? '*');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    header('Access-Control-Max-Age: 86400');
+    exit;
+}
 
 date_default_timezone_set("Asia/Manila");
 set_time_limit(1000);
@@ -117,13 +124,13 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
         if ($req[0] == 'Login') {
             $usertype = $rm->getUserTypeFromToken();
-            if(!isset($_COOKIE['Authorization'])){
+            if(isset($_COOKIE['Authorization']) && $_COOKIE['Authorization'] !== ''){
+                echo json_encode(($rm->responsePayload(null, 'failed', 'Already logged in', 403)));
+                return;
+            }else{
                 if ($req[1] == 'Admin'){echo json_encode($auth->adminLogin($data));return;}
                 if ($req[1] == 'Member'){echo json_encode($auth->memLogin($data));return;}
                 if ($req[1] == 'Coach'){echo json_encode($auth->coachLogin($data));return;}
-            }else{
-                echo json_encode(($rm->responsePayload(null, 'failed', 'Already logged in', 403)));
-                return;
             }
         }
         
