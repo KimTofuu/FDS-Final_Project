@@ -19,17 +19,69 @@
       <div class="content">
         <div class="form">
           <h2><b>ADMIN LOGIN</b></h2>
-          <input type="text" placeholder="Username" />
-          <input type="password" placeholder="Password" />
-          <button><h3>LOGIN</h3></button>
-          <div class="return-button">
-            <router-link to="/MainLogin"> < RETURN </router-link>
-          </div>
+          <form @submit.prevent="login">
+            <input type="text" placeholder="Username" id="username" v-model="username"/>
+            <input type="password" placeholder="Password" id="password" v-model="password"/>
+            <button type="submit"><h3>LOGIN</h3></button>
+            <div v-if="error" style="color: red">{{ error }}</div>
+            <div class="return-button">
+              <router-link to="/MainLogin"> < RETURN </router-link>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      username: '',
+      password: '',
+      error: '',
+    };
+  },
+
+  methods: {
+    async login() {
+      if (this.username === '' || this.password === '') {
+        this.error = 'Please enter both username and password';
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/Login/Admin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: this.username,
+            password: this.password,
+          }),
+        });
+
+        if (!response.ok) {
+          // If the response status is not OK, extract the error message
+          const errorData = await response.json();
+          this.error = errorData.message || 'An error occurred during login';
+          return;
+        }
+
+        const responseData = await response.json();
+        console.log(responseData);
+        // Handle successful login (e.g., redirect the user or display a success message)
+      } catch (error) {
+        console.error('Network or server error:', error);
+        this.error = 'Failed to connect to the server. Please try again later.';
+      }
+    },
+  },
+};
+</script>
+
 
 <style scoped>
 * {
@@ -119,9 +171,11 @@ header {
   background: transparent;
   border-bottom: 1px solid #ac0700;
   font-size: 15px;
+  font-weight: bold;
   color: #ffffff;
   letter-spacing: 1px;
   margin-top: 20px;
+  padding: 0 20px;
 }
 
 ::placeholder {

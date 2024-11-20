@@ -27,6 +27,24 @@
 
     <main class="content">
       <h1>Your Goals For Today</h1>
+      <div class="bmi-calculator">
+        <h2>BMI Calculator</h2>
+        <form>
+          <div class="bmi-form">
+            <p>Weight (kg):</p>
+            <input type="number" id="weight" placeholder="Enter your weight" />
+          </div>
+          <div class="bmi-form">
+            <p>Height (cm):</p>
+            <input type="number" id="height" placeholder="Enter your height" />
+          </div>
+          <div class="bmi-form">
+            <p>Calculated BMI:</p>
+            <div class="bmi-result">Your BMI will appear here</div>
+          </div>
+          <button type="button" class="calculate-btn">Calculate BMI</button>
+        </form>
+      </div>
     </main>
   </div>
 </template>
@@ -144,6 +162,59 @@ body {
   border-radius: 5px;
   cursor: pointer;
   z-index: 20;
+}
+
+.bmi-calculator {
+  margin-top: 5%;
+  margin-left: 70%;
+  background: #eae9e9;
+  padding: 20px;
+  border-radius: 20px;
+  max-width: 350px;
+}
+
+.bmi-calculator h2 {
+  font-size: 1.5rem;
+  color: #000;
+  margin-bottom: 3vh;
+}
+
+.bmi-form {
+  margin-bottom: 5%;
+  color: #000;
+  
+}
+
+.bmi-form input,
+.bmi-result {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  font-size: 1rem;
+  color: #000;
+}
+
+.bmi-result {
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.calculate-btn {
+  width: 100%;
+  padding: 10px 0;
+  background-color: #ac0700;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.calculate-btn:hover {
+  background: #000;
 }
 
 @media (max-width: 768px) {

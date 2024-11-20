@@ -5,8 +5,15 @@
         <router-link to="/LandingPage">
           <img src="../assets/logo.png" alt="Logo" class="logo" />
         </router-link>
-        <nav class="navbar">
-          <ul id="sidemenu">
+
+        <div class="hamburger" @click="toggleMenu">
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+
+        <nav class="navbar" :class="{ active: isMenuOpen }">
+          <ul id="sidemenu" :class="{ active: isMenuOpen }">
             <li><router-link to="/LandingPage">HOME</router-link></li>
             <li><router-link to="/AboutUs">ABOUT US</router-link></li>
             <li><router-link to="/Services">SERVICES</router-link></li>
@@ -45,6 +52,21 @@
   </div>
 </template>
 
+<script>
+export default {
+  data() {
+    return {
+      isMenuOpen: false, // Tracks whether the menu is open or not
+    };
+  },
+  methods: {
+    toggleMenu() {
+      this.isMenuOpen = !this.isMenuOpen; // Toggle the menu open/close state
+    },
+  },
+};
+</script>
+
 <style scoped>
 @font-face {
   font-family: "Grifter";
@@ -69,11 +91,8 @@ body {
 
 #header {
   width: 100%;
-  height: 100vh;
-  background-image: url(./assets/background.png);
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+  min-height: 100vh;
+  background-color: #000;
 }
 
 .container {
@@ -92,19 +111,30 @@ body {
 
 .logo {
   height: 100px;
-  margin-right: 300px;
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 25px;
+  cursor: pointer;
+}
+
+.hamburger .line {
+  height: 4px;
+  background-color: white;
+  border-radius: 5px;
 }
 
 .navbar {
   display: flex;
-  align-items: center;
 }
 
 .navbar ul {
   display: flex;
   list-style-type: none;
-  margin: 0;
-  padding: 0;
   gap: 20px;
 }
 
@@ -123,19 +153,46 @@ body {
   color: #ac0700;
 }
 
-@keyframes float {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
+@media (max-width: 768px) {
+  .container {
+    padding-bottom: 50px; /* Adds extra space at the bottom */
   }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
 
-.services {
-  padding: 60px 0;
+  .header-container {
+    flex-direction: row; /* Align logo and hamburger side by side */
+    justify-content: space-between; /* Space between logo and hamburger */
+    align-items: center;
+  }
+
+  .logo {
+    height: 70px;
+    margin-right: 20px; /* Space between logo and hamburger */
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    margin-left: 43%;
+    display: none; /* Hidden by default */
+  }
+
+  .navbar ul.active {
+    display: flex; /* Show the navbar when active */
+  }
+
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 25px;
+    cursor: pointer;
+  }
+
+  .navbar a {
+    font-size: 14px;
+  }
 }
 
 .services-list {
@@ -173,5 +230,91 @@ body {
 
 .service-item p {
   font-size: 15px;
+}
+
+@media (max-width: 425px) {
+  .navbar ul {
+    gap: 10px;
+  }
+
+  .navbar li {
+    margin: 8px;
+  }
+
+  .service-item h2 {
+    font-size: 18px;
+  }
+
+  .service-item p {
+    font-size: 12px;
+  }
+
+  .services-list {
+    gap: 15px;
+  }
+
+  .service-item {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 375px) {
+  .header-container {
+    padding: 0 5%;
+  }
+
+  .logo {
+    height: 60px;
+  }
+
+  .navbar ul {
+    gap: 8px;
+  }
+
+  .service-item h2 {
+    font-size: 16px;
+  }
+
+  .service-item p {
+    font-size: 11px;
+  }
+
+  .services-list {
+    gap: 10px;
+  }
+
+  .service-item {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 320px) {
+  .container {
+    padding: 0 5%;
+  }
+
+  .logo {
+    height: 50px;
+  }
+
+  .sub-title {
+    font-size: 24px;
+  }
+
+  .service-item h2 {
+    font-size: 14px;
+  }
+
+  .service-item p {
+    font-size: 10px;
+  }
+
+  .services-list {
+    gap: 8px;
+  }
+
+  .service-item {
+    padding: 8px;
+  }
 }
 </style>

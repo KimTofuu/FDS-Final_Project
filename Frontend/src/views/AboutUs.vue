@@ -5,8 +5,15 @@
         <router-link to="/LandingPage">
           <img src="../assets/logo.png" alt="Logo" class="logo" />
         </router-link>
-        <nav class="navbar">
-          <ul id="sidemenu">
+
+        <div class="hamburger" @click="toggleMenu">
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+
+        <nav class="navbar" :class="{ active: isMenuOpen }">
+          <ul id="sidemenu" :class="{ active: isMenuOpen }">
             <li><router-link to="/LandingPage">HOME</router-link></li>
             <li><router-link to="/AboutUs">ABOUT US</router-link></li>
             <li><router-link to="/Services">SERVICES</router-link></li>
@@ -15,36 +22,52 @@
           </ul>
         </nav>
       </div>
+    </div>
 
-      <div class="container">
-        <div class="row">
-          <div class="about-col-1">
-            <img src="@/assets/aboutus-pic.png" alt="About Us" />
-          </div>
-          <div class="about-col-2">
-            <h1 class="sub-title">About Us</h1>
-            <div class="justified-text">
-              Olympus Gym Club is a premium fitness center that aims to offer a
-              holistic approach to health and wellness. Inspired by the strength
-              and endurance of the gods from ancient mythology, Olympus is
-              designed to help members reach their peak physical and mental
-              fitness. The gym features state-of-the-art equipment, a wide range
-              of group classes, and personal training sessions tailored to
-              individual goals.
-              <br />
-              <br />
-              Olympus Gym Club promotes a community-driven environment where
-              individuals of all fitness levels are welcome, fostering
-              camaraderie and support among its members. Whether you're a
-              seasoned athlete or new to fitness, Olympus provides the tools and
-              inspiration to push your limits and achieve your personal best.
-            </div>
+    <div class="container">
+      <div class="row">
+        <div class="about-col-1">
+          <img src="@/assets/aboutus-pic.png" alt="About Us" />
+        </div>
+        <div class="about-col-2">
+          <h1 class="sub-title">About Us</h1>
+          <div class="justified-text">
+            Olympus Gym Club is a premium fitness center that aims to offer a
+            holistic approach to health and wellness. Inspired by the strength
+            and endurance of the gods from ancient mythology, Olympus is
+            designed to help members reach their peak physical and mental
+            fitness. The gym features state-of-the-art equipment, a wide range
+            of group classes, and personal training sessions tailored to
+            individual goals.
+            <br />
+            <br />
+            Olympus Gym Club promotes a community-driven environment where
+            individuals of all fitness levels are welcome, fostering camaraderie
+            and support among its members. Whether you're a seasoned athlete or
+            new to fitness, Olympus provides the tools and inspiration to push
+            your limits and achieve your personal best.
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      isMenuOpen: false, // Tracks whether the menu is open
+    };
+  },
+  methods: {
+    toggleMenu() {
+      this.isMenuOpen = !this.isMenuOpen; // Toggles the menu open/close state
+    },
+  },
+};
+</script>
+
 
 <style>
 @font-face {
@@ -70,10 +93,9 @@ body {
 
 #header {
   width: 100%;
-  min-height: 100vh;
-  background-color: #000; 
+  height: auto;
+  background-color: #000;
 }
-
 
 .container {
   padding: 0vh 10%;
@@ -90,6 +112,25 @@ body {
 
 .logo {
   height: 100px;
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 25px;
+  cursor: pointer;
+}
+
+.hamburger .line {
+  height: 4px;
+  background-color: white;
+  border-radius: 5px;
+}
+
+.navbar {
+  display: flex;
 }
 
 .navbar ul {
@@ -148,19 +189,28 @@ body {
 }
 
 @media (max-width: 768px) {
-  .header-container {
-    flex-direction: column;
-    align-items: center;
+  .hamburger {
+    display: flex;
   }
 
-  .logo {
-    height: 80px;
-    margin-bottom: 20px;
+  .navbar {
+    display: none;
+    width: 100%;
+    background-color: #000;
+    position: absolute;
+    top: 100px;
+    left: 0;
+    text-align: center;
+  }
+
+  .navbar.active {
+    display: block;
   }
 
   .navbar ul {
     flex-direction: column;
     gap: 10px;
+    padding: 20px 0;
   }
 
   .navbar li {
@@ -188,10 +238,6 @@ body {
 }
 
 @media (max-width: 425px) {
-  .logo {
-    height: 70px;
-  }
-
   .navbar ul {
     gap: 5px;
   }

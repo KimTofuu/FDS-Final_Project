@@ -119,9 +119,11 @@ header {
   background: transparent;
   border-bottom: 1px solid #ac0700;
   font-size: 15px;
+  font-weight: bold;
   color: #ffffff;
   letter-spacing: 1px;
   margin-top: 20px;
+  padding: 0 20px;
 }
 
 ::placeholder {
