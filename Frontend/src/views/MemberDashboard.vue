@@ -208,13 +208,12 @@ body {
   text-align: center;
   border-radius: 10px;
   border-color: #000;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5); 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   width: 205%;
   height: 300%;
 }
 
-.calorie-box h2{
-margin-bottom: 10px;
+.calorie-box h2 {
+  margin-bottom: 10px;
 }
-
 </style>
