@@ -29,6 +29,29 @@
 
     <main class="content">
       <h1>Welcome, Francis!</h1>
+      <div class="dashboard-content">
+        <div class="bmi-box">
+          <h2>BMI</h2>
+          <p>29.8</p>
+        </div>
+        <div class="bmi-box">
+          <h2>TIME</h2>
+        </div>
+        <div class="schedule-section">
+          <h2>Schedule</h2>
+          <div
+            class="schedule-item"
+            v-for="(item, index) in schedule"
+            :key="index"
+          >
+            <p>{{ item.time }} - {{ item.topic }}</p>
+          </div>
+        </div>
+        <div class="calorie-box">
+          <h2>Calorie Recommendation</h2>
+          <p>1200 - 1500 kcal/day</p>
+        </div>
+      </div>
     </main>
   </div>
 </template>
@@ -125,13 +148,73 @@ body {
 }
 
 .content {
-  margin-left: 20%;
   margin-left: 250px;
-  padding: 75px;
+  padding: 20px;
   flex: 1;
 }
 
 .content h1 {
   color: black;
 }
+
+.dashboard-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.bmi-box,
+.schedule-section {
+  background-color: #ac0700;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.bmi-box h2,
+.schedule-section h2 {
+  margin-bottom: 10px;
+}
+
+.bmi-box p {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.schedule-section {
+  background-color: #fff;
+  color: #000;
+  padding: 20px;
+  text-align: left;
+  border-radius: 20px;
+}
+
+.schedule-item {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+.calorie-box {
+  background-color: #f5f5f5;
+  color: #000000;
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  border-color: #000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5); 
+  width: 205%;
+  height: 300%;
+}
+
+.calorie-box h2{
+margin-bottom: 10px;
+}
+
 </style>
