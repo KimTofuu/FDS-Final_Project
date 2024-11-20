@@ -217,7 +217,10 @@ class adminControls implements adminInterface {
     
 
     public function getAllAcc() {
-        $sql = "SELECT Email, Username, Status FROM member";
+        $sql = "SELECT m.Email, m.Username, m.ArchiveStatus, s.SubscriptionStat, s.subPlan
+            FROM member m
+            LEFT JOIN membership_duration s ON m.User_ID = s.User_ID
+            WHERE m.ArchiveStatus = 1";
         $data = array(); 
         
         try {
