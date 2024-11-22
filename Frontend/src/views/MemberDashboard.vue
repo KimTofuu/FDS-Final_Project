@@ -19,17 +19,100 @@
           <li><a href="/MemberUpgrade">Upgrade</a></li>
         </ul>
       </nav>
-      <div class="user-info">
-        <div class="user-info-box">
-          <p>Francis Emil Rosete</p>
-          <p class="member-text">Member</p>
+      <button @click="showLogoutConfirm = true" class="logout-button">
+        <img src="../assets/logout.png" alt="Logout" class="logout-img" />
+        <span class="logout-text">Logout</span>
+      </button>
+    </aside>
+
+    <transition
+      name="fade"
+      @before-enter="beforeEnter"
+      @enter="enter"
+      @leave="leave"
+    >
+      <div v-if="showLogoutConfirm" class="logout-confirmation">
+        <p>Are you sure you want to logout?</p>
+        <div class="button-group">
+          <button @click="logout">Yes</button>
+          <button @click="showLogoutConfirm = false">No</button>
         </div>
       </div>
-    </aside>
+    </transition>
 
     <main class="content">
       <h1>Welcome, Francis!</h1>
+      <div class="dashboard-content">
+        <div class="bmi-box">
+          <h2>BMI</h2>
+          <p>29.8</p>
+        </div>
+        <div class="bmi-box">
+          <h2>TIME</h2>
+        </div>
+        <div class="schedule-section">
+          <h2>Schedule</h2>
+          <div
+            class="schedule-item"
+            v-for="(item, index) in schedule"
+            :key="index"
+          >
+            <p>{{ item.time }} - {{ item.topic }}</p>
+          </div>
+        </div>
+        <div class="dietplan">
+          <h2>DIET PLAN</h2>
+        </div>
+        <div class="workoutplan">
+          <h2>WORKOUT PLAN</h2>
+        </div>
+        <div class="additionalnotes">
+          <h2>ADDITIONAL NOTES</h2>
+        </div>
+        <div class="calorie-box">
+          <h2>Daily Caloric Needs</h2>
+          <p>1200 - 1500 kcal/day</p>
+        </div>
+        <div class="food-calories" @click="showFoodCalories = true">
+          <h2>Food Calories</h2>
+          <p class="food-info">Click To Add Food Information</p>
+        </div>
+      </div>
     </main>
+    <transition
+      name="fade"
+      @before-enter="beforeEnter"
+      @enter="enter"
+      @leave="leave"
+    >
+      <div v-if="showFoodCalories" class="food-calories-modal">
+        <h2>Add Food Details</h2>
+        <form @submit.prevent="saveFoodDetails">
+          <label>
+            Food:
+            <input type="text" v-model="foodDetails.food" required />
+          </label>
+          <label>
+            Protein (g):
+            <input type="number" v-model="foodDetails.protein" required />
+          </label>
+          <label>
+            Carbs (g):
+            <input type="number" v-model="foodDetails.carbs" required />
+          </label>
+          <label>
+            Fat (g):
+            <input type="number" v-model="foodDetails.fat" required />
+          </label>
+          <div class="button-group">
+            <button type="submit">Save</button>
+            <button type="button" @click="showFoodCalories = false">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -37,12 +120,40 @@
 export default {
   data() {
     return {
-      showSidebar: false,
+      showLogoutConfirm: false,
+      showFoodCalories: false,
+      foodDetails: {
+        food: "",
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+      },
     };
   },
   methods: {
-    toggleSidebar() {
-      this.showSidebar = !this.showSidebar;
+    logout() {
+      this.showLogoutConfirm = false;
+      console.log("Logging out...");
+    },
+    saveFoodDetails() {
+      console.log("Food Details Saved:", this.foodDetails);
+      this.showFoodCalories = false;
+      // Optionally clear the form after saving
+      this.foodDetails = { food: "", protein: 0, carbs: 0, fat: 0 };
+    },
+    beforeEnter(el) {
+      el.style.opacity = 0;
+    },
+    enter(el, done) {
+      el.offsetHeight;
+      el.style.transition = "opacity 0.3s ease-in-out";
+      el.style.opacity = 1;
+      done();
+    },
+    leave(el, done) {
+      el.style.transition = "opacity 0.3s ease-in-out";
+      el.style.opacity = 0;
+      done();
     },
   },
 };
@@ -106,18 +217,88 @@ body {
   color: #ac0700;
 }
 
-.user-info {
-  margin-top: auto;
-  padding-bottom: 20px;
-  text-align: center;
+.logout-button {
+  background-color: #ac0700;
+  border: none;
+  cursor: pointer;
+  margin-top: 25vh;
+  padding: 5px 10px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 50px;
+  overflow: hidden;
+  transition: width 0.3s ease, padding 0.3s ease;
 }
 
-.user-info-box {
+.logout-img {
+  width: 30px;
+  height: 30px;
+  transition: transform 0.3s ease;
+}
+
+.logout-img:hover {
+  transform: scale(1.1);
+}
+
+.logout-text {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ffffff;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  white-space: nowrap;
+}
+
+.logout-button:hover {
+  width: 15vh;
+  padding: 5px 10px;
+}
+
+.logout-button:hover .logout-text {
+  opacity: 1;
+}
+
+.logout-confirmation {
+  position: fixed;
+  top: 50%;
+  left: 60%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 27%;
+  height: 20%;
+  opacity: 0;
+  pointer-events: auto;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.logout-confirmation p {
+  font-size: 1.5rem;
+  margin-bottom: 5%;
+}
+
+.logout-confirmation button {
+  padding: 0px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.2rem;
+  width: 10vh;
+  height: 5vh;
+  background-color: #fff;
+  color: #ffffff(255, 255, 255);
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.logout-confirmation button:hover {
   background-color: #ac0700;
   color: #fff;
-  padding: 10px 20px;
-  border-radius: 20px;
-  text-align: center;
+  transform: scale(1.05);
 }
 
 .member-text {
@@ -133,5 +314,161 @@ body {
 
 .content h1 {
   color: black;
+}
+
+.dashboard-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.bmi-box,
+.schedule-section {
+  background-color: #ac0700;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.bmi-box h2,
+.schedule-section h2 {
+  margin-bottom: 10px;
+}
+
+.bmi-box p {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.dietplan,
+.workoutplan,
+.additionalnotes {
+  background-color: #ac0700;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dietplan h2,
+.workoutplan h2,
+.additionalnotes h2 {
+  margin-bottom: 10px;
+}
+
+.dietplan p,
+.workoutplan p,
+.additionalnotes p {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.schedule-section {
+  background-color: #e0f7fa;
+  color: #000;
+  padding: 20px;
+  text-align: left;
+  border-radius: 20px;
+}
+
+.schedule-item {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 1) !important;
+}
+
+.calorie-box,
+.food-calories {
+  background-color: #f5f5f5;
+  color: #000000;
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  border-color: #000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: auto;
+}
+
+.calorie-box h2 {
+  margin-bottom: 10px;
+}
+
+.food-calories {
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s ease;
+}
+
+.food-calories:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.7);
+}
+
+.food-calories h2 {
+  margin-bottom: 10px;
+}
+
+.food-info {
+  font-size: 0.9rem;
+  color: #000000;
+  margin-top: 10px;
+}
+.food-calories-modal {
+  position: fixed;
+  top: 50%;
+  left: 60%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 1);
+  color: black;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+  text-align: center;
+  width: 300px;
+}
+
+.food-calories-modal h2 {
+  margin-bottom: 20px;
+}
+
+.food-calories-modal form label {
+  display: block;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.food-calories-modal input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.food-calories-modal .button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.food-calories-modal button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.food-calories-modal button:hover {
+  background-color: #ac0700;
+  color: white;
 }
 </style>
