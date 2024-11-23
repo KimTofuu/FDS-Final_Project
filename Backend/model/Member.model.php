@@ -209,7 +209,7 @@ class member implements memberInterface {
     
         $calories = ($protein * 4) + ($carbs * 4) + ($fats * 9);
     
-        return $this->gm->responsePayload(array('food' => $food, 'calories' => $calories), 'success', 'Food total calories', 200);
+        return $this->gm->responsePayload($calories, 'success', 'Food total calories', 200);
     }
 
     public function getRecomm($data){

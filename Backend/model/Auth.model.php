@@ -173,7 +173,7 @@ class Auth implements AuthInterface{
     public function verifyToken($requiredUserType = null) {
         $tokenBL = $_COOKIE['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'];
         if ($this->checkBlacklistStatus($tokenBL)) {
-            return $this->gm->responsePayload(null, 'failed', 'Token has been blacklisted', 401);
+            return $this->tokenPayload(null, false); // Ensure is_valid = false
         }
     
         $jwt = isset($_SERVER['HTTP_AUTHORIZATION']) 
@@ -183,25 +183,25 @@ class Auth implements AuthInterface{
                 : null);
     
         if (!$jwt || $jwt[0] !== 'Bearer' || !isset($jwt[1])) {
-            return $this->gm->responsePayload(null, 'failed', 'No valid token provided', 400);
+            return $this->tokenPayload(null, false); // Ensure is_valid = false
         }
     
         $token = $jwt[1];
-   
+    
         // Decode the token
         $decoded = explode(".", $token);
         if (count($decoded) !== 3) {
-            return $this->gm->responsePayload(null, 'failed', 'Invalid token structure', 400);
+            return $this->tokenPayload(null, false); // Ensure is_valid = false
         }
     
         $payload = json_decode(base64_decode($decoded[1]));
         if (!$payload) {
-            return $this->gm->responsePayload(null, 'failed', 'Invalid token payload', 400);
+            return $this->tokenPayload(null, false); // Ensure is_valid = false
         }
     
         // Check if the token has expired
         if (isset($payload->exp) && time() > strtotime($payload->exp)) {
-            return $this->gm->responsePayload(null, 'failed', 'Token has expired', 401);
+            return $this->tokenPayload(null, false); // Ensure is_valid = false
         }
     
         // Verify the token's signature
@@ -209,20 +209,20 @@ class Auth implements AuthInterface{
         $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
     
         if ($base64UrlSignature !== $decoded[2]) {
-            return $this->gm->responsePayload(null, 'failed', 'Token signature is invalid', 401);
+            return $this->tokenPayload(null, false); // Ensure is_valid = false
         }
     
         // Check user type if required
         if ($requiredUserType && isset($payload->token_data->user_type) && $payload->token_data->user_type !== $requiredUserType) {
-            return $this->gm->responsePayload(null, 'failed', 'Access denied. User type mismatch.', 403);
+            return $this->tokenPayload(null, false); // Ensure is_valid = false
         }
     
         // Ensure User_ID exists in the payload if required
         if (!isset($payload->token_data->User_ID)) {
-            return $this->gm->responsePayload(null, 'failed', 'User_ID not found in token', 400);
+            return $this->tokenPayload(null, false); // Ensure is_valid = false
         }
     
-        return $this->tokenPayload($payload, true);
+        // If all checks pass, return a valid payload
+        return $this->tokenPayload($payload, true); // is_valid = true
     }
-    
 }
