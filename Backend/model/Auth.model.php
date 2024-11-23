@@ -96,50 +96,56 @@ class Auth implements AuthInterface{
 
     public function logout() {
         $token = $_COOKIE['Authorization'];
-        $this->invalidateJWT($token);
+
+        if (!$token) {
+            return $this->gm->responsePayload(null, "failed", "No token found for logout.", 400);
+        }
+
+        $blacklistResult = $this->handleBlacklist($token);
         setcookie('Authorization', '', time() - 3600, '/', '', true, true);
-        return $this->gm->responsePayload(null, "success", "Logged out successfully", 200);
+
+        if ($blacklistResult['status'] === "success") {
+            return $this->gm->responsePayload(null, "success", "Logged out successfully and token blacklisted", 200);
+        } else {
+            return $blacklistResult;
+        }
     }
 
-    public function invalidateJWT($token) {
-        $this->setBlacklistStatus($token);
+    public function handleBlacklist($token) {
+    if ($this->checkBlacklistStatus($token)) {
+        return $this->gm->responsePayload(null, "failed", "Token already blacklisted", 400);
     }
+
+    return $this->setBlacklistStatus($token);
+}
+
 
     public function checkBlacklistStatus($token) {
-        $checkBLstat = 'SELECT COUNT(*) AS nums FROM blacklist WHERE token  = ?';
-
-        try{
-            $checkStat  =$this->pdo->prepare($checkBLstat);
-            if($checkStat->execute([$token])){
-                $res = $checkStat->fetchColumn();
-                if($res > 0){
-                    return $res > 0;
-                }else{
-                    return false;
-                }
-            }else{
-                return $this->gm->responsePayload(null, "failed", "Failed to check token status", 500);
-            }
-        }catch(PDOException $e){
-            echo $e->getMessage();
+        $checkBLstat = 'SELECT COUNT(*) AS nums FROM blacklist WHERE token = ?';
+        try {
+            $checkStat = $this->pdo->prepare($checkBLstat);
+            $checkStat->execute([$token]);
+            $res = $checkStat->fetchColumn();
+            return $res > 0; 
+        } catch (PDOException $e) {
+            error_log("Error checking blacklist status: " . $e->getMessage());
+            return $this->gm->responsePayload(null, "error", "An internal error occurred.", 500);
         }
     }
+
 
     public function setBlacklistStatus($token) {
-        $setBLstat = 'INSERT INTO blacklist(token) VALUES (?)  ON DUPLICATE KEY UPDATE token = VALUES(token)';
-
-        try{
+        $setBLstat = 'INSERT INTO blacklist(token) VALUES (?) ON DUPLICATE KEY UPDATE token = VALUES(token)';
+        try {
             $setStat = $this->pdo->prepare($setBLstat);
-            if($setStat->execute([$token])){
-                return $this->gm->responsePayload(null, "success", "Token has been added to blacklist", 200);
-            }else{
-                return $this->gm->responsePayload(null, "failed", "Failed to add token to blacklist", 500);
-            }
-        }catch(PDOException $e){
-            echo $e->getMessage();
+            $setStat->execute([$token]);
+            return $this->gm->responsePayload(null, "success", "Token has been added to blacklist", 200);
+        } catch (PDOException $e) {
+            error_log("Error setting blacklist status: " . $e->getMessage());
+            return $this->gm->responsePayload(null, "error", "An internal error occurred.", 500);
         }
-
     }
+
 
     public function tokenGen($tokenData = null)
     {
@@ -164,44 +170,59 @@ class Auth implements AuthInterface{
         );
     }
 
-    public function verifyToken($requiredUserType = null){
-    // Retrieve JWT from Authorization header or cookie
-        $token = $_COOKIE['Authorization'];
-
-        $BLstat = $this->checkBlacklistStatus($token);
-        if($BLstat){
-            return $this->gm->responsePayload(null, 'failed', "Token has been blacklisted", 401);
+    public function verifyToken($requiredUserType = null) {
+        $tokenBL = $_COOKIE['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'];
+        if ($this->checkBlacklistStatus($tokenBL)) {
+            return $this->gm->responsePayload(null, 'failed', 'Token has been blacklisted', 401);
         }
-
-        $jwt = isset($_SERVER['HTTP_AUTHORIZATION']) ? explode(' ', $_SERVER['HTTP_AUTHORIZATION']) : (isset($_COOKIE['Authorization']) ? explode(' ', $_COOKIE['Authorization']) : null); 
-        if (!$jwt || $jwt[0] != 'Bearer') {
-            return $this->tokenPayload(null, false);  // No token found
-        } else {
-            $decoded = explode(".", $jwt[1]);
-            $payload = json_decode(base64_decode($decoded[1]));
-            
-            if (isset($payload->exp) && time() > strtotime($payload->exp)) {
-                return $this->gm->responsePayload(null, 'failed', 'Token has expired', 401);
-            }
-
-            $signature = hash_hmac('sha256', $decoded[0] . "." . $decoded[1], $_ENV['SECRET_KEY'], true);
-            $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-
-            if ($base64UrlSignature === $decoded[2]) {
-                // Optional: Check user type if required
-                if ($requiredUserType && isset($payload->token_data->user_type) && $payload->token_data->user_type !== $requiredUserType) {
-                    return $this->gm->responsePayload(null, 'failed', 'Access denied. User type mismatch.', 403);
-                }
-
-                if (isset($payload->token_data->User_ID) && $requiredUserType && isset($payload->token_data->user_type) && $payload->token_data->user_type === $requiredUserType) {
-                    $userID = $payload->token_data->User_ID;
-                    return $this->tokenPayload($payload, true);
-                } else {
-                    return $this->gm->responsePayload(null, 'failed', 'User_ID not found in token', 400);
-                }
-            } else {
-                return $this->tokenPayload(null, false);  // Token is invalid
-            }
+    
+        $jwt = isset($_SERVER['HTTP_AUTHORIZATION']) 
+            ? explode(' ', $_SERVER['HTTP_AUTHORIZATION']) 
+            : (isset($_COOKIE['Authorization']) 
+                ? explode(' ', $_COOKIE['Authorization']) 
+                : null);
+    
+        if (!$jwt || $jwt[0] !== 'Bearer' || !isset($jwt[1])) {
+            return $this->gm->responsePayload(null, 'failed', 'No valid token provided', 400);
         }
+    
+        $token = $jwt[1];
+   
+        // Decode the token
+        $decoded = explode(".", $token);
+        if (count($decoded) !== 3) {
+            return $this->gm->responsePayload(null, 'failed', 'Invalid token structure', 400);
+        }
+    
+        $payload = json_decode(base64_decode($decoded[1]));
+        if (!$payload) {
+            return $this->gm->responsePayload(null, 'failed', 'Invalid token payload', 400);
+        }
+    
+        // Check if the token has expired
+        if (isset($payload->exp) && time() > strtotime($payload->exp)) {
+            return $this->gm->responsePayload(null, 'failed', 'Token has expired', 401);
+        }
+    
+        // Verify the token's signature
+        $signature = hash_hmac('sha256', $decoded[0] . "." . $decoded[1], $_ENV['SECRET_KEY'], true);
+        $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+    
+        if ($base64UrlSignature !== $decoded[2]) {
+            return $this->gm->responsePayload(null, 'failed', 'Token signature is invalid', 401);
+        }
+    
+        // Check user type if required
+        if ($requiredUserType && isset($payload->token_data->user_type) && $payload->token_data->user_type !== $requiredUserType) {
+            return $this->gm->responsePayload(null, 'failed', 'Access denied. User type mismatch.', 403);
+        }
+    
+        // Ensure User_ID exists in the payload if required
+        if (!isset($payload->token_data->User_ID)) {
+            return $this->gm->responsePayload(null, 'failed', 'User_ID not found in token', 400);
+        }
+    
+        return $this->tokenPayload($payload, true);
     }
+    
 }
