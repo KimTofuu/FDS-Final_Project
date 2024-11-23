@@ -95,15 +95,56 @@ class Auth implements AuthInterface{
     }
 
     public function logout() {
+        $token = $_COOKIE['Authorization'];
+        $this->invalidateJWT($token);
         setcookie('Authorization', '', time() - 3600, '/', '', true, true);
-    
         return $this->gm->responsePayload(null, "success", "Logged out successfully", 200);
+    }
+
+    public function invalidateJWT($token) {
+        $this->setBlacklistStatus($token);
+    }
+
+    public function checkBlacklistStatus($token) {
+        $checkBLstat = 'SELECT COUNT(*) AS nums FROM blacklist WHERE token  = ?';
+
+        try{
+            $checkStat  =$this->pdo->prepare($checkBLstat);
+            if($checkStat->execute([$token])){
+                $res = $checkStat->fetchColumn();
+                if($res > 0){
+                    return $res > 0;
+                }else{
+                    return false;
+                }
+            }else{
+                return $this->gm->responsePayload(null, "failed", "Failed to check token status", 500);
+            }
+        }catch(PDOException $e){
+            echo $e->getMessage();
+        }
+    }
+
+    public function setBlacklistStatus($token) {
+        $setBLstat = 'INSERT INTO blacklist(token) VALUES (?)  ON DUPLICATE KEY UPDATE token = VALUES(token)';
+
+        try{
+            $setStat = $this->pdo->prepare($setBLstat);
+            if($setStat->execute([$token])){
+                return $this->gm->responsePayload(null, "success", "Token has been added to blacklist", 200);
+            }else{
+                return $this->gm->responsePayload(null, "failed", "Failed to add token to blacklist", 500);
+            }
+        }catch(PDOException $e){
+            echo $e->getMessage();
+        }
+
     }
 
     public function tokenGen($tokenData = null)
     {
         $header = json_encode(['typ' => 'JWT', 'alg' => 'HS256']);
-        $payload = json_encode(['token_data' => $tokenData, 'exp' => date("Y-m-d", strtotime('+7 days'))]);
+        $payload = json_encode(['token_data' => $tokenData, 'exp' => date("Y-m-d", strtotime('+7 days')), 'jti' => bin2hex(random_bytes(16))]);
         
         $base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
         $base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
@@ -125,8 +166,14 @@ class Auth implements AuthInterface{
 
     public function verifyToken($requiredUserType = null){
     // Retrieve JWT from Authorization header or cookie
-        $jwt = isset($_SERVER['HTTP_AUTHORIZATION']) ? explode(' ', $_SERVER['HTTP_AUTHORIZATION']) : (isset($_COOKIE['Authorization']) ? explode(' ', $_COOKIE['Authorization']) : null);
-        
+        $token = $_COOKIE['Authorization'];
+
+        $BLstat = $this->checkBlacklistStatus($token);
+        if($BLstat){
+            return $this->gm->responsePayload(null, 'failed', "Token has been blacklisted", 401);
+        }
+
+        $jwt = isset($_SERVER['HTTP_AUTHORIZATION']) ? explode(' ', $_SERVER['HTTP_AUTHORIZATION']) : (isset($_COOKIE['Authorization']) ? explode(' ', $_COOKIE['Authorization']) : null); 
         if (!$jwt || $jwt[0] != 'Bearer') {
             return $this->tokenPayload(null, false);  // No token found
         } else {
