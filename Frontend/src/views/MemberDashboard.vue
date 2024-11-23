@@ -85,33 +85,37 @@
       @enter="enter"
       @leave="leave"
     >
-      <div v-if="showFoodCalories" class="food-calories-modal">
-        <h2>Add Food Details</h2>
-        <form @submit.prevent="saveFoodDetails">
-          <label>
-            Food:
-            <input type="text" v-model="foodDetails.food" required />
-          </label>
-          <label>
-            Protein (g):
-            <input type="number" v-model="foodDetails.protein" required />
-          </label>
-          <label>
-            Carbs (g):
-            <input type="number" v-model="foodDetails.carbs" required />
-          </label>
-          <label>
-            Fat (g):
-            <input type="number" v-model="foodDetails.fat" required />
-          </label>
-          <div class="button-group">
-            <button type="submit">Save</button>
-            <button type="button" @click="showFoodCalories = false">
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
+    <div v-if="showFoodCalories" class="food-calories-modal">
+      <h2>Insert Food Details</h2>
+      <form>
+        <label>
+          Food:
+          <input type="text" v-model="foodDetails.food" required />
+        </label>
+        <label>
+          Protein (g):
+          <input type="number" v-model="foodDetails.protein" required />
+        </label>
+        <label>
+          Carbs (g):
+          <input type="number" v-model="foodDetails.carbs" required />
+        </label>
+        <label>
+          Fats (g):
+          <input type="number" v-model="foodDetails.fats" required />
+        </label>
+        <label>
+          Total Calories:
+          <input type="number" v-model="foodDetails.total_Calories" disabled />
+        </label>
+        <div class="button-group">
+          <button type="button" @click="calculateFoodCalories">Calculate</button>
+          <button type="button" @click="showFoodCalories = false">
+            Close
+          </button>
+        </div>
+      </form>
+    </div>
     </transition>
   </div>
 </template>
@@ -128,7 +132,8 @@ export default {
         food: "",
         protein: 0,
         carbs: 0,
-        fat: 0,
+        fats: 0,
+        total_Calories: 0,
       },
     };
   },
@@ -137,7 +142,7 @@ export default {
       this.showLogoutConfirm = false;
       try{
         const response = await apiClient.post("/Logout");
-        console.log(response.data);
+        console.log(response.data);   
         if(response.data?.status?.remarks === "success") {
           this.$router.push("/MainLogin");
         }else{
@@ -148,11 +153,29 @@ export default {
         this.error = "An error occurred while logging out. Please try again.";
       }
     },
-    saveFoodDetails() {
-      console.log("Food Details Saved:", this.foodDetails);
-      this.showFoodCalories = false;
-      // Optionally clear the form after saving
-      this.foodDetails = { food: "", protein: 0, carbs: 0, fat: 0 };
+
+    async calculateFoodCalories() {
+      const data = {
+        food: this.foodDetails.food,
+        protein: this.foodDetails.protein,
+        carbs: this.foodDetails.carbs,
+        fats: this.foodDetails.fats,
+      };
+      try {
+        const response = await apiClient.post("/Member/Food-Calories ", data);
+        console.log(response.data);
+
+        if (response.data && response.data.status && response.data.status.remarks === "success") {
+          console.log('calculateFoodCalories method called');
+          this.foodDetails.total_Calories = response.data.payload;
+        }
+      } catch (error) {
+        console.error("Error calculating food calories:", error);
+        this.error = "An error occurred while calculating food calories. Please try again.";
+      }
+    },
+    async saveFoodDetails() {
+      await this.calculateFoodCalories();
     },
     beforeEnter(el) {
       el.style.opacity = 0;
