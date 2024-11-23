@@ -116,7 +116,9 @@
   </div>
 </template>
 
-<script>
+<script scoped>
+import apiClient from "@/api/axios";
+
 export default {
   data() {
     return {
@@ -131,9 +133,20 @@ export default {
     };
   },
   methods: {
-    logout() {
+    async logout() {
       this.showLogoutConfirm = false;
-      console.log("Logging out...");
+      try{
+        const response = await apiClient.post("/Logout");
+        console.log(response.data);
+        if(response.data?.status?.remarks === "success") {
+          this.$router.push("/MainLogin");
+        }else{
+          this.error = response.data.message || "Logout failed";
+        }
+      }catch (error) {
+        console.error("Logout Error:", error);
+        this.error = "An error occurred while logging out. Please try again.";
+      }
     },
     saveFoodDetails() {
       console.log("Food Details Saved:", this.foodDetails);
