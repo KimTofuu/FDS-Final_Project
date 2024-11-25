@@ -40,17 +40,22 @@
 
     <main class="profile-container">
       <div class="profile-content">
-        <div class="profile-avatar">
-          <img
-            src="@/assets/coach1.png"
-            alt="Profile Avatar"
-            class="avatar-img"
-          />
-        </div>
         <div class="profile-details">
           <div class="detail-item">
             <label>Name:</label>
             <p>{{ profile.name }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Contact Number:</label>
+            <p>{{ profile.conNumm }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Emergency Contact Number:</label>
+            <p>{{ profile.econNumm }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Address:</label>
+            <p>{{ profile.address }}</p>
           </div>
           <div class="detail-item">
             <label>Age:</label>
@@ -73,20 +78,199 @@
             <p>{{ profile.height }}</p>
           </div>
         </div>
+        <button @click="openEditModal" class="update-button">Update</button>
       </div>
     </main>
+
+    <transition name="fade">
+      <div v-if="showEditModal" class="edit-modal" @click.self="closeEditModal">
+        <div class="modal-content">
+          <h2>Edit Profile</h2>
+          <div class="form-group">
+            <label for="name">Name:</label>
+            <input
+              type="text"
+              id="name"
+              v-model="profile.name"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="conNumm">Contact Number:</label>
+            <input
+              type="text"
+              id="conNumm"
+              v-model="profile.conNumm"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="econNumm">Emergency Contact Number:</label>
+            <input
+              type="text"
+              id="econNumm"
+              v-model="profile.econNumm"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="address">Address:</label>
+            <input
+              type="text"
+              id="address"
+              v-model="profile.address"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="age">Age:</label>
+            <input
+              type="number"
+              id="age"
+              v-model="profile.age"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="sex">Sex:</label>
+            <input
+              type="text"
+              id="sex"
+              v-model="profile.sex"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="gender">Gender:</label>
+            <input
+              type="text"
+              id="gender"
+              v-model="profile.gender"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="weight">Weight (kg):</label>
+            <input
+              type="number"
+              id="weight"
+              v-model="profile.weight"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="height">Height (cm):</label>
+            <input
+              type="number"
+              id="height"
+              v-model="profile.height"
+              class="form-input"
+            />
+          </div>
+          <div class="modal-buttons">
+            <button @click="saveProfile" class="save-button">Save</button>
+            <button @click="closeEditModal" class="cancel-button">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
+
     <main class="session-container">
       <div class="session-box set-session">
         <h2>Set Session</h2>
         <p>Configure your session details here.</p>
-        <button>Set Session</button>
+        <button @click="showSessionPopup = true">Set Session</button>
       </div>
+
+      <transition name="fade">
+        <div
+          v-if="showSessionPopup"
+          class="session-popup"
+          @click.self="closeSessionPopup"
+        >
+          <div class="popup-content">
+            <h2>Set Session</h2>
+            <div class="form-group">
+              <label for="session-date">Date:</label>
+              <input
+                type="date"
+                id="session-date"
+                v-model="sessionDetails.date"
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label for="session-time">Time:</label>
+              <input
+                type="time"
+                id="session-time"
+                v-model="sessionDetails.time"
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label for="session-coach">Coach:</label>
+              <input
+                type="text"
+                id="session-coach"
+                v-model="sessionDetails.coach"
+                class="form-input"
+              />
+            </div>
+            <div class="modal-buttons">
+              <button @click="submitSession" class="save-button">Submit</button>
+              <button @click="closeSessionPopup" class="cancel-button">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </transition>
 
       <div class="session-box set-alarm">
         <h2>Set Alarm</h2>
         <p>Set the time for your alarm.</p>
-        <button>Set Alarm</button>
+        <button @click="openAlarmPopup">Set Alarm</button>
       </div>
+
+      <transition name="fade">
+        <div
+          v-if="showAlarmPopup"
+          class="session-popup"
+          @click.self="closeAlarmPopup"
+        >
+          <div class="popup-content">
+            <h2>Set Alarm</h2>
+            <div class="form-group">
+              <label for="alarm-day">Day:</label>
+              <input
+                type="text"
+                id="alarm-day"
+                v-model="alarmDetails.day"
+                class="form-input"
+                placeholder="Enter the day (e.g., Monday)"
+              />
+            </div>
+            <div class="form-group">
+              <label for="alarm-time">Time:</label>
+              <input
+                type="time"
+                id="alarm-time"
+                v-model="alarmDetails.time"
+                class="form-input"
+              />
+            </div>
+            <div class="modal-buttons">
+              <button @click="submitAlarm" class="save-button">Submit</button>
+              <button @click="closeAlarmPopup" class="cancel-button">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </transition>
     </main>
   </div>
 </template>
@@ -97,42 +281,72 @@ export default {
     return {
       showSidebar: false,
       showLogoutConfirm: false,
-      profile: {
-        name: "John Doe",
-        age: 25,
-        sex: "Male",
-        gender: "Male",
-        weight: 70,
-        height: 175,
+      showEditModal: false,
+      showSessionPopup: false,
+      showAlarmPopup: false,
+      sessionDetails: {
+        date: "",
+        time: "",
+        coach: "",
       },
+      alarmDetails: {
+        day: "",
+        time: "",
+      },
+      profile: {
+        name: " John Doe",
+        conNumm: " 1234567890",
+        econNumm: " 9876543210",
+        address: " 123 Main St",
+        age: " 25",
+        sex: " Male",
+        gender: " Male",
+        weight: " 65",
+        height: " 175",
+      },
+      tempProfile: {},
     };
   },
   methods: {
-    // Toggle the sidebar
     toggleSidebar() {
       this.showSidebar = !this.showSidebar;
     },
-
-    // Logout functionality
     logout() {
-      this.showLogoutConfirm = false;
+      this.showLogoutConfirm = true;
       console.log("Logging out...");
     },
-
-    // Transition effects for animations
-    beforeEnter(el) {
-      el.style.opacity = 0; // Initial opacity before the element enters
+    openEditModal() {
+      this.tempProfile = { ...this.profile };
+      this.showEditModal = true;
     },
-    enter(el, done) {
-      el.offsetHeight; // Trigger reflow to ensure transition works
-      el.style.transition = "opacity 0.3s ease-in-out";
-      el.style.opacity = 1;
-      done(); // Call the done function when transition is finished
+    closeEditModal() {
+      this.showEditModal = false;
     },
-    leave(el, done) {
-      el.style.transition = "opacity 0.3s ease-in-out";
-      el.style.opacity = 0;
-      done(); // Call the done function when transition is finished
+    saveProfile() {
+      this.profile = { ...this.tempProfile };
+      console.log("Profile saved:", this.profile);
+      this.closeEditModal();
+    },
+    openSessionPopup() {
+      console.log("Opening session popup");
+      this.showSessionPopup = true;
+    },
+    closeSessionPopup() {
+      this.showSessionPopup = false;
+    },
+    submitSession() {
+      console.log("Session details:", this.sessionDetails); // Use sessionDetails
+      this.closeSessionPopup();
+    },
+    openAlarmPopup() {
+      this.showAlarmPopup = true;
+    },
+    closeAlarmPopup() {
+      this.showAlarmPopup = false;
+    },
+    submitAlarm() {
+      console.log("Alarm details:", this.alarmDetails); // Log the alarm details
+      this.closeAlarmPopup(); // Close the popup
     },
   },
 };
@@ -218,7 +432,7 @@ body {
   margin-left: 10vh;
   margin-top: 19vh;
   padding: 20px;
-  width: calc(100% - 110px); 
+  width: calc(100% - 110px);
   box-sizing: border-box;
 }
 
@@ -236,8 +450,73 @@ body {
 .set-session {
   background-color: #e0f7fa;
 }
+
 .set-alarm {
   background-color: #e0f7fa;
+}
+
+.session-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-content {
+  background: white;
+  color: #000;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.save-button,
+.cancel-button {
+  background-color: #ac0700;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.save-button:hover,
+.cancel-button:hover {
+  background-color: #333;
 }
 
 .session-box h2 {
@@ -285,11 +564,11 @@ body {
 }
 
 .profile-container {
-  margin-left: 20%; /* Adjust this to match sidebar width + some margin */
+  margin-left: 20%;
   margin-top: 5%;
   padding: 20px;
-  width: calc(90% - 200px); /* Fill the remaining space */
-  box-sizing: border-box; /* Ensure padding doesn't affect width */
+  width: calc(90% - 200px);
+  box-sizing: border-box;
 }
 
 .profile-content {
@@ -300,8 +579,8 @@ body {
 }
 
 .profile-avatar .avatar-img {
-  width: 100px;
-  height: 100px;
+  width: 50px;
+  height: 50px;
   border-radius: 30px;
 }
 
@@ -310,7 +589,7 @@ body {
   flex-direction: column;
   gap: 15px;
   width: 60vh;
-  height: 60vh;
+  height: 70vh;
   background-color: #fff;
   padding: 20px;
   border-radius: 10px;
@@ -333,6 +612,94 @@ body {
   margin: 0;
   color: #666;
   text-align: right;
+}
+
+.update-button {
+  background-color: #ac0700;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 1vh;
+  margin-left: 45vh;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.update-button:hover {
+  background-color: #ffffff;
+  color: #ac0700;
+}
+
+.edit-modal {
+  position: fixed;
+  top: 50%;
+  left: 55%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  padding: 20px;
+  width: 40%;
+  height: 60%;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.modal-content {
+  width: 100%;
+  height: calc(100% - 40px);
+  overflow-y: auto;
+  padding: 20px;
+  box-sizing: border-box;
+  color: #000;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.save-button,
+.cancel-button {
+  background-color: #ac0700;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.cancel-button {
+  background-color: #ddd;
+  color: black;
+}
+
+.save-button:hover,
+.cancel-button:hover {
+  opacity: 0.8;
 }
 
 .logout-button {
