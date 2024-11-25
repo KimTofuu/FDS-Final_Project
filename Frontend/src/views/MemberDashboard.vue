@@ -60,15 +60,67 @@
             <p>{{ item.time }} - {{ item.topic }}</p>
           </div>
         </div>
-        <div class="dietplan">
+        <div class="recommendations">
+          <h2>Recommendations</h2>
+        
+          <div class="input-container row">
+            <div class="col-4">
+              <label for="fitness-level">Fitness Level:</label>
+              <select id="fitness-level" v-model="fitnessLevel">
+                <option value="">Select a fitness level</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="expert">Expert</option>
+              </select>
+            </div>
+        
+            <div class="col-4">
+              <label for="goal">Goal:</label>
+              <select id="goal" v-model="goal">
+                <option value="">Select a goal</option>
+                <option value="weight loss">Weight Loss</option>
+                <option value="muscle gain">Muscle Gain</option>
+                <option value="general fitness">General Fitness</option>
+                <option value="flexibility">Flexibility</option>
+                <option value="endurance">Endurance</option>
+              </select>
+            </div>
+        
+            <div class="col-4">
+              <button @click="fetchRecommendations">Get Recommendations</button>
+            </div>
+          </div>
+        
+          <div class="recommendations-container row">
+            <div class="col-4 dietplan">
+              <h2>DIET PLAN</h2>
+              <p>{{ recom.dietPlan }}</p>
+            </div>
+        
+            <div class="col-4 workoutplan">
+              <h2>WORKOUT PLAN</h2>
+              <p>{{ recom.workoutPlan }}</p>
+            </div>
+        
+            <div class="col-4 additionalnotes">
+              <h2>ADDITIONAL NOTES</h2>
+              <p>{{ recom.additionalNotes }}</p>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="dietplan" v-if="recom.dietplan">
           <h2>DIET PLAN</h2>
+          <p>{{ recom.dietplan }}</p>
         </div>
-        <div class="workoutplan">
+        <div class="workoutplan" v-if="recom.workoutplan">
           <h2>WORKOUT PLAN</h2>
+          <p>{{ recom.workoutplan }}</p>
         </div>
-        <div class="additionalnotes">
+        <div class="additionalnotes" v-if="recom.additionalnotes">
           <h2>ADDITIONAL NOTES</h2>
+          <p>{{ recom.additionalnotes }}</p>
         </div>
+        <button @click="getRecom" class="recom-button">Get Recommendations</button> -->
         <div class="calorie-box">
           <h2>Daily Caloric Needs</h2>
           <p>1200 - 1500 kcal/day</p>
@@ -135,6 +187,11 @@ export default {
         fats: 0,
         total_Calories: 0,
       },
+      recom: {
+        dietplan: "",
+        workoutplan: "",
+        foodplan: "",
+      },
     };
   },
   methods: {
@@ -154,6 +211,28 @@ export default {
       }
     },
 
+    async fetchRecommendations() {
+      const recomData = {
+        goal: this.goal.toLowerCase(),
+        fitnessLevel: this.fitnessLevel.toLowerCase(),
+      };
+      try {
+        const response = await apiClient.post("/Member/Get-Recommendation", recomData);
+        console.log("API Response:", response.data);
+
+        if (response.data.status.remarks == 'success') {
+          const recommendation = response.data.payload[0];
+          this.recom.dietPlan = recommendation.diet_plan || "No diet plan available.";
+          this.recom.workoutPlan = recommendation.workout_plan || "No workout plan available.";
+          this.recom.additionalNotes = recommendation.additional_notes || "No additional notes.";
+
+          console.log("Updated recom:", this.recom);
+        }
+      } catch (error) {
+        console.error("Error fetching recommendations:", error);
+        this.error = "An error occurred while fetching recommendations. Please try again.";
+      }
+    },
     async calculateFoodCalories() {
       const data = {
         food: this.foodDetails.food,
@@ -166,7 +245,6 @@ export default {
         console.log(response.data);
 
         if (response.data && response.data.status && response.data.status.remarks === "success") {
-          console.log('calculateFoodCalories method called');
           this.foodDetails.total_Calories = response.data.payload;
         }
       } catch (error) {
@@ -195,7 +273,7 @@ export default {
 };
 </script>
 
-<style>
+<style> 
 * {
   margin: 0;
   padding: 0;
