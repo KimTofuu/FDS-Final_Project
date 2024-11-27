@@ -60,54 +60,51 @@
             <p>{{ item.time }} - {{ item.topic }}</p>
           </div>
         </div>
-        <div class="recommendations">
-          <h2>Recommendations</h2>
-        
-          <div class="input-container row">
-            <div class="col-4">
-              <label for="fitness-level">Fitness Level:</label>
-              <select id="fitness-level" v-model="fitnessLevel">
-                <option value="">Select a fitness level</option>
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="expert">Expert</option>
-              </select>
-            </div>
-        
-            <div class="col-4">
-              <label for="goal">Goal:</label>
-              <select id="goal" v-model="goal">
-                <option value="">Select a goal</option>
-                <option value="weight loss">Weight Loss</option>
-                <option value="muscle gain">Muscle Gain</option>
-                <option value="general fitness">General Fitness</option>
-                <option value="flexibility">Flexibility</option>
-                <option value="endurance">Endurance</option>
-              </select>
-            </div>
-        
-            <div class="col-4">
-              <button @click="fetchRecommendations">Get Recommendations</button>
-            </div>
+
+        <transition
+          name="fade"
+          @before-enter="beforeEnter"
+          @enter="enter"
+          @leave="leave"
+        >
+          <div v-if="showFoodCalories" class="food-calories-modal">
+            <h2>Insert Food Details</h2>
+            <form>
+              <label>
+                Food:
+                <input type="text" v-model="foodDetails.food" required />
+              </label>
+              <label>
+                Protein (g):
+                <input type="number" v-model="foodDetails.protein" required />
+              </label>
+              <label>
+                Carbs (g):
+                <input type="number" v-model="foodDetails.carbs" required />
+              </label>
+              <label>
+                Fats (g):
+                <input type="number" v-model="foodDetails.fats" required />
+              </label>
+              <label>
+                Total Calories:
+                <input
+                  type="number"
+                  v-model="foodDetails.total_Calories"
+                  disabled
+                />
+              </label>
+              <div class="button-group">
+                <button type="button" @click="calculateFoodCalories">
+                  Calculate
+                </button>
+                <button type="button" @click="showFoodCalories = false">
+                  Close
+                </button>
+              </div>
+            </form>
           </div>
-        
-          <div class="recommendations-container row">
-            <div class="col-4 dietplan">
-              <h2>DIET PLAN</h2>
-              <p>{{ recom.dietPlan }}</p>
-            </div>
-        
-            <div class="col-4 workoutplan">
-              <h2>WORKOUT PLAN</h2>
-              <p>{{ recom.workoutPlan }}</p>
-            </div>
-        
-            <div class="col-4 additionalnotes">
-              <h2>ADDITIONAL NOTES</h2>
-              <p>{{ recom.additionalNotes }}</p>
-            </div>
-          </div>
-        </div>
+        </transition>
         <!-- <div class="dietplan" v-if="recom.dietplan">
           <h2>DIET PLAN</h2>
           <p>{{ recom.dietplan }}</p>
@@ -129,46 +126,46 @@
           <h2>Food Calories</h2>
           <p class="food-info">Click To Add Food Information</p>
         </div>
+
+        <div class="recommendations">
+            <div class="col-4 button">
+              <h2>Recommendations</h2>
+              <label for="fitness-level">Fitness Level:</label>
+              <select id="fitness-level" v-model="fitnessLevel">
+                <option value="" disabled selected>Select a fitness level</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="expert">Expert</option>
+              </select>
+              <label for="goal">Goal:</label>
+              <select id="goal" v-model="goal">
+                <option value="" disabled selected>Select a goal</option>
+                <option value="weight loss">Weight Loss</option>
+                <option value="muscle gain">Muscle Gain</option>
+                <option value="general fitness">General Fitness</option>
+                <option value="flexibility">Flexibility</option>
+                <option value="endurance">Endurance</option>
+              </select>
+              <button @click="fetchRecommendations">Get Recommendations</button>
+          </div>
+        </div>
+
+        <div class="col-4 dietplan">
+          <h2>DIET PLAN</h2>
+          <p>{{ recom.dietPlan }}</p>
+        </div>
+
+        <div class="col-4 workoutplan">
+          <h2>WORKOUT PLAN</h2>
+          <p>{{ recom.workoutPlan }}</p>
+        </div>
+
+        <div class="col-4 additionalnotes">
+          <h2>ADDITIONAL NOTES</h2>
+          <p>{{ recom.additionalNotes }}</p>
+        </div>
       </div>
     </main>
-    <transition
-      name="fade"
-      @before-enter="beforeEnter"
-      @enter="enter"
-      @leave="leave"
-    >
-    <div v-if="showFoodCalories" class="food-calories-modal">
-      <h2>Insert Food Details</h2>
-      <form>
-        <label>
-          Food:
-          <input type="text" v-model="foodDetails.food" required />
-        </label>
-        <label>
-          Protein (g):
-          <input type="number" v-model="foodDetails.protein" required />
-        </label>
-        <label>
-          Carbs (g):
-          <input type="number" v-model="foodDetails.carbs" required />
-        </label>
-        <label>
-          Fats (g):
-          <input type="number" v-model="foodDetails.fats" required />
-        </label>
-        <label>
-          Total Calories:
-          <input type="number" v-model="foodDetails.total_Calories" disabled />
-        </label>
-        <div class="button-group">
-          <button type="button" @click="calculateFoodCalories">Calculate</button>
-          <button type="button" @click="showFoodCalories = false">
-            Close
-          </button>
-        </div>
-      </form>
-    </div>
-    </transition>
   </div>
 </template>
 
@@ -197,15 +194,15 @@ export default {
   methods: {
     async logout() {
       this.showLogoutConfirm = false;
-      try{
+      try {
         const response = await apiClient.post("/Logout");
-        console.log(response.data);   
-        if(response.data?.status?.remarks === "success") {
+        console.log(response.data);
+        if (response.data?.status?.remarks === "success") {
           this.$router.push("/MainLogin");
-        }else{
+        } else {
           this.error = response.data.message || "Logout failed";
         }
-      }catch (error) {
+      } catch (error) {
         console.error("Logout Error:", error);
         this.error = "An error occurred while logging out. Please try again.";
       }
@@ -217,20 +214,27 @@ export default {
         fitnessLevel: this.fitnessLevel.toLowerCase(),
       };
       try {
-        const response = await apiClient.post("/Member/Get-Recommendation", recomData);
+        const response = await apiClient.post(
+          "/Member/Get-Recommendation",
+          recomData
+        );
         console.log("API Response:", response.data);
 
-        if (response.data.status.remarks == 'success') {
+        if (response.data.status.remarks == "success") {
           const recommendation = response.data.payload[0];
-          this.recom.dietPlan = recommendation.diet_plan || "No diet plan available.";
-          this.recom.workoutPlan = recommendation.workout_plan || "No workout plan available.";
-          this.recom.additionalNotes = recommendation.additional_notes || "No additional notes.";
+          this.recom.dietPlan =
+            recommendation.diet_plan || "No diet plan available.";
+          this.recom.workoutPlan =
+            recommendation.workout_plan || "No workout plan available.";
+          this.recom.additionalNotes =
+            recommendation.additional_notes || "No additional notes.";
 
           console.log("Updated recom:", this.recom);
         }
       } catch (error) {
         console.error("Error fetching recommendations:", error);
-        this.error = "An error occurred while fetching recommendations. Please try again.";
+        this.error =
+          "An error occurred while fetching recommendations. Please try again.";
       }
     },
     async calculateFoodCalories() {
@@ -244,12 +248,17 @@ export default {
         const response = await apiClient.post("/Member/Food-Calories ", data);
         console.log(response.data);
 
-        if (response.data && response.data.status && response.data.status.remarks === "success") {
+        if (
+          response.data &&
+          response.data.status &&
+          response.data.status.remarks === "success"
+        ) {
           this.foodDetails.total_Calories = response.data.payload;
         }
       } catch (error) {
         console.error("Error calculating food calories:", error);
-        this.error = "An error occurred while calculating food calories. Please try again.";
+        this.error =
+          "An error occurred while calculating food calories. Please try again.";
       }
     },
     async saveFoodDetails() {
@@ -273,7 +282,7 @@ export default {
 };
 </script>
 
-<style> 
+<style>
 * {
   margin: 0;
   padding: 0;
@@ -457,15 +466,64 @@ body {
   font-weight: bold;
 }
 
+.col-4 {
+  align-items: center;
+  background-color: #f9f9f9;
+  color: #000000;
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.col-4 h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.col-4 select {
+  width: 87%;
+  margin: 10px 0;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.col-4 select:focus {
+  border-color: #ac0700;
+}
+
+.col-4 button {
+  background-color: #ac0700;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  margin-top: 10px;
+}
+
+.col-4 button:hover {
+  background-color: #ffffff;
+  color: #ac0700;
+  transform: scale(1.05);
+}
+
 .dietplan,
 .workoutplan,
 .additionalnotes {
   background-color: #ac0700;
-  color: #fff;
+  color: #ffffff;
   padding: 20px;
   text-align: center;
   border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-color: #000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: auto;
+
 }
 
 .dietplan h2,
@@ -493,22 +551,21 @@ body {
   margin-bottom: 10px;
   padding: 10px;
   background-color: #f5f5f5;
-  border: 1px solid #ccc;
   border-radius: 5px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 1) !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 1);
 }
 
 .calorie-box,
 .food-calories {
   background-color: #f5f5f5;
   color: #000000;
-  padding: 20px;
+  padding-top: 25%;
   text-align: center;
   border-radius: 10px;
-  border-color: #000;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   width: 100%;
   height: auto;
+  
 }
 
 .calorie-box h2 {
