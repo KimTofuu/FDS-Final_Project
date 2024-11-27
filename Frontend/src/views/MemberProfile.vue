@@ -437,12 +437,13 @@ body {
 }
 
 .session-box {
-  width: 60%;
+  width: 65%;
+  height: 35%;
   margin: 20px auto;
   background-color: #f9f9f9;
   border: 1px solid #ccc;
   padding: 20px;
-  margin: 20px 0;
+  margin:10px;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -588,7 +589,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  width: 60vh;
+  width: 80vh;
   height: 70vh;
   background-color: #fff;
   padding: 20px;
@@ -620,7 +621,7 @@ body {
   border: none;
   padding: 10px 20px;
   margin-top: 1vh;
-  margin-left: 45vh;
+  margin-left: 67vh;
   border-radius: 10px;
   cursor: pointer;
   font-weight: bold;
