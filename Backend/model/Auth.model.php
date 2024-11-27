@@ -76,7 +76,7 @@ class Auth implements AuthInterface{
                     $stmt->closeCursor();
                     if (password_verify($data->Password, $res['Password'])) {
                         $token = $this->tokenGen(['user_type' => $userType, 'User_ID' => $res['User_ID']]);
-                        setcookie('Authorization','Bearer ' . $token['token'], time() + (86400 * 7), '/', '', true, true);
+                        setcookie('Authorization','Bearer ' . $token['token'], time() + (86400 * 7), '/', '', false, false);
                         // $redirectUrl = $url . $res['User_ID'];
                         // header('Location: $apipath');
                         return $this->gm->responsePayload(array("token" => $token['token'], "user_type" => $userType, "User_ID" => $res['User_ID']), "success", "Logged in", 200);
@@ -171,58 +171,101 @@ class Auth implements AuthInterface{
     }
 
     public function verifyToken($requiredUserType = null) {
-        $tokenBL = $_COOKIE['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'];
-        if ($this->checkBlacklistStatus($tokenBL)) {
-            return $this->tokenPayload(null, false); // Ensure is_valid = false
+    //     $tokenBL = $_COOKIE['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'];
+    //     if ($this->checkBlacklistStatus($tokenBL)) {
+    //         return $this->tokenPayload(null, false); // Ensure is_valid = false
+    //     }
+    
+    //     $jwt = isset($_SERVER['HTTP_AUTHORIZATION']) 
+    //         ? explode(' ', $_SERVER['HTTP_AUTHORIZATION']) 
+    //         : (isset($_COOKIE['Authorization']) 
+    //             ? explode(' ', $_COOKIE['Authorization']) 
+    //             : null);
+    
+    //     if (!$jwt || $jwt[0] !== 'Bearer' || !isset($jwt[1])) {
+    //         return $this->tokenPayload(null, false); // Ensure is_valid = false
+    //     }
+    
+    //     $token = $jwt[1];
+    
+    //     // Decode the token
+    //     $decoded = explode(".", $token);
+    //     if (count($decoded) !== 3) {
+    //         return $this->tokenPayload(null, false); // Ensure is_valid = false
+    //     }
+    
+    //     $payload = json_decode(base64_decode($decoded[1]));
+    //     if (!$payload) {
+    //         return $this->tokenPayload(null, false); // Ensure is_valid = false
+    //     }
+    
+    //     // Check if the token has expired
+    //     if (isset($payload->exp) && time() > strtotime($payload->exp)) {
+    //         return $this->tokenPayload(null, false); // Ensure is_valid = false
+    //     }
+    
+    //     // Verify the token's signature
+    //     $signature = hash_hmac('sha256', $decoded[0] . "." . $decoded[1], $_ENV['SECRET_KEY'], true);
+    //     $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+    
+    //     if ($base64UrlSignature !== $decoded[2]) {
+    //         return $this->tokenPayload(null, false); // Ensure is_valid = false
+    //     }
+    
+    //     // Check user type if required
+    //     if ($requiredUserType && isset($payload->token_data->user_type) && $payload->token_data->user_type !== $requiredUserType) {
+    //         return $this->tokenPayload(null, false); // Ensure is_valid = false
+    //     }
+    
+    //     // Ensure User_ID exists in the payload if required
+    //     if (!isset($payload->token_data->User_ID)) {
+    //         return $this->tokenPayload(null, false); // Ensure is_valid = false
+    //     }
+    
+    //     // If all checks pass, return a valid payload
+    //     return $this->tokenPayload($payload, true); // is_valid = true
+    // }public function verifyToken($requiredUserType = null) {
+        $authHeader = $_COOKIE['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? null;
+
+        if (!$authHeader || strpos($authHeader, 'Bearer ') !== 0) {
+            return $this->tokenPayload(null, false);
         }
-    
-        $jwt = isset($_SERVER['HTTP_AUTHORIZATION']) 
-            ? explode(' ', $_SERVER['HTTP_AUTHORIZATION']) 
-            : (isset($_COOKIE['Authorization']) 
-                ? explode(' ', $_COOKIE['Authorization']) 
-                : null);
-    
-        if (!$jwt || $jwt[0] !== 'Bearer' || !isset($jwt[1])) {
-            return $this->tokenPayload(null, false); // Ensure is_valid = false
+
+        $token = substr($authHeader, 7); // Strip "Bearer " prefix
+        if ($this->checkBlacklistStatus($token)) {
+            return $this->tokenPayload(null, false);
         }
-    
-        $token = $jwt[1];
-    
-        // Decode the token
+
         $decoded = explode(".", $token);
         if (count($decoded) !== 3) {
-            return $this->tokenPayload(null, false); // Ensure is_valid = false
+            return $this->tokenPayload(null, false);
         }
-    
+
         $payload = json_decode(base64_decode($decoded[1]));
         if (!$payload) {
-            return $this->tokenPayload(null, false); // Ensure is_valid = false
+            return $this->tokenPayload(null, false);
         }
-    
-        // Check if the token has expired
+
         if (isset($payload->exp) && time() > strtotime($payload->exp)) {
-            return $this->tokenPayload(null, false); // Ensure is_valid = false
+            return $this->tokenPayload(null, false);
         }
-    
-        // Verify the token's signature
+
         $signature = hash_hmac('sha256', $decoded[0] . "." . $decoded[1], $_ENV['SECRET_KEY'], true);
         $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-    
+
         if ($base64UrlSignature !== $decoded[2]) {
-            return $this->tokenPayload(null, false); // Ensure is_valid = false
+            return $this->tokenPayload(null, false);
         }
-    
-        // Check user type if required
+
         if ($requiredUserType && isset($payload->token_data->user_type) && $payload->token_data->user_type !== $requiredUserType) {
-            return $this->tokenPayload(null, false); // Ensure is_valid = false
+            return $this->tokenPayload(null, false);
         }
-    
-        // Ensure User_ID exists in the payload if required
+
         if (!isset($payload->token_data->User_ID)) {
-            return $this->tokenPayload(null, false); // Ensure is_valid = false
+            return $this->tokenPayload(null, false);
         }
-    
-        // If all checks pass, return a valid payload
-        return $this->tokenPayload($payload, true); // is_valid = true
+
+        return $this->tokenPayload($payload, true);
     }
+
 }
