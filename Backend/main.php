@@ -65,13 +65,6 @@ try{
             }
         }
 
-        if ($req[0] == 'VerifyToken') {
-            
-            $tokenRes = $auth->verifyToken(); 
-            echo json_encode($tokenRes);
-            return;
-        }
-
         if($req[0] == 'Coach'){
             $tokenResMem = $auth->verifyToken('coach');
             if ($tokenResMem['is_valid'] !== true) {
@@ -84,6 +77,14 @@ try{
         break;
 
     case 'POST':
+        if ($req[0] == 'Front') {
+            $tokenRes = $auth->verifyToken('Out-Of-Bound');
+            if ($tokenRes['is_valid'] !== true) {
+                if($req[1] == 'verifyToken'){echo json_encode($auth->verifyToken($data));return;}
+                if($req[1] == 'getUserType'){echo json_encode($rm->getUserTypeFromToken());return;}
+            }
+        }
+
         if ($req[0] == 'Create') {
             if ($req[1] == 'Member') {echo json_encode($adminCon->createAcc($data));return;}
             if ($req[1] == 'Coach') {echo json_encode($adminCon->coachCreate($data));return;}
