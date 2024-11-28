@@ -217,4 +217,48 @@ class Auth implements AuthInterface{
         return $this->tokenPayload($payload, true);
     }
 
+    public function verifyTokenBackend($token = null, $requiredUserType = null) {
+        $authHeader = $_COOKIE['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? null;
+
+
+        if (!$authHeader || strpos($authHeader, 'Bearer ') !== 0) {
+            return $this->tokenPayload(null, false);
+        }
+
+        $token = substr($authHeader, 7); // Strip "Bearer " prefix
+        if ($this->checkBlacklistStatus($token)) {
+            return $this->tokenPayload(null, false);
+        }
+
+        $decoded = explode(".", $token);
+        if (count($decoded) !== 3) {
+            return $this->tokenPayload(null, false);
+        }
+
+        $payload = json_decode(base64_decode($decoded[1]));
+        if (!$payload) {
+            return $this->tokenPayload(null, true);
+        }
+
+        if (isset($payload->exp) && time() > $payload->exp) {
+            return $this->tokenPayload(null, false);
+        }
+
+        $signature = hash_hmac('sha256', $decoded[0] . "." . $decoded[1], $_ENV['SECRET_KEY'], true);
+        $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+
+        if ($base64UrlSignature !== $decoded[2]) {
+            return $this->tokenPayload(null, false);
+        }
+
+        if ($requiredUserType && isset($payload->token_data->user_type) && $payload->token_data->user_type !== $requiredUserType) {
+            return $this->tokenPayload(null, false);
+        }
+
+        if (!isset($payload->token_data->User_ID)) {
+            return $this->tokenPayload(null, false);
+        }
+
+        return $this->tokenPayload($payload, true);
+    }
 }

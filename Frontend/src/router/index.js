@@ -28,7 +28,6 @@ async function isTokenValid() {
   const tokendata = {
     Token: token,
   };
-  console.log('Token:', token);
   if (!token) return false;
   try {
     const response = await apiClient.post("/Front/verifyToken", tokendata);
@@ -41,11 +40,14 @@ async function isTokenValid() {
 
 // Retrieve user role from token
 async function getUserRole() {
-  const token = getCookie("Authorization")?.split("Bearer ")[1];
+  const token = getCookie("Authorization");
+  const tokendata = { Token: token };
+  console.log('Token:', token);
+
   if (!token) return null;
   try {
-    const response = await apiClient.post("/Front/getUserType", { token });
-    return response.data?.payload?.token_data?.user_type; // API response: { user_type: "member/admin/etc" }
+    const response = await apiClient.post("/Front/getUserType", tokendata);
+    return response.data; // API response: { user_type: "member/admin/etc" }
   } catch (error) {
     console.error("Error retrieving user role:", error);
     return null;
