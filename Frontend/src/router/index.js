@@ -18,16 +18,19 @@ import MemberUpgrade from "@/views/MemberUpgrade.vue";
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(";").shift();
+  if (parts.length === 2) return decodeURIComponent(parts.pop().split(";").shift());
   return null;
 }
 
 // Validate token with the server
 async function isTokenValid() {
-  const token = getCookie("Authorization")?.split("Bearer ")[1];
+  const token = getCookie("Authorization");
+  const tokendata = {
+    Token: token,
+  };
   if (!token) return false;
   try {
-    const response = await apiClient.post("/Out-Of-Bound/verifyToken", { token });
+    const response = await apiClient.post("/Front/verifyToken", tokendata);
     return response.data.is_valid; // API returns { is_valid: true/false }
   } catch (error) {
     console.error("Error validating token:", error);
@@ -37,11 +40,14 @@ async function isTokenValid() {
 
 // Retrieve user role from token
 async function getUserRole() {
-  const token = getCookie("Authorization")?.split("Bearer ")[1];
+  const token = getCookie("Authorization");
+  const tokendata = { Token: token };
+  console.log('Token:', token);
+
   if (!token) return null;
   try {
-    const response = await apiClient.post("/Out-Of-Bound/getUserType", { token });
-    return response.data.user_type || null; // API response: { user_type: "member/admin/etc" }
+    const response = await apiClient.post("/Front/getUserType", tokendata);
+    return response.data; // API response: { user_type: "member/admin/etc" }
   } catch (error) {
     console.error("Error retrieving user role:", error);
     return null;
@@ -97,7 +103,7 @@ router.beforeEach(async (to, from, next) => {
 
   const isValid = await isTokenValid();
   if (!isValid) {
-    console.error("Invalid token. Redirecting to login.");
+    console.error("Invalid token. Redirecting to login.");  
     return next("/MainLogin");
   }
 

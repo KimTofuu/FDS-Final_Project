@@ -51,7 +51,7 @@ try{
     switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
         if ($req[0] == 'Get') {
-            $tokenRes = $auth->verifyToken('admin');
+            $tokenRes = $auth->verifyTokenBackend('admin');
             if ($tokenRes['is_valid'] !== true) {
                 if ($req[1] == 'One') {echo json_encode($adminCon->getOneAcc($data));return;}
                 if ($req[1] == 'All') {echo json_encode($adminCon->getAllAcc());return;}
@@ -59,14 +59,14 @@ try{
         }
 
         if ($req[0] == 'Member') {
-            $tokenResMem = $auth->verifyToken('member');
+            $tokenResMem = $auth->verifyTokenBackend('member');
             if ($tokenResMem['is_valid'] !== true) {
                 if ($req[1] == 'ViewInfo') {echo json_encode($member->viewInfo());return;}
             }
         }
 
         if($req[0] == 'Coach'){
-            $tokenResMem = $auth->verifyToken('coach');
+            $tokenResMem = $auth->verifyTokenBackend('coach');
             if ($tokenResMem['is_valid'] !== true) {
                 if ($req[1] == 'View-Clients') {echo json_encode($coach->getAllClients());return;}
                 if ($req[1] == 'View-one-Client') {echo json_encode($coach->seeMemDet($data));return;}
@@ -78,11 +78,8 @@ try{
 
     case 'POST':
         if ($req[0] == 'Front') {
-            $tokenRes = $auth->verifyToken('Out-Of-Bound');
-            if ($tokenRes['is_valid'] !== true) {
-                if($req[1] == 'verifyToken'){echo json_encode($auth->verifyToken($data));return;}
-                if($req[1] == 'getUserType'){echo json_encode($rm->getUserTypeFromToken());return;}
-            }
+            if($req[1] == 'verifyTokenBackend'){echo json_encode($auth->verifyTokenBackend($data));return;}
+            if($req[1] == 'getUserType'){echo json_encode($rm->getUserTypeFromToken($data));return;}
         }
 
         if ($req[0] == 'Create') {
@@ -93,7 +90,7 @@ try{
         
 
         if ($req[0] == 'Login') {
-            $usertype = $rm->getUserTypeFromToken();
+            // $usertype = $rm->getUserTypeFromToken();
             if(isset($_COOKIE['Authorization']) && $_COOKIE['Authorization'] !== ''){
                 echo json_encode(($rm->responsePayload(null, 'failed', 'Already logged in', 403)));
                 return;
@@ -107,7 +104,7 @@ try{
         if ($req[0] == 'Logout') {echo json_encode($auth->logout());return;}                                            
 
         if($req[0] == 'Member'){
-            $tokenResMem = $auth->verifyToken('member');
+            $tokenResMem = $auth->verifyTokenBackend('member');
             if($tokenResMem['is_valid'] !== true && isset($_COOKIE['Authorization'])) {
                 if($req[1] == 'setAlarm'){echo json_encode($member->setAlarm($data));return;}
                 if($req[1] == 'setSession'){echo json_encode($member->setSession($data));return;}
@@ -122,7 +119,7 @@ try{
         }
 
         if($req[0] == 'Coach'){
-            $tokenResMem = $auth->verifyToken('coach');
+            $tokenResMem = $auth->verifyTokenBackend('coach');
             if($tokenResMem['is_valid'] !== true && isset($_COOKIE['Authorization'])) {
                 if($req[1] == "Send-Message"){echo json_encode($coach->sendMessage($data));return;}
             }else{
@@ -143,7 +140,7 @@ try{
         if ($req[0] == 'UpdateStat') {echo json_encode($adminCon->archStat($data));return;}
 
         if ($req[0] == 'Member') {
-            $tokenResMem = $auth->verifyToken('member');
+            $tokenResMem = $auth->verifyTokenBackend('member');
             if ($tokenResMem['is_valid'] !== true) {
                 if ($req[1] == 'UpdateInfo') {echo json_encode($member->editInfo($data));return;}
             }
