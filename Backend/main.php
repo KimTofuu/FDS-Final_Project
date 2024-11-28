@@ -78,11 +78,8 @@ try{
 
     case 'POST':
         if ($req[0] == 'Front') {
-            $tokenRes = $auth->verifyToken('Out-Of-Bound');
-            if ($tokenRes['is_valid'] !== true) {
-                if($req[1] == 'verifyToken'){echo json_encode($auth->verifyToken($data));return;}
-                if($req[1] == 'getUserType'){echo json_encode($rm->getUserTypeFromToken());return;}
-            }
+            if($req[1] == 'verifyToken'){echo json_encode($auth->verifyToken($data));return;}
+            if($req[1] == 'getUserType'){echo json_encode($rm->getUserTypeFromToken());return;}
         }
 
         if ($req[0] == 'Create') {
