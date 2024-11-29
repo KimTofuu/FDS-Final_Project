@@ -61,7 +61,7 @@ try{
 
         if ($req[0] == 'Member') {
             $tokenResMem = $auth->verifyTokenBackend('member');
-            if ($tokenResMem['is_valid'] !== true) {
+            if ($tokenResMem['is_valid'] == true) {
                 if ($req[1] == 'ViewInfo') {echo json_encode($member->viewInfo($data));return;}
             }
         }

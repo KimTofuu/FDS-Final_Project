@@ -45,7 +45,8 @@
       <div class="dashboard-content">
         <div class="bmi-box">
           <h2>BMI</h2>
-          <p>29.8</p>
+          <p>{{ BMI }}</p>
+          <button @click="computeBMI">Compute BMI</button>
         </div>
         <div class="bmi-box">
           <h2>TIME</h2>
@@ -150,7 +151,7 @@
                 <option value="" disabled selected>Select a fitness level</option>
                 <option value="beginner">Beginner</option>
                 <option value="intermediate">Intermediate</option>
-                <option value="expert">Expert</option>
+                <option value="advanced">Advanced</option>
               </select>
               <label for="goal">Goal:</label>
               <select id="goal" v-model="goal">
@@ -192,6 +193,7 @@ export default {
     return {
       showLogoutConfirm: false,
       showFoodCalories: false,
+      BMI: 0,
       foodDetails: {
         food: "",
         protein: 0,
@@ -238,6 +240,17 @@ export default {
         console.log(response.data);
         if(response.data.status.remarks == "success"){
           this.CalorieReq.dailyCalories = response.data.payload;
+        }
+      }catch(error){
+        console.error("Error:", error);
+      }
+    },
+
+    async computeBMI() {
+      try{
+        const response = await apiClient.get("/Member/ViewInfo", {withCredentials: true});
+        if(response.data?.status?.remarks == "success"){
+          this.BMI = response.data.payload[0].BMI;
         }
       }catch(error){
         console.error("Error:", error);
