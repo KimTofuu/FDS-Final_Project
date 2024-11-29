@@ -13,6 +13,12 @@ import MemberDashboard from "@/views/MemberDashboard.vue";
 import MemberProfile from "@/views/MemberProfile.vue";
 import MemberCoaches from "@/views/MemberCoaches.vue";
 import MemberUpgrade from "@/views/MemberUpgrade.vue";
+import AdminMembercondition from "@/views/AdminMembercondition.vue";
+import AdminMemberemail from "@/views/AdminMemberemail.vue";
+import AdminMemberinfo from "@/views/AdminMemberinfo.vue";
+import AdminMembersubscription from "@/views/AdminMembersubscription.vue";
+import CoachClient from "@/views/CoachClient.vue";
+import CoachProfile from "@/views/CoachProfile.vue";
 
 // Helper function to read cookies
 // function getCookie(name) {
@@ -33,11 +39,10 @@ async function getCookie(name) {
     console.log(`Retrieved cookie for ${name}:`, cookieValue);
     return cookieValue;
   }
-  
+
   console.warn(`Cookie ${name} not found.`);
   return null;
 }
-
 
 // Validate token with the server
 async function isTokenValid() {
@@ -45,7 +50,8 @@ async function isTokenValid() {
   const tokendata = {
     Token: token,
   };
-  if (!token) console.log("Token not found", token); return false;
+  if (!token) console.log("Token not found", token);
+  return false;
   try {
     const response = await apiClient.post("/Front/verifyToken", tokendata);
     console.log(response.data);
@@ -83,6 +89,28 @@ const router = createRouter({
     { path: "/Services", name: "Services", component: Services },
     { path: "/OurTeam", name: "OurTeam", component: OurTeam },
     { path: "/Contacts", name: "Contacts", component: Contacts },
+    { path: "/CoachClient", name: "CoachClient", component: CoachClient },
+    { path: "/CoachProfile", name: "CoachProfile", component: CoachProfile },
+    {
+      path: "/AdminMembercondition",
+      name: "AdminMembercondition",
+      component: AdminMembercondition,
+    },
+    {
+      path: "/AdminMemberemail",
+      name: "AdminMemberemail",
+      component: AdminMemberemail,
+    },
+    {
+      path: "/AdminMemberinfo",
+      name: "AdminMemberinfo",
+      component: AdminMemberinfo,
+    },
+    {
+      path: "/AdminMembersubscription",
+      name: "AdminMembersubscription",
+      component: AdminMembersubscription,
+    },
     {
       path: "/MemberDashboard",
       name: "MemberDashboard",
@@ -120,13 +148,15 @@ router.beforeEach(async (to, from, next) => {
 
   const isValid = isTokenValid();
   if (!isValid) {
-    console.error("Invalid token. Redirecting to login.");  
+    console.error("Invalid token. Redirecting to login.");
     return next("/MainLogin");
   }
 
   const userRole = await getUserRole();
   if (to.meta.role && to.meta.role !== userRole) {
-    console.error(`Unauthorized access. Expected role: ${to.meta.role}, got: ${userRole}.`);
+    console.error(
+      `Unauthorized access. Expected role: ${to.meta.role}, got: ${userRole}.`
+    );
     return next("/MainLogin");
   }
 
