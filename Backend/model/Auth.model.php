@@ -76,7 +76,7 @@ class Auth implements AuthInterface{
                     $stmt->closeCursor();
                     if (password_verify($data->Password, $res['Password'])) {
                         $token = $this->tokenGen(['user_type' => $userType, 'User_ID' => $res['User_ID']]);
-                        setcookie('Authorization','Bearer ' . $token['token'], time() + (86400 * 7), '/', '', false, false);
+                        setcookie('Authorization', 'Bearer ' . $token['token'], ["expires" => time() + (86400 * 7),"path" => '/',"domain" => 'localhost', "secure" => true, "httponly" => false, "samesite" => "none"]);
                         // $redirectUrl = $url . $res['User_ID'];
                         // header('Location: $apipath');
                         return $this->gm->responsePayload(array("token" => $token['token'], "user_type" => $userType, "User_ID" => $res['User_ID']), "success", "Logged in", 200);
@@ -170,55 +170,54 @@ class Auth implements AuthInterface{
         );
     }
 
-    public function verifyToken($token = null, $requiredUserType = null) {
-        //$authHeader = $_COOKIE['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? null;
-
+    public function verifyToken($token, $requiredUserType = null) {
         $authHeader = $token->Token;
 
 
         if (!$authHeader || strpos($authHeader, 'Bearer ') !== 0) {
-            return $this->tokenPayload(null, false);
+            return $this->tokenPayload('1', false);
         }
 
         $token = substr($authHeader, 7); // Strip "Bearer " prefix
         if ($this->checkBlacklistStatus($token)) {
-            return $this->tokenPayload(null, false);
+            return $this->tokenPayload('2', false);
         }
 
         $decoded = explode(".", $token);
         if (count($decoded) !== 3) {
-            return $this->tokenPayload(null, false);
+            // error_log('Token parts: ' . print_r($decoded, true));
+            return $this->tokenPayload('3', false);
         }
 
         $payload = json_decode(base64_decode($decoded[1]));
         if (!$payload) {
-            return $this->tokenPayload(null, true);
+            return $this->tokenPayload('4', true);
         }
 
         if (isset($payload->exp) && time() > $payload->exp) {
-            return $this->tokenPayload(null, false);
+            return $this->tokenPayload('5', false);
         }
 
         $signature = hash_hmac('sha256', $decoded[0] . "." . $decoded[1], $_ENV['SECRET_KEY'], true);
         $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
 
         if ($base64UrlSignature !== $decoded[2]) {
-            return $this->tokenPayload(null, false);
+            return $this->tokenPayload('6', false);
         }
 
         if ($requiredUserType && isset($payload->token_data->user_type) && $payload->token_data->user_type !== $requiredUserType) {
-            return $this->tokenPayload(null, false);
+            return $this->tokenPayload('7', false);
         }
 
         if (!isset($payload->token_data->User_ID)) {
-            return $this->tokenPayload(null, false);
+            return $this->tokenPayload('8', false);
         }
 
         return $this->tokenPayload($payload, true);
     }
 
-    public function verifyTokenBackend($token = null, $requiredUserType = null) {
-        $authHeader = $_COOKIE['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? null;
+    public function verifyTokenBackend( $requiredUserType = null) {
+        $authHeader = rawurldecode($_COOKIE['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? null);
 
 
         if (!$authHeader || strpos($authHeader, 'Bearer ') !== 0) {
@@ -253,6 +252,10 @@ class Auth implements AuthInterface{
 
         if ($requiredUserType && isset($payload->token_data->user_type) && $payload->token_data->user_type !== $requiredUserType) {
             return $this->tokenPayload(null, false);
+        }
+
+        if ($requiredUserType && isset($payload->token_data->user_type) && $payload->token_data->user_type === $requiredUserType) {
+            return $this->tokenPayload($payload, true);
         }
 
         if (!isset($payload->token_data->User_ID)) {

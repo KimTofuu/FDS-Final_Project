@@ -17,9 +17,33 @@ class ResponseMethodsProj implements ResponseInterfacePHPTemp
         http_response_code(403);
     }
 
-    public function getIDFromToken(){ // WILL RETRIEVE DATA FROM COOKIE
+    public function getIDFromTokenBackend(){ // WILL RETRIEVE DATA FROM COOKIE
         if (isset($_COOKIE['Authorization'])) {
             $jwt = explode(' ', $_COOKIE['Authorization']);
+            
+            if ($jwt[0] === 'Bearer' && isset($jwt[1])) {
+                $token = $jwt[1];
+                
+                $decoded = explode(".", $token);
+                
+                $payload = json_decode(base64_decode($decoded[1]));
+                
+                $signature = hash_hmac('sha256', $decoded[0] . "." . $decoded[1], $_ENV['SECRET_KEY'], true);
+                $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+                
+                if ($base64UrlSignature === $decoded[2]) {
+                    if (isset($payload->token_data->User_ID)) {
+                        return $payload->token_data->User_ID;
+                    }
+                }
+            }
+        }
+    }
+
+    public function getIDFromToken($data){ // WILL RETRIEVE DATA FROM COOKIE
+        $token = $data->Token;
+        if ($token) {
+            $jwt = explode(' ', $token);
             
             if ($jwt[0] === 'Bearer' && isset($jwt[1])) {
                 $token = $jwt[1];

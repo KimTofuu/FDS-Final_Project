@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     header('Access-Control-Allow-Origin: '. ($_SERVER['HTTP_ORIGIN'] ?? '*'));
     header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    header('Access-Control-Allow-Credentials: true');
     header('Access-Control-Max-Age: 86400');
     exit;
 }
@@ -61,7 +62,7 @@ try{
         if ($req[0] == 'Member') {
             $tokenResMem = $auth->verifyTokenBackend('member');
             if ($tokenResMem['is_valid'] !== true) {
-                if ($req[1] == 'ViewInfo') {echo json_encode($member->viewInfo());return;}
+                if ($req[1] == 'ViewInfo') {echo json_encode($member->viewInfo($data));return;}
             }
         }
 
@@ -78,7 +79,7 @@ try{
 
     case 'POST':
         if ($req[0] == 'Front') {
-            if($req[1] == 'verifyTokenBackend'){echo json_encode($auth->verifyTokenBackend($data));return;}
+            if($req[1] == 'verifyToken'){echo json_encode($auth->verifyToken($data));return;}
             if($req[1] == 'getUserType'){echo json_encode($rm->getUserTypeFromToken($data));return;}
         }
 
@@ -105,7 +106,7 @@ try{
 
         if($req[0] == 'Member'){
             $tokenResMem = $auth->verifyTokenBackend('member');
-            if($tokenResMem['is_valid'] !== true && isset($_COOKIE['Authorization'])) {
+            if($tokenResMem['is_valid'] == true) {
                 if($req[1] == 'setAlarm'){echo json_encode($member->setAlarm($data));return;}
                 if($req[1] == 'setSession'){echo json_encode($member->setSession($data));return;}
                 if($req[1] == 'Daily-Calories'){echo json_encode($member->calcBodCalcNeed($data));return;}
@@ -113,7 +114,7 @@ try{
                 if($req[1] == 'Get-Recommendation'){echo json_encode($member->getRecomm($data));return;}
                 if($req[1] == 'Enroll-Class'){echo json_encode($member->enrollClass($data));return;}
             }else{
-                echo json_encode(($rm->responsePayload(null, 'failed', 'Login first', 403)));
+                echo json_encode(($rm->responsePayload($_COOKIE['Authorization'], 'failed', 'Login first', 403)));
                 return;
             }
         }
@@ -132,6 +133,10 @@ try{
             if($req[1] == 'Expiry'){echo json_encode($mailer->Expiry());return;}            
             if($req[1] == 'Session'){echo json_encode($mailer->Session());return;}
             if($req[1] == 'Alarm'){echo json_encode($mailer->Alarm());return;}
+        }
+
+        if($req[0] == 'cookieTest'){
+            echo json_encode($auth->verifyTokenBackend('member')); return;
         }
 
         break;

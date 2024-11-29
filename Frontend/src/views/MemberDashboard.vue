@@ -120,11 +120,26 @@
         <button @click="getRecom" class="recom-button">Get Recommendations</button> -->
         <div class="calorie-box">
           <h2>Daily Caloric Needs</h2>
-          <p>1200 - 1500 kcal/day</p>
+          <form @submit.prevent="computeDailyCalories">
+            <select v-model="goal">
+              <option value="lose weight">Lose weight</option>
+              <option value="gain weight">Gain weight</option>
+              <option value=null>Maintenance</option>
+            </select>
+            <select v-model="activityLevel">
+              <option value="sedentary">Sedentary (little or no exercise)</option>
+              <option value="lightly active">Lightly Active (light exercise/sports 1-3 days/week)</option>
+              <option value="moderately active">Moderately Active (moderate exercise/sports 3-5 days/week)</option>
+              <option value="very active">Very Active (hard exercise/sports 6-7 days a week)</option>
+              <option value="extra active">Extra Active (very hard exercise/sports & physical job or 2x training)</option>
+            </select>
+            <p>Calories per day: {{ CalorieReq.dailyCalories }}</p>
+            <button type="submit">Compute Calorie Requirements</button>
+          </form>
         </div>
         <div class="food-calories" @click="showFoodCalories = true">
-          <h2>Food Calories</h2>
-          <p class="food-info">Click To Add Food Information</p>
+          <h2>Food Calories Calculator</h2>
+          <p class="food-info">Click to compute your meal's total calories</p>
         </div>
 
         <div class="recommendations">
@@ -189,6 +204,11 @@ export default {
         workoutplan: "",
         foodplan: "",
       },
+      CalorieReq: {
+        goal: "",
+        activityLevel: "",
+        dailyCalories: 0,
+      },
     };
   },
   methods: {
@@ -208,16 +228,31 @@ export default {
       }
     },
 
+    async computeDailyCalories() {
+      const data = {
+        activityLevel: this.CalorieReq.activityLevel,
+        goal: this.CalorieReq.goal
+      }
+      try{
+        const response = await apiClient.post("/Member/Daily-Calories", data, {withCredentials: true});
+        console.log(response.data);
+        if(response.data.status.remarks == "success"){
+          this.CalorieReq.dailyCalories = response.data.payload;
+        }
+      }catch(error){
+        console.error("Error:", error);
+      }
+    },
+
     async fetchRecommendations() {
       const recomData = {
         goal: this.goal.toLowerCase(),
         fitnessLevel: this.fitnessLevel.toLowerCase(),
       };
       try {
-        const response = await apiClient.post(
-          "/Member/Get-Recommendation",
-          recomData
-        );
+        const response = await apiClient.post("/Member/Get-Recommendation", recomData, {
+          withCredentials: true
+        });
         console.log("API Response:", response.data);
 
         if (response.data.status.remarks == "success") {

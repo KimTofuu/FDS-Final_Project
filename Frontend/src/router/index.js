@@ -15,23 +15,41 @@ import MemberCoaches from "@/views/MemberCoaches.vue";
 import MemberUpgrade from "@/views/MemberUpgrade.vue";
 
 // Helper function to read cookies
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
+// function getCookie(name) {
+//   const value = `; ${document.cookie}`;
+//   const parts = value.split(`; ${name}=`);
+//   if (parts.length === 2) return decodeURIComponent(parts.pop().split(";").shift());
+//   return null;
+// }
+
+async function getCookie(name) {
+  const cookies = document.cookie;
+  console.log("All cookies:", cookies);
+
+  const value = `; ${cookies}`;
   const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return decodeURIComponent(parts.pop().split(";").shift());
+  if (parts.length === 2) {
+    const cookieValue = decodeURIComponent(parts.pop().split(";").shift());
+    console.log(`Retrieved cookie for ${name}:`, cookieValue);
+    return cookieValue;
+  }
+  
+  console.warn(`Cookie ${name} not found.`);
   return null;
 }
 
+
 // Validate token with the server
 async function isTokenValid() {
-  const token = getCookie("Authorization");
+  const token = await getCookie("Authorization");
   const tokendata = {
     Token: token,
   };
-  if (!token) return false;
+  if (!token) console.log("Token not found", token); return false;
   try {
     const response = await apiClient.post("/Front/verifyToken", tokendata);
-    return response.data.is_valid; // API returns { is_valid: true/false }
+    console.log(response.data);
+    return response.data?.is_valid; // API returns { is_valid: true/false }
   } catch (error) {
     console.error("Error validating token:", error);
     return false;
@@ -40,13 +58,12 @@ async function isTokenValid() {
 
 // Retrieve user role from token
 async function getUserRole() {
-  const token = getCookie("Authorization");
+  const token = await getCookie("Authorization");
   const tokendata = { Token: token };
-  console.log('Token:', token);
-
   if (!token) return null;
   try {
     const response = await apiClient.post("/Front/getUserType", tokendata);
+    console.log(response.data);
     return response.data; // API response: { user_type: "member/admin/etc" }
   } catch (error) {
     console.error("Error retrieving user role:", error);
@@ -101,7 +118,7 @@ router.beforeEach(async (to, from, next) => {
     return next(); // No auth required for this route
   }
 
-  const isValid = await isTokenValid();
+  const isValid = isTokenValid();
   if (!isValid) {
     console.error("Invalid token. Redirecting to login.");  
     return next("/MainLogin");
@@ -110,7 +127,7 @@ router.beforeEach(async (to, from, next) => {
   const userRole = await getUserRole();
   if (to.meta.role && to.meta.role !== userRole) {
     console.error(`Unauthorized access. Expected role: ${to.meta.role}, got: ${userRole}.`);
-    return next("/LandingPage");
+    return next("/MainLogin");
   }
 
   // Token valid and role matched

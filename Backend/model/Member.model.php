@@ -37,7 +37,7 @@ class member implements memberInterface {
     }
 
     public function editInfo($data) {
-        $userID = $this->gm->getIDFromToken();
+        $userID = $this->gm->getIDFromToken($data->Token);
 
         if ($data->height == 0) {
             return $this->gm->responsePayload(null, 'failed', 'Height cannot be zero', 403);
@@ -60,8 +60,8 @@ class member implements memberInterface {
     }
 
     
-    public function viewInfo() {
-        $userID = $this->gm->getIDFromToken();
+    public function viewInfo($data) {
+        $userID = $this->gm->getIDFromToken($data->Token);
         if (!$userID) {
             return $this->gm->responsePayload(null, 'error', 'Invalid user ID', 400);
         }
@@ -85,7 +85,7 @@ class member implements memberInterface {
     }
 
     public function setAlarm($data){
-        $userID = $this->gm->getIDFromToken();
+        $userID = $this->gm->getIDFromToken($data->Token);
 
         $sql = 'INSERT INTO gymalarm(User_ID, day, time) VALUES(?, ?, ?)';
         $checkDup = 'SELECT * FROM gymalarm WHERE User_ID = ? AND day = ? AND time = ?'; //gagawin mo to
@@ -109,7 +109,7 @@ class member implements memberInterface {
     }
 
     public function setSession($data){
-        $userID = $this->gm->getIDFromToken();
+        $userID = $this->gm->getIDFromToken($data->Token);
 
         $sql = 'INSERT INTO gymsession(User_ID, date, time, Coach_ID) VALUES(?, ?, ?, ?)';
         $checkDup = 'SELECT * FROM gymsession WHERE User_ID = ? AND date = ? AND time = ? AND Coach_ID = ?'; //gagawin mo to
@@ -133,7 +133,7 @@ class member implements memberInterface {
     }
 
     public function calcBodCalcNeed($data){
-        $userID = $this->gm->getIDFromToken();
+        $userID = $this->gm->getIDFromTokenBackend();
         $getSex = 'SELECT sex FROM member_info WHERE user_id = ?';
         $getWeight = 'SELECT weight FROM member_info WHERE user_id = ?';
         $getHeight = 'SELECT height FROM member_info WHERE user_id = ?';
@@ -213,7 +213,7 @@ class member implements memberInterface {
     }
 
     public function getRecomm($data){
-        $userID = $this->gm->getIDFromToken();
+        $userID = $this->gm->getIDFromTokenBackend();
 
         $goal = $data->goal;
         $fitnessLevel = $data->fitnessLevel;
@@ -282,7 +282,7 @@ class member implements memberInterface {
     }   
 
     public function enrollClass($data){
-        $userID = $this->gm->getIDFromToken();
+        $userID = $this->gm->getIDFromToken($data->Token);
 
         $getCoachID = 'SELECT User_ID FROM coach WHERE Username = LOWER(?)';
         $enrollClass = 'INSERT INTO coach_classes(coach_id, user_id) VALUES(?, ?)';
