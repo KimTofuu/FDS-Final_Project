@@ -58,7 +58,7 @@ export default {
           // Handle successful login
           this.$router.push("/MemberDashboard"); // Redirect to the dashboard or another page
         } else {
-          console.log(response.data);
+          console.log(response.data); 
           this.error = response.data.message || "Login failed";
         }
       } catch (error) {

@@ -2,7 +2,8 @@
 interface ResponseInterfacePHPTemp{
     public function responsePayload($payload, $remarks, $message, $code);
     public function notFound();
-    public function getIDFromToken();
+    public function getIDFromToken($data);
+    public function getIDFromTokenBackend();
     public function getUserTypeFromToken($data);
     public function getUserTypeFromTokenBackendHandler();
 

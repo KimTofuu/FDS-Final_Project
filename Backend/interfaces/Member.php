@@ -2,7 +2,7 @@
 
 interface memberInterface{
     public function editInfo($data);
-    public function viewInfo();
+    public function viewInfo($data);
     public function setAlarm($data);
     public function setSession($data);
     public function calcFoodCalor($data);
