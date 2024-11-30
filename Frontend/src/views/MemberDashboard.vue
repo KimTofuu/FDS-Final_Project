@@ -2,7 +2,7 @@
   <div class="sidebar-layout">
     <button @click="toggleSidebar" class="sidebar-toggle">☰</button>
 
-    <aside :class="['sidebar', { show: showSidebar }]">
+    <div :class="['sidebar', { show: showSidebar }]">
       <div class="logo">
         <router-link to="/MemberDashboard">
           <img src="@/assets/logononame.png" alt="Logo" class="logo-img" />
@@ -23,7 +23,7 @@
         <img src="../assets/logout.png" alt="Logout" class="logout-img" />
         <span class="logout-text">Logout</span>
       </button>
-    </aside>
+    </div>
 
     <transition
       name="fade"
@@ -45,8 +45,7 @@
       <div class="dashboard-content">
         <div class="bmi-box">
           <h2>BMI</h2>
-          <p>{{ BMI }}</p>
-          <button @click="computeBMI">Compute BMI</button>
+          <p>29.8</p>
         </div>
         <div class="bmi-box">
           <h2>TIME</h2>
@@ -125,14 +124,25 @@
             <select v-model="goal">
               <option value="lose weight">Lose weight</option>
               <option value="gain weight">Gain weight</option>
-              <option value=null>Maintenance</option>
+              <option value="null">Maintenance</option>
             </select>
             <select v-model="activityLevel">
-              <option value="sedentary">Sedentary (little or no exercise)</option>
-              <option value="lightly active">Lightly Active (light exercise/sports 1-3 days/week)</option>
-              <option value="moderately active">Moderately Active (moderate exercise/sports 3-5 days/week)</option>
-              <option value="very active">Very Active (hard exercise/sports 6-7 days a week)</option>
-              <option value="extra active">Extra Active (very hard exercise/sports & physical job or 2x training)</option>
+              <option value="sedentary">
+                Sedentary (little or no exercise)
+              </option>
+              <option value="lightly active">
+                Lightly Active (light exercise/sports 1-3 days/week)
+              </option>
+              <option value="moderately active">
+                Moderately Active (moderate exercise/sports 3-5 days/week)
+              </option>
+              <option value="very active">
+                Very Active (hard exercise/sports 6-7 days a week)
+              </option>
+              <option value="extra active">
+                Extra Active (very hard exercise/sports & physical job or 2x
+                training)
+              </option>
             </select>
             <p>Calories per day: {{ CalorieReq.dailyCalories }}</p>
             <button type="submit">Compute Calorie Requirements</button>
@@ -144,25 +154,25 @@
         </div>
 
         <div class="recommendations">
-            <div class="col-4 button">
-              <h2>Recommendations</h2>
-              <label for="fitness-level">Fitness Level:</label>
-              <select id="fitness-level" v-model="fitnessLevel">
-                <option value="" disabled selected>Select a fitness level</option>
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-              </select>
-              <label for="goal">Goal:</label>
-              <select id="goal" v-model="goal">
-                <option value="" disabled selected>Select a goal</option>
-                <option value="weight loss">Weight Loss</option>
-                <option value="muscle gain">Muscle Gain</option>
-                <option value="general fitness">General Fitness</option>
-                <option value="flexibility">Flexibility</option>
-                <option value="endurance">Endurance</option>
-              </select>
-              <button @click="fetchRecommendations">Get Recommendations</button>
+          <div class="col-4 button">
+            <h2>Recommendations</h2>
+            <label for="fitness-level">Fitness Level:</label>
+            <select id="fitness-level" v-model="fitnessLevel">
+              <option value="" disabled selected>Select a fitness level</option>
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="expert">Expert</option>
+            </select>
+            <label for="goal">Goal:</label>
+            <select id="goal" v-model="goal">
+              <option value="" disabled selected>Select a goal</option>
+              <option value="weight loss">Weight Loss</option>
+              <option value="muscle gain">Muscle Gain</option>
+              <option value="general fitness">General Fitness</option>
+              <option value="flexibility">Flexibility</option>
+              <option value="endurance">Endurance</option>
+            </select>
+            <button @click="fetchRecommendations">Get Recommendations</button>
           </div>
         </div>
 
@@ -185,15 +195,15 @@
   </div>
 </template>
 
-<script scoped>
+<script>
 import apiClient from "@/api/axios";
 
 export default {
   data() {
     return {
       showLogoutConfirm: false,
+      showSidebar: false,
       showFoodCalories: false,
-      BMI: 0,
       foodDetails: {
         food: "",
         protein: 0,
@@ -214,6 +224,11 @@ export default {
     };
   },
   methods: {
+    toggleSidebar() {
+      this.showSidebar = !this.showSidebar;
+      console.log("Sidebar visibility:", this.showSidebar);
+    },
+
     async logout() {
       this.showLogoutConfirm = false;
       try {
@@ -233,26 +248,17 @@ export default {
     async computeDailyCalories() {
       const data = {
         activityLevel: this.CalorieReq.activityLevel,
-        goal: this.CalorieReq.goal
-      }
-      try{
-        const response = await apiClient.post("/Member/Daily-Calories", data, {withCredentials: true});
+        goal: this.CalorieReq.goal,
+      };
+      try {
+        const response = await apiClient.post("/Member/Daily-Calories", data, {
+          withCredentials: true,
+        });
         console.log(response.data);
-        if(response.data.status.remarks == "success"){
+        if (response.data.status.remarks == "success") {
           this.CalorieReq.dailyCalories = response.data.payload;
         }
-      }catch(error){
-        console.error("Error:", error);
-      }
-    },
-
-    async computeBMI() {
-      try{
-        const response = await apiClient.get("/Member/ViewInfo", {withCredentials: true});
-        if(response.data?.status?.remarks == "success"){
-          this.BMI = response.data.payload[0].BMI;
-        }
-      }catch(error){
+      } catch (error) {
         console.error("Error:", error);
       }
     },
@@ -263,9 +269,13 @@ export default {
         fitnessLevel: this.fitnessLevel.toLowerCase(),
       };
       try {
-        const response = await apiClient.post("/Member/Get-Recommendation", recomData, {
-          withCredentials: true
-        });
+        const response = await apiClient.post(
+          "/Member/Get-Recommendation",
+          recomData,
+          {
+            withCredentials: true,
+          }
+        );
         console.log("API Response:", response.data);
 
         if (response.data.status.remarks == "success") {
@@ -571,7 +581,6 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   width: 100%;
   height: auto;
-
 }
 
 .dietplan h2,
@@ -605,21 +614,49 @@ body {
 
 .calorie-box,
 .food-calories {
-  background-color: #f5f5f5;
+  align-items: center;
+  background-color: #f9f9f9;
   color: #000000;
-  padding-top: 25%;
+  padding: 20px;
   text-align: center;
   border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-  width: 100%;
-  height: auto;
-  
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 .calorie-box h2 {
+  font-size: 1.5rem;
   margin-bottom: 10px;
 }
 
+.calorie-box select {
+  width: 87%;
+  margin: 10px 0;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.calorie-box select:focus {
+  border-color: #ac0700;
+}
+
+.calorie-box button {
+  background-color: #ac0700;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  margin-top: 10px;
+}
+
+.calorie-box button:hover {
+  background-color: #ffffff;
+  color: #ac0700;
+  transform: scale(1.05);
+}
 .food-calories {
   cursor: pointer;
   transition: transform 0.3s, box-shadow 0.3s ease;
@@ -631,6 +668,7 @@ body {
 }
 
 .food-calories h2 {
+  font-size: 1.5rem;
   margin-bottom: 10px;
 }
 
