@@ -26,20 +26,24 @@
         <span class="logout-text">Logout</span>
       </button>
     </aside>
-    <transition
-      name="fade"
-      @before-enter="beforeEnter"
-      @enter="enter"
-      @leave="leave"
-    >
-      <div v-if="showLogoutConfirm" class="logout-confirmation">
-        <p>Are you sure you want to logout?</p>
-        <div class="button-group">
-          <button @click="logout">Yes</button>
-          <button @click="showLogoutConfirm = false">No</button>
+    
+    <div v-show="showLogoutConfirm">
+      <div class="overlay" @click="showLogoutConfirm = false"></div>
+      <transition
+        name="fade"
+        @before-enter="beforeEnter"
+        @enter="enter"
+        @leave="leave"
+      >
+        <div v-if="showLogoutConfirm" class="logout-confirmation">
+          <p>Are you sure you want to logout?</p>
+          <div class="button-group">
+            <button @click="logout">Yes</button>
+            <button @click="showLogoutConfirm = false">No</button>
+          </div>
         </div>
-      </div>
-    </transition>
+      </transition>
+    </div>
 
     <main class="content">
       <header>
@@ -201,6 +205,100 @@ body {
   text-decoration: none;
   font-weight: bold;
   transition: color 0.3s;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); 
+  z-index: 1000;
+}
+
+.logout-button {
+  background-color: #ac0700;
+  border: none;
+  cursor: pointer;
+  margin-top: 25vh;
+  padding: 5px 10px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 50px;
+  overflow: hidden;
+  transition: width 0.3s ease, padding 0.3s ease;
+}
+
+.logout-img {
+  width: 30px;
+  height: 30px;
+  transition: transform 0.3s ease;
+}
+
+.logout-img:hover {
+  transform: scale(1.1);
+}
+
+.logout-text {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ffffff;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  white-space: nowrap;
+}
+
+.logout-button:hover {
+  width: 15vh;
+  padding: 5px 10px;
+}
+
+.logout-button:hover .logout-text {
+  opacity: 1;
+}
+
+.logout-confirmation {
+  position: fixed;
+  top: 50%;
+  left: 60%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 27%;
+  height: 20%;
+  opacity: 0;
+  pointer-events: auto;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.logout-confirmation p {
+  font-size: 1.5rem;
+  margin-bottom: 5%;
+}
+
+.logout-confirmation button {
+  padding: 0px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.2rem;
+  width: 10vh;
+  height: 5vh;
+  background-color: #fff;
+  color: #ffffff(255, 255, 255);
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.logout-confirmation button:hover {
+  background-color: #ac0700;
+  color: #fff;
+  transform: scale(1.05);
 }
 
 .content h1 {
