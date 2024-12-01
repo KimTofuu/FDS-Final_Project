@@ -22,20 +22,23 @@
       </button>
     </aside>
 
-    <transition
-      name="fade"
-      @before-enter="beforeEnter"
-      @enter="enter"
-      @leave="leave"
-    >
-      <div v-if="showLogoutConfirm" class="logout-confirmation">
-        <p>Are you sure you want to logout?</p>
-        <div class="button-group">
-          <button @click="logout">Yes</button>
-          <button @click="showLogoutConfirm = false">No</button>
+    <div v-show="showLogoutConfirm">
+        <div class="overlay" @click="showLogoutConfirm = false"></div>  
+      <transition
+        name="fade"
+        @before-enter="beforeEnter"
+        @enter="enter"
+        @leave="leave"
+      >
+        <div v-if="showLogoutConfirm" class="logout-confirmation">
+          <p>Are you sure you want to logout?</p>
+          <div class="button-group">
+            <button @click="logout">Yes</button>
+            <button @click="showLogoutConfirm = false">No</button>
+          </div>
         </div>
+      </transition>
       </div>
-    </transition>
 
     <main class="content">
       <div class="subscriptions">
@@ -92,7 +95,7 @@
 export default {
   data() {
     return {
-      showSidebar: false,
+      showSidebar: true,
       showLogoutConfirm: false,
     };
   },
@@ -137,6 +140,7 @@ body {
   height: 100%;
   font-family: "Figtree", sans-serif;
   background-color: #fff;
+  overflow: hidden;
 }
 
 .sidebar-layout {
@@ -225,6 +229,16 @@ body {
   border-radius: 5px;
   cursor: pointer;
   z-index: 20;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); 
+  z-index: 1000;
 }
 
 .logout-button {

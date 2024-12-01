@@ -23,20 +23,23 @@
       </button>
     </aside>
 
-    <transition
-      name="fade"
-      @before-enter="beforeEnter"
-      @enter="enter"
-      @leave="leave"
-    >
-      <div v-if="showLogoutConfirm" class="logout-confirmation">
-        <p>Are you sure you want to logout?</p>
-        <div class="button-group">
-          <button @click="logout">Yes</button>
-          <button @click="showLogoutConfirm = false">No</button>
+    <div v-show="showLogoutConfirm">
+      <div class="overlay" @click="showLogoutConfirm = false"></div>
+      <transition
+        name="fade"
+        @before-enter="beforeEnter"
+        @enter="enter"
+        @leave="leave"
+      >
+        <div v-if="showLogoutConfirm" class="logout-confirmation">
+          <p>Are you sure you want to logout?</p>
+          <div class="button-group">
+            <button @click="logout">Yes</button>
+            <button @click="showLogoutConfirm = false">No</button>
+          </div>
         </div>
-      </div>
-    </transition>
+      </transition>
+    </div>
 
     <main class="profile-container">
       <div class="profile-content">
@@ -279,7 +282,7 @@
 export default {
   data() {
     return {
-      showSidebar: false,
+      showSidebar: true,
       showLogoutConfirm: false,
       showEditModal: false,
       showSessionPopup: false,
@@ -443,7 +446,7 @@ body {
   background-color: #f9f9f9;
   border: 1px solid #ccc;
   padding: 20px;
-  margin:10px;
+  margin: 10px;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -703,6 +706,16 @@ body {
   opacity: 0.8;
 }
 
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
 .logout-button {
   background-color: #ac0700;
   border: none;
@@ -761,6 +774,7 @@ body {
   opacity: 0;
   pointer-events: auto;
   transition: opacity 0.3s ease-in-out;
+  z-index: 1100;
 }
 
 .logout-confirmation p {

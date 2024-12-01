@@ -2,7 +2,7 @@
   <div class="sidebar-layout">
     <button @click="toggleSidebar" class="sidebar-toggle">☰</button>
 
-    <div :class="['sidebar', { show: showSidebar }]">
+    <aside :class="['sidebar', { show: showSidebar }]">
       <div class="logo">
         <router-link to="/MemberDashboard">
           <img src="@/assets/logononame.png" alt="Logo" class="logo-img" />
@@ -23,22 +23,25 @@
         <img src="../assets/logout.png" alt="Logout" class="logout-img" />
         <span class="logout-text">Logout</span>
       </button>
-    </div>
+    </aside>
 
-    <transition
-      name="fade"
-      @before-enter="beforeEnter"
-      @enter="enter"
-      @leave="leave"
-    >
-      <div v-if="showLogoutConfirm" class="logout-confirmation">
-        <p>Are you sure you want to logout?</p>
-        <div class="button-group">
-          <button @click="logout">Yes</button>
-          <button @click="showLogoutConfirm = false">No</button>
+    <div v-show="showLogoutConfirm">
+      <div class="overlay" @click="showLogoutConfirm = false"></div>
+      <transition
+        name="fade"
+        @before-enter="beforeEnter"
+        @enter="enter"
+        @leave="leave"
+      >
+        <div v-if="showLogoutConfirm" class="logout-confirmation">
+          <p>Are you sure you want to logout?</p>
+          <div class="button-group">
+            <button @click="logout">Yes</button>
+            <button @click="showLogoutConfirm = false">No</button>
+          </div>
         </div>
-      </div>
-    </transition>
+      </transition>
+    </div>
 
     <main class="content">
       <h1>Welcome, Francis!</h1>
@@ -67,42 +70,44 @@
           @enter="enter"
           @leave="leave"
         >
-          <div v-if="showFoodCalories" class="food-calories-modal">
-            <h2>Insert Food Details</h2>
-            <form>
-              <label>
-                Food:
-                <input type="text" v-model="foodDetails.food" required />
-              </label>
-              <label>
-                Protein (g):
-                <input type="number" v-model="foodDetails.protein" required />
-              </label>
-              <label>
-                Carbs (g):
-                <input type="number" v-model="foodDetails.carbs" required />
-              </label>
-              <label>
-                Fats (g):
-                <input type="number" v-model="foodDetails.fats" required />
-              </label>
-              <label>
-                Total Calories:
-                <input
-                  type="number"
-                  v-model="foodDetails.total_Calories"
-                  disabled
-                />
-              </label>
-              <div class="button-group">
-                <button type="button" @click="calculateFoodCalories">
-                  Calculate
-                </button>
-                <button type="button" @click="showFoodCalories = false">
-                  Close
-                </button>
-              </div>
-            </form>
+          <div v-if="showFoodCalories" class="overlay">
+            <div class="food-calories-modal">
+              <h2>Insert Food Details</h2>
+              <form>
+                <label>
+                  Food:
+                  <input type="text" v-model="foodDetails.food" required />
+                </label>
+                <label>
+                  Protein (g):
+                  <input type="number" v-model="foodDetails.protein" required />
+                </label>
+                <label>
+                  Carbs (g):
+                  <input type="number" v-model="foodDetails.carbs" required />
+                </label>
+                <label>
+                  Fats (g):
+                  <input type="number" v-model="foodDetails.fats" required />
+                </label>
+                <label>
+                  Total Calories:
+                  <input
+                    type="number"
+                    v-model="foodDetails.total_Calories"
+                    disabled
+                  />
+                </label>
+                <div class="button-group">
+                  <button type="button" @click="calculateFoodCalories">
+                    Calculate
+                  </button>
+                  <button type="button" @click="showFoodCalories = false">
+                    Close
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </transition>
         <!-- <div class="dietplan" v-if="recom.dietplan">
@@ -201,8 +206,8 @@ import apiClient from "@/api/axios";
 export default {
   data() {
     return {
+      showSidebar: true,
       showLogoutConfirm: false,
-      showSidebar: false,
       showFoodCalories: false,
       foodDetails: {
         food: "",
@@ -226,7 +231,6 @@ export default {
   methods: {
     toggleSidebar() {
       this.showSidebar = !this.showSidebar;
-      console.log("Sidebar visibility:", this.showSidebar);
     },
 
     async logout() {
@@ -354,6 +358,7 @@ body {
 
 .sidebar-layout {
   display: flex;
+  height: 100vh;
 }
 
 .sidebar {
@@ -366,14 +371,13 @@ body {
   flex-direction: column;
   align-items: center;
   padding-top: 8%;
+  transition: transform 0.3s ease;
 }
 
 .sidebar .logo img {
   width: 50px;
   height: 60px;
   margin-bottom: 20px;
-  margin-left: 0%;
-  margin-top: -160%;
 }
 
 .sidebar nav ul {
@@ -396,6 +400,16 @@ body {
 
 .sidebar a:hover {
   color: #ac0700;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); 
+  z-index: 1000;
 }
 
 .logout-button {
@@ -488,7 +502,6 @@ body {
 
 .content {
   margin-left: 20%;
-  margin-left: 250px;
   padding: 75px;
   flex: 1;
 }
@@ -669,7 +682,8 @@ body {
 
 .food-calories h2 {
   font-size: 1.5rem;
-  margin-bottom: 10px;
+  margin-bottom: 1vh;
+  margin-top: 10vh;
 }
 
 .food-info {

@@ -12,11 +12,14 @@
       <nav>
         <ul>
           <li>
-            <a href="/AdminMemberinfo">Members Information</a
-            >
+            <a href="/AdminMemberinfo">Members Information</a>
           </li>
           <li><a href="/AdminMemberemail">Members Email</a></li>
-          <li><a href="/AdminMembercondition" style="color: #ac0700">Members Condition</a></li>
+          <li>
+            <a href="/AdminMembercondition" style="color: #ac0700"
+              >Members Condition</a
+            >
+          </li>
           <li><a href="/AdminMembersubscription">Members Subscription</a></li>
         </ul>
       </nav>
@@ -26,20 +29,23 @@
       </button>
     </aside>
 
-    <transition
-      name="fade"
-      @before-enter="beforeEnter"
-      @enter="enter"
-      @leave="leave"
-    >
-      <div v-if="showLogoutConfirm" class="logout-confirmation">
-        <p>Are you sure you want to logout?</p>
-        <div class="button-group">
-          <button @click="logout">Yes</button>
-          <button @click="showLogoutConfirm = false">No</button>
+    <div v-show="showLogoutConfirm">
+      <div class="overlay" @click="showLogoutConfirm = false"></div>
+      <transition
+        name="fade"
+        @before-enter="beforeEnter"
+        @enter="enter"
+        @leave="leave"
+      >
+        <div v-if="showLogoutConfirm" class="logout-confirmation">
+          <p>Are you sure you want to logout?</p>
+          <div class="button-group">
+            <button @click="logout">Yes</button>
+            <button @click="showLogoutConfirm = false">No</button>
+          </div>
         </div>
-      </div>
-    </transition>
+      </transition>
+    </div>
 
     <main class="content">
       <h1>MEMBERS CONDITION</h1>
@@ -58,7 +64,8 @@
             <td>
               <a href="update.html?id=2" class="action-button">Update</a>
               <a
-                href="delete.html?id=3" class="action-button"
+                href="delete.html?id=3"
+                class="action-button"
                 onclick="return confirm('Are you sure you want to delete this record?');"
                 >Delete</a
               >
@@ -70,7 +77,8 @@
             <td>
               <a href="update.html?id=2" class="action-button">Update</a>
               <a
-                href="delete.html?id=3" class="action-button"
+                href="delete.html?id=3"
+                class="action-button"
                 onclick="return confirm('Are you sure you want to delete this record?');"
                 >Delete</a
               >
@@ -82,7 +90,8 @@
             <td>
               <a href="update.html?id=2" class="action-button">Update</a>
               <a
-                href="delete.html?id=3" class="action-button"
+                href="delete.html?id=3"
+                class="action-button"
                 onclick="return confirm('Are you sure you want to delete this record?');"
                 >Delete</a
               >
@@ -106,7 +115,7 @@ export default {
   },
   methods: {
     toggleSidebar() {
-      this.showSidebar = !this.showSidebar; 
+      this.showSidebar = !this.showSidebar;
     },
     async logout() {
       this.showLogoutConfirm = false;
@@ -161,19 +170,19 @@ body {
 .sidebar {
   width: 250px;
   height: 100vh;
-  background-color: #000; 
+  background-color: #000;
   color: #fff;
   position: fixed;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 8%;
-  transition: transform 0.3s ease; 
-  transform: translateX(-100%); 
+  transition: transform 0.3s ease;
+  transform: translateX(-100%);
 }
 
 .sidebar.show {
-  transform: translateX(0); 
+  transform: translateX(0);
 }
 
 .logo {
@@ -203,30 +212,124 @@ body {
   transition: color 0.3s;
 }
 
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.logout-button {
+  background-color: #ac0700;
+  border: none;
+  cursor: pointer;
+  margin-top: 25vh;
+  padding: 5px 10px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 50px;
+  overflow: hidden;
+  transition: width 0.3s ease, padding 0.3s ease;
+}
+
+.logout-img {
+  width: 30px;
+  height: 30px;
+  transition: transform 0.3s ease;
+}
+
+.logout-img:hover {
+  transform: scale(1.1);
+}
+
+.logout-text {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ffffff;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  white-space: nowrap;
+}
+
+.logout-button:hover {
+  width: 15vh;
+  padding: 5px 10px;
+}
+
+.logout-button:hover .logout-text {
+  opacity: 1;
+}
+
+.logout-confirmation {
+  position: fixed;
+  top: 50%;
+  left: 60%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 27%;
+  height: 20%;
+  opacity: 0;
+  pointer-events: auto;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.logout-confirmation p {
+  font-size: 1.5rem;
+  margin-bottom: 5%;
+}
+
+.logout-confirmation button {
+  padding: 0px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.2rem;
+  width: 10vh;
+  height: 5vh;
+  background-color: #fff;
+  color: #ffffff(255, 255, 255);
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.logout-confirmation button:hover {
+  background-color: #ac0700;
+  color: #fff;
+  transform: scale(1.05);
+}
+
 .content h1 {
-  color: #000000; 
+  color: #000000;
   margin-bottom: 8vh;
 }
 
 table {
-  width: 100%; 
-  margin: 20px auto; 
-  border-collapse: collapse; 
-  background-color: white; 
-  border-radius: 10px; 
-  overflow: hidden; 
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); 
+  width: 100%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 th,
 td {
   border: 1px solid #ddd;
-  padding: 12px; 
+  padding: 12px;
   text-align: center;
 }
 
 th {
-  background-color: #f2f2f2; 
-  color: #333; 
+  background-color: #f2f2f2;
+  color: #333;
 }
 
 td {
@@ -236,19 +339,18 @@ td {
 
 .action-button {
   display: inline-block;
-  width: 80px; 
-  height: 30px; 
-  background: #ac0700; 
-  border-radius: 5px; 
+  width: 80px;
+  height: 30px;
+  background: #ac0700;
+  border-radius: 5px;
   text-decoration: none;
-  color: white; 
-  padding: 5px 10px; 
-  margin: 0 5px; 
-  transition: background-color 0.3s; 
+  color: white;
+  padding: 5px 10px;
+  margin: 0 5px;
+  transition: background-color 0.3s;
 }
 
 .action-button:hover {
-  background: #b50a0a; 
+  background: #b50a0a;
 }
-
 </style>
