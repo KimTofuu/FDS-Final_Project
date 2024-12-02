@@ -48,7 +48,8 @@
       <div class="dashboard-content">
         <div class="bmi-box">
           <h2>BMI</h2>
-          <p>29.8</p>
+          <p>{{  BMI  }}</p>
+          <button @click="getBMI">Calculate BMI</button>
         </div>
         <div class="bmi-box">
           <h2>TIME</h2>
@@ -226,6 +227,7 @@ export default {
         activityLevel: "",
         dailyCalories: 0,
       },
+      BMI: 0,
     };
   },
   methods: {
@@ -246,6 +248,18 @@ export default {
       } catch (error) {
         console.error("Logout Error:", error);
         this.error = "An error occurred while logging out. Please try again.";
+      }
+    },
+
+    async getBMI() {
+      try{
+        const response = await apiClient.get("/Member/ViewInfo", {withCredentials: true});
+        if(response.data.status.remarks == "success"){
+          this.BMI = response.data.payload[0].BMI;
+        }
+      }catch(error){
+        console.error("Error:", error);
+        this.error = "An error occurred while calculating BMI. Please try again.";
       }
     },
 
