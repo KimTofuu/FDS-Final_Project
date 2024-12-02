@@ -73,6 +73,14 @@
             <p>{{ profile.gender }}</p>
           </div>
           <div class="detail-item">
+            <label>Body Type:</label>
+            <p>{{ profile.bodyType }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Level of Activity:</label>
+            <p>{{ profile.activityLevel }}</p>
+          </div>
+          <div class="detail-item">
             <label>Weight (kg):</label>
             <p>{{ profile.weight }}</p>
           </div>
@@ -149,6 +157,24 @@
               type="text"
               id="gender"
               v-model="profile.gender"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="gender">Body Type:</label>
+            <input
+              type="text"
+              id="gender"
+              v-model="profile.bodyType"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="gender">Level of Activity:</label>
+            <input
+              type="text"
+              id="gender"
+              v-model="profile.activityLevel"
               class="form-input"
             />
           </div>
@@ -278,9 +304,9 @@
   </div>
 </template>
 
-<script>
+<!-- <script>
 export default {
-  data() {
+data() {
     return {
       showSidebar: true,
       showLogoutConfirm: false,
@@ -297,15 +323,15 @@ export default {
         time: "",
       },
       profile: {
-        name: " John Doe",
-        conNumm: " 1234567890",
-        econNumm: " 9876543210",
-        address: " 123 Main St",
-        age: " 25",
-        sex: " Male",
-        gender: " Male",
-        weight: " 65",
-        height: " 175",
+        name: "John Doe",
+        conNumm: "09XX-XXX-XXXX",
+        econNumm: "09XX-XXX-XXXX",
+        address: "123 Main St. This City, This Country",
+        age: "25",
+        sex: "Male",
+        gender: "Male",
+        weight: "65",
+        height: "175",
       },
       tempProfile: {},
     };
@@ -314,10 +340,21 @@ export default {
     toggleSidebar() {
       this.showSidebar = !this.showSidebar;
     },
-    logout() {
-      this.showLogoutConfirm = true;
-      console.log("Logging out...");
-    },
+    async logout() {
+      this.showLogoutConfirm = false;
+      try {
+        const response = await apiClient.post("/Logout");
+        console.log(response.data);
+        if (response.data?.status?.remarks === "success") {
+          this.$router.push("/MainLogin");
+        } else {
+          this.error = response.data.message || "Logout failed";
+        }
+      } catch (error) {
+        console.error("Logout Error:", error);
+        this.error = "An error occurred while logging out. Please try again.";
+      }
+    },  
     openEditModal() {
       this.tempProfile = { ...this.profile };
       this.showEditModal = true;
@@ -353,7 +390,148 @@ export default {
     },
   },
 };
+</script> -->
+
+<script>
+import apiClient from "@/api/axios"; // Assuming you have an API client setup
+
+export default {
+  data() {
+    return {
+      showSidebar: true,
+      showLogoutConfirm: false,
+      showEditModal: false,
+      showSessionPopup: false,
+      showAlarmPopup: false,
+      sessionDetails: {
+        date: "",
+        time: "",
+        coach: "",
+      },
+      alarmDetails: {
+        day: "",
+        time: "",
+      },
+      profile: {
+        name: "John Doe",
+        conNumm: "09XX-XXX-XXXX",
+        econNumm: "09XX-XXX-XXXX",
+        address: "123 Main St. This City, This Country",
+        age: 0,
+        sex: "XX/XY",
+        gender: "RAINBOW<<3",
+        bodyType: "XXXXXXX",
+        activityLevel: "XXXXXX",
+        weight: 0,
+        height: 0,
+      },
+      tempProfile: {},
+      loadingProfile: false, // Loading state for profile fetching
+      profileError: null, // Error state for profile fetching
+    };
+  },
+  created() {
+    this.fetchProfile();
+  },
+  methods: {
+    async fetchProfile() {
+      this.loadingProfile = true;
+      this.profileError = null;
+      try {
+        const response = await apiClient.get("/Member/ViewInfo", {withCredentials: true}); // Replace with your API endpoint
+        if (response.data?.status?.remarks === "success") {
+          this.profile.name = response.data.payload[0].name;
+          this.profile.conNumm = response.data.payload[0].conNum;
+          this.profile.econNumm = response.data.payload[0].eConNum;
+          this.profile.address = response.data.payload[0].address;
+          this.profile.age = response.data.payload[0].age;
+          if(response.data.payload[0].sex === 1) this.profile.sex = "Male";
+          if(response.data.payload[0].sex === 0) this.profile.sex = "Female";
+          this.profile.gender = response.data.payload[0].gender;
+          this.profile.bodyType = response.data.payload[0].bodyType;
+          this.profile.activityLevel = response.data.payload[0].activityLevel;
+          this.profile.weight = response.data.payload[0].weight;
+          this.profile.height = response.data.payload[0].height;
+        } else {
+          this.profileError =
+            response.data?.message || "Failed to load profile data.";
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        this.profileError =
+          "An error occurred while fetching profile data. Please try again.";
+      } finally {
+        this.loadingProfile = false;
+      }
+    },
+    toggleSidebar() {
+      this.showSidebar = !this.showSidebar;
+    },
+    async logout() {
+      this.showLogoutConfirm = false;
+      try {
+        const response = await apiClient.post("/Logout");
+        console.log(response.data);
+        if (response.data?.status?.remarks === "success") {
+          this.$router.push("/MainLogin");
+        } else {
+          this.error = response.data.message || "Logout failed";
+        }
+      } catch (error) {
+        console.error("Logout Error:", error);
+        this.error = "An error occurred while logging out. Please try again.";
+      }
+    },
+    openEditModal() {
+      this.tempProfile = { ...this.profile };
+      this.showEditModal = true;
+    },
+    closeEditModal() {
+      this.showEditModal = false;
+    },
+    saveProfile() {
+      this.profile = { ...this.tempProfile };
+      console.log("Profile saved:", this.profile);
+      this.closeEditModal();
+    },
+    openSessionPopup() {
+      console.log("Opening session popup");
+      this.showSessionPopup = true;
+    },
+    closeSessionPopup() {
+      this.showSessionPopup = false;
+    },
+    submitSession() {
+      console.log("Session details:", this.sessionDetails);
+      this.closeSessionPopup();
+    },
+    openAlarmPopup() {
+      this.showAlarmPopup = true;
+    },
+    closeAlarmPopup() {
+      this.showAlarmPopup = false;
+    },
+    async submitAlarm() {
+      const alarmData = {
+        day: this.alarmDetails.day,
+        time: this.alarmDetails.time,
+      };
+      try{
+        const response = await apiClient.post("/Member/setAlarm", alarmData, {withCredentials: true});
+        if(response.data.status.remarks === "success"){
+          console.alert("Alarm set successfully");
+        }
+      }catch(error){
+        console.log(error);
+        this.error = "An error occurred while logging out. Please try again.";
+
+      }
+      this.closeAlarmPopup();
+    },
+  },
+};
 </script>
+
 
 <style>
 * {
