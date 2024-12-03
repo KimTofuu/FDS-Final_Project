@@ -210,5 +210,6 @@ header {
 
 .return-button a:hover {
   color: #ac0700;
+  transition: color 0.3s;
 }
 </style>
