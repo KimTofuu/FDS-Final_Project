@@ -785,7 +785,7 @@ body {
 
 .profile-container {
   margin-left: 20%;
-  margin-top: 5%;
+  margin-top: 3%;
   padding: 20px;
   width: calc(90% - 200px);
   box-sizing: border-box;
@@ -795,23 +795,17 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-}
-
-.profile-avatar .avatar-img {
-  width: 50px;
-  height: 50px;
-  border-radius: 30px;
+  gap: 10px;
 }
 
 .profile-details {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  width: 80vh;
-  height: 70vh;
+  gap: 10px;
+  width: 70vh;
+  height: 81vh;
   background-color: #fff;
-  padding: 20px;
+  padding: 25px;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
@@ -838,9 +832,8 @@ body {
   background-color: #ac0700;
   color: white;
   border: none;
-  padding: 10px 20px;
-  margin-top: 1vh;
-  margin-left: 67vh;
+  padding: 10px 10px;
+  margin-left: 57vh;
   border-radius: 10px;
   cursor: pointer;
   font-weight: bold;
