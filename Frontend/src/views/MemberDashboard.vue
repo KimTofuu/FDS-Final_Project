@@ -44,12 +44,11 @@
     </div>
 
     <main class="content">
-      <h1>Welcome, Francis!</h1>
+      <h1>Welcome, {{ username }} !</h1>
       <div class="dashboard-content">
         <div class="bmi-box">
           <h2>BMI</h2>
           <p>{{  BMI  }}</p>
-          <button @click="getBMI">Calculate BMI</button>
         </div>
         <div class="bmi-box">
           <h2>TIME</h2>
@@ -228,8 +227,14 @@ export default {
         dailyCalories: 0,
       },
       BMI: 0,
+      username: "",
     };
   },
+
+  created() {
+    this.getData();  
+  },
+
   methods: {
     toggleSidebar() {
       this.showSidebar = !this.showSidebar;
@@ -251,11 +256,12 @@ export default {
       }
     },
 
-    async getBMI() {
+    async getData() {
       try{
         const response = await apiClient.get("/Member/ViewInfo", {withCredentials: true});
         if(response.data.status.remarks == "success"){
           this.BMI = response.data.payload[0].BMI;
+          this.username = response.data.payload[0].Username;
         }
       }catch(error){
         console.error("Error:", error);

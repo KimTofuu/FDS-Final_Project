@@ -197,7 +197,7 @@
             />
           </div>
           <div class="modal-buttons">
-            <button @click="saveProfile" class="save-button">Save</button>
+            <button @click="updateInfo" class="save-button">Save</button>
             <button @click="closeEditModal" class="cancel-button">
               Cancel
             </button>
@@ -249,7 +249,7 @@
               />
             </div>
             <div class="modal-buttons">
-              <button @click="submitSession" class="save-button">Submit</button>
+              <button @click="updateInfo" class="save-button">Submit</button>
               <button @click="closeSessionPopup" class="cancel-button">
                 Cancel
               </button>
@@ -392,7 +392,7 @@ data() {
 };
 </script> -->
 
-<script>
+<script scoped>
 import apiClient from "@/api/axios"; // Assuming you have an API client setup
 
 export default {
@@ -462,6 +462,44 @@ export default {
           "An error occurred while fetching profile data. Please try again.";
       } finally {
         this.loadingProfile = false;
+      }
+    },
+
+    async updateInfo(){
+      this.loadingProfile = true;
+      this.profileError = null;
+      const updateData = {
+        name: this.profile.name,
+        conNum: this.profile.conNumm,
+        eConNum: this.profile.econNumm,
+        address: this.profile.address,
+        age: this.profile.age,
+        sex: this.profile.sex,
+        gender: this.profile.gender,
+        bodyType: this.profile.bodyType,
+        activityLevel: this.profile.activityLevel,
+        weight: this.profile.weight,
+        height: this.profile.height,
+      }
+      try{
+        const response = await apiClient.put("/Member/UpdateInfo", updateData, {withCredentials: true});
+        if(response.data.status.remarks == "success"){
+          this.profile.name = response.data.payload[0].name;
+          this.profile.conNumm = response.data.payload[0].conNum;
+          this.profile.econNumm = response.data.payload[0].eConNum;
+          this.profile.address = response.data.payload[0].address;
+          this.profile.age = response.data.payload[0].age;
+          this.profile.sex = response.data.payload[0].sex;
+          this.profile.gender = response.data.payload[0].gender;
+          this.profile.bodyType = response.data.payload[0].bodyType;
+          this.profile.activityLevel = response.data.payload[0].activityLevel;
+          this.profile.weight = response.data.payload[0].weight;
+          this.profile.height = response.data.payload[0].height;
+          console.log("Profile updated successfully");
+        }
+      }catch(error){
+        console.log(error);
+        console.error("Error updating profile:", error);
       }
     },
     toggleSidebar() {

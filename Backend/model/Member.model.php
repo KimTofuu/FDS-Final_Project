@@ -45,11 +45,11 @@ class member implements memberInterface {
 
         $bmi = $this->bmi((int)$data->weight, (int)$data->height);
 
-        $sql = 'UPDATE member_info SET name = ?, conNum = ?, eConNum = ?, address = ?, age = ?, sex = ?, gender = ?, weight = ?, height = ?, BMI = ? WHERE user_id = ?';
+        $sql = 'UPDATE member_info SET name = ?, conNum = ?, eConNum = ?, address = ?, age = ?, sex = ?, gender = ?, weight = ?, height = ?, BMI = ?, bodyType = ?, activityLevel = ? WHERE user_id = ?';
 
         try {
             $stmt = $this->pdo->prepare($sql);
-            if ($stmt->execute([$data->name, $data->conNum, $data->eConNum, $data->address, $data->age, $this->SexIdentifier($data->sex), $data->gender, $data->weight, $data->height, $bmi, $userID])) {
+            if ($stmt->execute([$data->name, $data->conNum, $data->eConNum, $data->address, $data->age, $this->SexIdentifier($data->sex), $data->gender, $data->weight, $data->height, $bmi, $data->bodyType, $data->activityLevel, $userID])) {
                 return $this->gm->responsePayload(get_object_vars($data), 'success', 'Data uploaded', 200);
             } else {
                 return $this->gm->responsePayload(null, 'failed', 'Upload failed', 403);
@@ -66,7 +66,10 @@ class member implements memberInterface {
             return $this->gm->responsePayload(null, 'error', 'Invalid user ID', 400);
         }
 
-        $sql = "SELECT * FROM member_info WHERE user_id = ?";
+        $sql = "SELECT m.*, n.Username
+        FROM member_info m
+        LEFT JOIN member n ON m.user_id = n.User_ID
+        WHERE m.user_id = ?";
         $updateBMI = 'UPDATE member_info SET BMI = ? WHERE user_id = ?';
         try {
             $stmt = $this->pdo->prepare($sql);
