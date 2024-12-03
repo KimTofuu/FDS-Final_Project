@@ -53,7 +53,7 @@ try{
     case 'GET':
         if ($req[0] == 'Get') {
             $tokenRes = $auth->verifyTokenBackend('admin');
-            if ($tokenRes['is_valid'] !== true) {
+            if ($tokenRes['is_valid'] == true) {
                 if ($req[1] == 'One') {echo json_encode($adminCon->getOneAcc($data));return;}
                 if ($req[1] == 'All') {echo json_encode($adminCon->getAllAcc());return;}
             }

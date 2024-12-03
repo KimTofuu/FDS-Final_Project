@@ -54,6 +54,7 @@
       <table>
         <thead>
           <tr>
+            <th>ID</th>
             <th>Name</th>
             <th>Contact Number</th>
             <th>Emergency Contact Number</th>
@@ -61,6 +62,8 @@
             <th>Age</th>
             <th>Sex</th>
             <th>Gender</th>
+            <th>Body Type</th>
+            <th>Activity Level</th>
             <th>Weight</th>
             <th>Height</th>
             <th>BMI</th>
@@ -69,41 +72,25 @@
         </thead>
 
         <tbody>
-          <tr>
-            <td>John Doe</td>
-            <td>1234567890</td>
-            <td>0987654321</td>
-            <td>123 Elm Street</td>
-            <td>30</td>
-            <td>Male</td>
-            <td>Man</td>
-            <td>70kg</td>
-            <td>175cm</td>
-            <td>22.9</td>
+          <tr v-for="(member, index) in members" :key="index">
+            <td>{{ member.User_ID }}</td>
+            <td>{{ member.name }}</td>
+            <td>{{ member.conNum }}</td>
+            <td>{{ member.eConNum }}</td>
+            <td>{{ member.address }}</td>
+            <td>{{ member.age }}</td>
+            <td>{{ member.sex }}</td>
+            <td>{{ member.gender }}</td>
+            <td>{{ member.bodyType }}</td>
+            <td>{{ member.activityLevel }}</td>
+            <td>{{ member.weight }}</td>
+            <td>{{ member.height }}</td>
+            <td>{{ member.BMI }}</td>
             <td>
-              <a href="update.html?id=2" class="action-button">Update</a>
+              <a href="update.html?id={{ member.User_ID }}" class="action-button">Update</a>
               <a
-                href="delete.html?id=3" class="action-button"
-                onclick="return confirm('Are you sure you want to delete this record?');"
-                >Delete</a
-              >
-            </td>
-          </tr>
-          <tr>
-            <td>Jane Smith</td>
-            <td>2345678901</td>
-            <td>1234567890</td>
-            <td>456 Maple Avenue</td>
-            <td>28</td>
-            <td>Female</td>
-            <td>Woman</td>
-            <td>60kg</td>
-            <td>165cm</td>
-            <td>22.0</td>
-            <td>
-              <a href="update.html?id=2" class="action-button">Update</a>
-              <a
-                href="delete.html?id=3" class="action-button"
+                href="delete.html?id={{ member.User_ID }}"
+                class="action-button"
                 onclick="return confirm('Are you sure you want to delete this record?');"
                 >Delete</a
               >
@@ -123,7 +110,38 @@ export default {
     return {
       showLogoutConfirm: false,
       showSidebar: true,
+      members: [] // Initialize an empty array to store the members data
     };
+  },
+  mounted() {
+    apiClient.get("/Get/All")
+      .then(response => {
+        // Check if the response status is success and the payload is an array
+        if (response.data.status?.remarks === "success" && Array.isArray(response.data.payload)) {
+          this.members = response.data.payload.map(member => ({
+            User_ID: member.User_ID, // Use Email as a unique ID if User_ID is not provided
+            name: member.name,
+            conNum: member.conNum,
+            eConNum: member.eConNum,
+            address: member.address,
+            age: member.age,
+            sex: member.sex,
+            gender: member.gender,
+            bodyType: member.bodyType,
+            activityLevel: member.activityLevel,
+            weight: member.weight,
+            height: member.height,
+            BMI: member.BMI
+          }));
+        } else {
+          console.error("Unexpected API response:", response.data);
+          this.errorMessage = "Data format error. Please contact support.";
+        }
+      })
+      .catch(error => {
+        console.error("Error fetching members data:", error);
+        this.errorMessage = "Failed to fetch members. Please try again later.";
+      });
   },
   methods: {
     toggleSidebar() {

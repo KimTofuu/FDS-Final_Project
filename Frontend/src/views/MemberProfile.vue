@@ -249,7 +249,7 @@
               />
             </div>
             <div class="modal-buttons">
-              <button @click="updateInfo" class="save-button">Submit</button>
+              <button @click="setSession" class="save-button">Submit</button>
               <button @click="closeSessionPopup" class="cancel-button">
                 Cancel
               </button>
@@ -304,96 +304,9 @@
   </div>
 </template>
 
-<!-- <script>
-export default {
-data() {
-    return {
-      showSidebar: true,
-      showLogoutConfirm: false,
-      showEditModal: false,
-      showSessionPopup: false,
-      showAlarmPopup: false,
-      sessionDetails: {
-        date: "",
-        time: "",
-        coach: "",
-      },
-      alarmDetails: {
-        day: "",
-        time: "",
-      },
-      profile: {
-        name: "John Doe",
-        conNumm: "09XX-XXX-XXXX",
-        econNumm: "09XX-XXX-XXXX",
-        address: "123 Main St. This City, This Country",
-        age: "25",
-        sex: "Male",
-        gender: "Male",
-        weight: "65",
-        height: "175",
-      },
-      tempProfile: {},
-    };
-  },
-  methods: {
-    toggleSidebar() {
-      this.showSidebar = !this.showSidebar;
-    },
-    async logout() {
-      this.showLogoutConfirm = false;
-      try {
-        const response = await apiClient.post("/Logout");
-        console.log(response.data);
-        if (response.data?.status?.remarks === "success") {
-          this.$router.push("/MainLogin");
-        } else {
-          this.error = response.data.message || "Logout failed";
-        }
-      } catch (error) {
-        console.error("Logout Error:", error);
-        this.error = "An error occurred while logging out. Please try again.";
-      }
-    },  
-    openEditModal() {
-      this.tempProfile = { ...this.profile };
-      this.showEditModal = true;
-    },
-    closeEditModal() {
-      this.showEditModal = false;
-    },
-    saveProfile() {
-      this.profile = { ...this.tempProfile };
-      console.log("Profile saved:", this.profile);
-      this.closeEditModal();
-    },
-    openSessionPopup() {
-      console.log("Opening session popup");
-      this.showSessionPopup = true;
-    },
-    closeSessionPopup() {
-      this.showSessionPopup = false;
-    },
-    submitSession() {
-      console.log("Session details:", this.sessionDetails); // Use sessionDetails
-      this.closeSessionPopup();
-    },
-    openAlarmPopup() {
-      this.showAlarmPopup = true;
-    },
-    closeAlarmPopup() {
-      this.showAlarmPopup = false;
-    },
-    submitAlarm() {
-      console.log("Alarm details:", this.alarmDetails); // Log the alarm details
-      this.closeAlarmPopup(); // Close the popup
-    },
-  },
-};
-</script> -->
-
 <script scoped>
 import apiClient from "@/api/axios"; // Assuming you have an API client setup
+import moment from 'moment';
 
 export default {
   data() {
@@ -432,6 +345,15 @@ export default {
   },
   created() {
     this.fetchProfile();
+  },
+  computed: {
+    formattedSessionDate() {
+      if(this.sessionDetails.date) {
+        return moment(this.sessionDetails.date).format('YYYY-MM-DD');
+      }else{
+        return "";
+      }
+    }
   },
   methods: {
     async fetchProfile() {
@@ -496,6 +418,7 @@ export default {
           this.profile.weight = response.data.payload[0].weight;
           this.profile.height = response.data.payload[0].height;
           console.log("Profile updated successfully");
+          this.closeEditModal();
         }
       }catch(error){
         console.log(error);
@@ -527,11 +450,7 @@ export default {
     closeEditModal() {
       this.showEditModal = false;
     },
-    saveProfile() {
-      this.profile = { ...this.tempProfile };
-      console.log("Profile saved:", this.profile);
-      this.closeEditModal();
-    },
+
     openSessionPopup() {
       console.log("Opening session popup");
       this.showSessionPopup = true;
@@ -561,10 +480,27 @@ export default {
         }
       }catch(error){
         console.log(error);
-        this.error = "An error occurred while logging out. Please try again.";
+        this.error = "An error occurred while setting alarm. Please try again.";
 
       }
       this.closeAlarmPopup();
+    },
+
+    async setSession() {
+      const sessionData = {
+        date: this.formattedSessionDate,
+        time: this.sessionDetails.time,
+        Coach_Name: this.sessionDetails.coach,
+      };
+      try{
+        const response = await apiClient.post("/Member/setSession", sessionData, {withCredentials: true});
+        if(response.data.status.remarks === "success"){
+          console.log("Session set successfully");
+        }
+      }catch(error){
+        console.log(error);
+        this.error = "An error occurred while setting session. Please try again.";
+      }
     },
   },
 };

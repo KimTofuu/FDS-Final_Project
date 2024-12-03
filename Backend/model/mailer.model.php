@@ -116,9 +116,9 @@ class Mailer implements phpmailerInterface{
 
     public function Session(){
         
-        $sql = "SELECT m.Username, m.Email, c.CoachName, c.CoachEmail
+        $sql = "SELECT m.Username, m.Email, c.Username, c.CoachEmail
                 FROM gymsession gs
-                JOIN coach c ON gs.Coach_ID = c.Coach_ID
+                JOIN coach c ON gs.Coach_ID = c.User_ID
                 JOIN member m ON gs.User_ID = m.User_ID
                 WHERE DATEDIFF(gs.date, NOW()) <= 1
                 AND DATEDIFF(gs.date, NOW()) >= 0;
@@ -136,28 +136,28 @@ class Mailer implements phpmailerInterface{
                         $userResult = $this->sendReminder(
                             'Upcoming Gym Session Reminder!',
                             '<p>Hello ' . $member['Username'] . ',</p>
-                             <p>This is a reminder that you have a gym session scheduled tomorrow with your coach, <strong>' . $member['CoachName'] . '</strong>.</p>
+                             <p>This is a reminder that you have a gym session scheduled tomorrow with your coach, <strong>' . $member['Username'] . '</strong>.</p>
                              <p>Thank you, and we look forward to seeing you!</p>',
-                            'Hello ' . $member['Username'] . ', This is a reminder that you have a gym session scheduled tomorrow with your coach, ' . $member['CoachName'] . '. Thank you, and we look forward to seeing you!'
+                            'Hello ' . $member['Username'] . ', This is a reminder that you have a gym session scheduled tomorrow with your coach, ' . $member['Username'] . '. Thank you, and we look forward to seeing you!'
                         );
     
                         // Send reminder to the coach
-                        $this->addRecipient($member['CoachEmail'], $member['CoachName']);
+                        $this->addRecipient($member['CoachEmail'], $member['Username']);
                         $coachResult = $this->sendReminder(
                             'Upcoming Gym Session Reminder!',
-                            '<p>Hello Coach ' . $member['CoachName'] . ',</p>
+                            '<p>Hello Coach ' . $member['Username'] . ',</p>
                              <p>This is a reminder that your client, <strong>' . $member['Username'] . '</strong>, has a gym session scheduled for tomorrow.</p>
                              <p>Thank you for your continued support!</p>',
-                            'Hello Coach ' . $member['CoachName'] . ', This is a reminder that your client, ' . $member['Username'] . ' has a gym session scheduled for tomorrow. Thank you for your continued support!'
+                            'Hello Coach ' . $member['Username'] . ', This is a reminder that your client, ' . $member['Username'] . ' has a gym session scheduled for tomorrow. Thank you for your continued support!'
                         );
     
                         // Check if reminders were sent successfully
                         if ($userResult['status'] !== 'success' || $coachResult['status'] !== 'success') {
-                            return $this->gm->responsePayload(array("Recipient Member Name" => $member['Username'], "Recipient Member Email" => $member['Email'], "Recipient Coach Name" => $member['CoachName'], "Recipient Coach Email" => $member['CoachEmail']), 'success', 'Reminders sent successfully.', 200);
+                            return $this->gm->responsePayload(array("Recipient Member Name" => $member['Username'], "Recipient Member Email" => $member['Email'], "Recipient Coach Name" => $member['Username'], "Recipient Coach Email" => $member['CoachEmail']), 'success', 'Reminders sent successfully.', 200);
                         }
                     }
                 } else {
-                    return $this->gm->responsePayload(null, 'failed', 'No members with expiring memberships found.', 404);
+                    return $this->gm->responsePayload(null, 'failed', 'No members with session memberships found.', 404);
                 }
             }
         } catch (PDOException $e) {
