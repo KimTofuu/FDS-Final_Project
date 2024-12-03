@@ -48,15 +48,15 @@ export default {
   methods: {
     async login() {
       const loginData = {
-        Username: this.username,
-        Password: this.password,
+        Username: this.Username,
+        Password: this.Password,
       };
 
       try {
         const response = await apiClient.post("/Login/Admin", loginData); // Adjust the endpoint if needed
         if (response.data.status.remarks === "success") {
           // Handle successful login
-          this.$router.push("/AdminDashboard"); // Redirect to the dashboard or another page
+          this.$router.push("/AdminMemberInfo"); // Redirect to the dashboard or another page
         } else {
           this.error = response.data.message || "Login failed";
         }
@@ -68,12 +68,6 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-/* Add your styles for the component here */
-</style>
-
-
 
 <style scoped>
 * {

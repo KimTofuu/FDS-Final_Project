@@ -95,21 +95,25 @@ const router = createRouter({
       path: "/AdminMembercondition",
       name: "AdminMembercondition",
       component: AdminMembercondition,
+      meta: { requiresAuth: true, role: "admin" },
     },
     {
       path: "/AdminMemberemail",
       name: "AdminMemberemail",
       component: AdminMemberemail,
+      meta: { requiresAuth: true, role: "admin" },
     },
     {
       path: "/AdminMemberinfo",
       name: "AdminMemberinfo",
       component: AdminMemberinfo,
+      meta: { requiresAuth: true, role: "admin" },
     },
     {
       path: "/AdminMembersubscription",
       name: "AdminMembersubscription",
       component: AdminMembersubscription,
+      meta: { requiresAuth: true, role: "admin" },
     },
     {
       path: "/MemberDashboard",

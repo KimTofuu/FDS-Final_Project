@@ -56,33 +56,16 @@
             <th>User ID</th>
             <th>Email</th>
             <th>Username</th>
-            <th>Password</th>
             <th>Archive Status</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>154</td>
-            <td>pitiknipau@gmail.com</td>
-            <td>pipo</td>
-            <td>120893e#$@^&082342634&&</td>
-            <td>1</td>
-            <td>
-              <a href="update.html?id=2" class="action-button">Update</a>
-              <a
-                href="delete.html?id=3" class="action-button"
-                onclick="return confirm('Are you sure you want to delete this record?');"
-                >Delete</a
-              >
-            </td>
-          </tr>
-          <tr>
-            <td>159</td>
-            <td>lumaw</td>
-            <td>Sir Mark</td>
-            <td>120893e#$@^&082342634&&</td>
-            <td>1</td>
+          <tr v-for="(member, index) in members" :key="index">
+            <td>{{ member.User_ID }}</td>
+            <td>{{ member.Email }}</td>
+            <td>{{ member.Username }}</td>
+            <td>{{ member.ArchiveStatus }}</td>
             <td>
               <a href="update.html?id=2" class="action-button">Update</a>
               <a
@@ -106,7 +89,21 @@ export default {
     return {
       showLogoutConfirm: false,
       showSidebar: true,
+      members: [],
     };
+  },
+  mounted(){
+    apiClient.get("/Get/All")
+    .then((response) => {
+      if (response.data.status.remarks === "success" && Array.isArray(response.data.payload)) {
+        this.members = response.data.payload.map((member) => ({
+          User_ID: member.User_ID,
+          Email: member.Email,
+          Username: member.Username,
+          ArchiveStatus: member.ArchiveStatus
+        }))
+      }
+    })
   },
   methods: {
     toggleSidebar() {

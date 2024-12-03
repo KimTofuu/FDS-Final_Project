@@ -115,17 +115,29 @@ class member implements memberInterface {
         $userID = $this->gm->getIDFromTokenBackend();
 
         $sql = 'INSERT INTO gymsession(User_ID, date, time, Coach_ID) VALUES(?, ?, ?, ?)';
-        $checkDup = 'SELECT * FROM gymsession WHERE User_ID = ? AND date = ? AND time = ? AND Coach_ID = ?'; //gagawin mo to
+        $checkDup = 'SELECT * FROM gymsession WHERE User_ID = ? AND date = ? AND time = ? AND Coach_ID = ?'; 
+        $checkCoachExistence = 'SELECT * FROM coach WHERE User_ID = ?';
+        $getCoachID = 'SELECT User_ID FROM coach WHERE Username = LOWER(?)';
         try {
 
+            $coachID = $this->pdo->prepare($getCoachID);
+            $coachID->execute([$data->Coach_Name]);
+            $coachID = $coachID->fetchColumn();
+
             $checkDup = $this->pdo->prepare($checkDup);
-            $checkDup->execute([$userID, $data->date, $data->time, $data->Coach_ID]);
+            $checkDup->execute([$userID, $data->date, $data->time, $coachID]);
+            $checkCoachExistence = $this->pdo->prepare($checkCoachExistence);
+            $checkCoachExistence->execute([$coachID]);
             if($checkDup->rowCount() > 0){
                 return $this->gm->responsePayload(null, 'failed', 'Session already exists',403);
             }
 
+            if($checkCoachExistence->rowCount() == 0){
+                return $this->gm->responsePayload(null, 'failed', 'Coach does not exist',403);
+            }
+
             $stmt = $this->pdo->prepare($sql);
-            if ($stmt->execute([$userID, $data->date, $data->time, $data->Coach_ID])) {
+            if ($stmt->execute([$userID, $data->date, $data->time, $coachID])) {
                 return $this->gm->responsePayload($data, 'success', 'Alarm or reminder set', 200);
             }else{
                 return $this->gm->responsePayload(null, 'failed', 'Alarm or reminder not set', 403);
