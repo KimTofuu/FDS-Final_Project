@@ -67,14 +67,8 @@
             <td>{{ member.User_ID }}</td>
             <td>{{ member.Email }}</td>
             <td>{{ member.Username }}</td>
-            <td>{{ member.ArchiveStatus === 1 ? 'Visible' : 'Hidden'}}</td>
             <td>
-              <a href="update.html?id=2" class="action-button">Update</a>
-              <a
-                href="delete.html?id=3" class="action-button"
-                onclick="return confirm('Are you sure you want to delete this record?');"
-                >Delete</a
-              >
+              <button @click="deleteMember(member.User_ID)" class="action-button">Delete</button>
             </td>
           </tr>
         </tbody>
@@ -319,17 +313,7 @@ export default {
     };
   },
   mounted(){
-    apiClient.get("/Get/All")
-    .then((response) => {
-      if (response.data.status.remarks === "success" && Array.isArray(response.data.payload)) {
-        this.members = response.data.payload.map((member) => ({
-          User_ID: member.User_ID,
-          Email: member.Email,
-          Username: member.Username,
-          ArchiveStatus: member.ArchiveStatus
-        }))
-      }
-    })
+    this.fetchData();
   },
   methods: {
     toggleSidebar() {
