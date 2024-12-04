@@ -48,7 +48,7 @@
       <div class="dashboard-content">
         <div class="bmi-box">
           <h2>BMI</h2>
-          <p>{{  BMI  }}</p>
+          <p>{{ BMI }}</p>
         </div>
         <div class="bmi-box">
           <h2>TIME</h2>
@@ -232,7 +232,7 @@ export default {
   },
 
   created() {
-    this.getData();  
+    this.getData();
   },
 
   methods: {
@@ -257,15 +257,18 @@ export default {
     },
 
     async getData() {
-      try{
-        const response = await apiClient.get("/Member/ViewInfo", {withCredentials: true});
-        if(response.data.status.remarks == "success"){
+      try {
+        const response = await apiClient.get("/Member/ViewInfo", {
+          withCredentials: true,
+        });
+        if (response.data.status.remarks == "success") {
           this.BMI = response.data.payload[0].BMI;
           this.username = response.data.payload[0].Username;
         }
-      }catch(error){
+      } catch (error) {
         console.error("Error:", error);
-        this.error = "An error occurred while calculating BMI. Please try again.";
+        this.error =
+          "An error occurred while calculating BMI. Please try again.";
       }
     },
 
@@ -428,7 +431,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5); 
+  background: rgba(0, 0, 0, 0.5);
   z-index: 1000;
 }
 
@@ -522,8 +525,8 @@ body {
 
 .content {
   margin-left: 20%;
-  padding: 75px;
-  flex: 1;
+  padding: 10vh !important;
+  overflow: auto;
 }
 
 .content h1 {
