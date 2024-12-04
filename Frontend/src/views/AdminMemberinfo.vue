@@ -67,7 +67,6 @@
             <th>Weight</th>
             <th>Height</th>
             <th>BMI</th>
-            <th>Actions</th>
           </tr>
         </thead>
 
@@ -86,15 +85,6 @@
             <td>{{ member.weight }}</td>
             <td>{{ member.height }}</td>
             <td>{{ member.BMI }}</td>
-            <td>
-              <a href="update.html?id={{ member.User_ID }}" class="action-button">Update</a>
-              <a
-                href="delete.html?id={{ member.User_ID }}"
-                class="action-button"
-                onclick="return confirm('Are you sure you want to delete this record?');"
-                >Delete</a
-              >
-            </td>
           </tr>
         </tbody>
       </table>

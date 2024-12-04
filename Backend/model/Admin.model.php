@@ -322,4 +322,18 @@ class adminControls implements adminInterface {
 
         }
     }
+    public function setPaid($data){
+        $sql = "UPDATE membership_duration SET SubscriptionStat = 1 WHERE User_ID = ?";
+
+        try{
+     $stmt = $this->pdo->prepare($sql);
+            if($stmt->execute([$data->User_ID])){
+                return $this->gm->responsePayload(null, 'success', "Accounts' status updated.", 200);
+            }else{
+                return $this->gm->responsePayload(null, 'failed', 'Accounts status update failed.', 404);
+            }
+        }catch(PDOException $e){
+            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+        }
+    }
 }

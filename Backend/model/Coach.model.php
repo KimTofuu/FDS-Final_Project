@@ -11,7 +11,7 @@ class coach implements coachInterface{
     }
 
     public function seeMemDet($data){
-        $coachID = $this->gm->getIDFromToken();
+        $coachID = $this->gm->getIDFromTokenBackend();
         $getClient = 'SELECT m.User_ID, m.Username, n.name, n.conNum, 
             n.age, n.sex, n.bodyType, n.activityLevel, n.weight, n.height, 
             n.BMI 
@@ -35,7 +35,7 @@ class coach implements coachInterface{
     } 
 
     public function sendMessage($data){
-        $coachID = $this->gm->getIDFromToken();
+        $coachID = $this->gm->getIDFromTokenBackend();
         $coachEmail = 'SELECT CoachEmail FROM coach WHERE User_ID = ?';
         $userDetails = 'SELECT Email, User_ID FROM member WHERE Username = LOWER(?)';
         $checkClient = 'SELECT COUNT(*) FROM coach_classes WHERE user_id = ? AND coach_id = ?';
@@ -68,7 +68,7 @@ class coach implements coachInterface{
     }
 
     public function getAllClients(){
-        $coachID = $this->gm->getIDFromToken();
+        $coachID = $this->gm->getIDFromTokenBackend();
         $getClients = 'SELECT m.Username, n.name
             FROM member m
             JOIN coach_classes cc ON m.User_ID = cc.user_id

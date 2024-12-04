@@ -139,6 +139,13 @@ try{
             echo json_encode($auth->verifyTokenBackend('member')); return;
         }
 
+        if($req[0] == 'Admin'){
+            $tokenResMem = $auth->verifyTokenBackend('admin');
+            if ($tokenResMem['is_valid'] == true) {
+                if($req[1] == 'Delete'){echo json_encode($adminCon->delAcc($data));return;}
+            }
+        }
+
         break;
 
     case 'PUT':
@@ -151,11 +158,16 @@ try{
             }
         }
 
-        if ($req[0] == 'ChangeSubStat'){echo json_encode($adminCon->changePaymentStatus());return;}
+        if($req[0] == 'Admin'){
+            $tokenResMem = $auth->verifyTokenBackend('admin');
+            if ($tokenResMem['is_valid'] == true) {
+            if ($req[1] == 'ChangeSubStat'){echo json_encode($adminCon->changePaymentStatus());return;}
+            if ($req[1] == 'setPaid'){echo json_encode($adminCon->setPaid($data));return;}
+            }
+        }
         break;
 
     case 'DELETE':
-        if ($req[0] == 'Delete') {echo json_encode($adminCon->delAcc($data));return;}
         break;
 
     default:

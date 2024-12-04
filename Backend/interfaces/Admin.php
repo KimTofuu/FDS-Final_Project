@@ -11,4 +11,5 @@ interface adminInterface{
     // public function getCoach($data);
     public function setMemSubPlan($data);
     public function changePaymentStatus();
+    public function setPaid($data);
 }

@@ -74,13 +74,7 @@
             <td>{{ member.subscriptionStat === 1 ? "Paid" : "Unpaid" }}</td>
             <td>{{ member.duration }}</td>
             <td>
-              <a href="update.html?id=2" class="action-button">Update</a>
-              <a
-                href="delete.html?id=3"
-                class="action-button"
-                onclick="return confirm('Are you sure you want to delete this record?');"
-                >Delete</a
-              >
+              <button @click="updateMember(member.User_ID)" class="action-button">Update</button>
             </td>
           </tr>
         </tbody>
@@ -101,7 +95,14 @@ export default {
     };
   },
   mounted(){
-    apiClient.get("/Get/All")
+    this.fetchData();
+  },
+  methods: {
+    toggleSidebar() {
+      this.showSidebar = !this.showSidebar;
+    },
+    async fetchData() {
+      apiClient.get("/Get/All")
     .then(response => {
       if(response.data.status.remarks === "success" && Array.isArray(response.data.payload)){
         this.members = response.data.payload.map(member => ({
@@ -114,10 +115,6 @@ export default {
         }))
       }
     })
-  },
-  methods: {
-    toggleSidebar() {
-      this.showSidebar = !this.showSidebar;
     },
     async logout() {
       this.showLogoutConfirm = false;
@@ -132,6 +129,22 @@ export default {
       } catch (error) {
         console.error("Logout Error:", error);
         this.error = "An error occurred while logging out. Please try again.";
+      }
+    },
+    async updateMember(id){
+      const updateData = {
+        User_ID: id,
+      }
+      try{
+        const response = await apiClient.put('/Admin/setPaid', updateData, {withCredentials: true} );
+        if(response.data.status.remarks === "success"){
+          await this.fetchData();
+        }else{
+          alert(`User ${id} failed to update or is already paid`);
+        }
+      }catch(error){
+        console.log(error);
+        this.error = "Error occured on update";
       }
     },
     beforeEnter(el) {
