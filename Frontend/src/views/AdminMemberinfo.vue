@@ -70,7 +70,6 @@
             <th>Weight</th>
             <th>Height</th>
             <th>BMI</th>
-            <th>Actions</th>
           </tr>
         </thead>
 
@@ -90,11 +89,7 @@
             <td>{{ member.height }}</td>
             <td>{{ member.BMI }}</td>
             <td>
-              <a
-                href="update.html?id={{ member.User_ID }}"
-                class="action-button"
-                >Update</a
-              >
+              <a href="update.html?id={{ member.User_ID }}" class="action-button">Update</a>
               <a
                 href="delete.html?id={{ member.User_ID }}"
                 class="action-button"

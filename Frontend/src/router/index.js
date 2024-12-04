@@ -85,8 +85,18 @@ const router = createRouter({
     { path: "/Services", name: "Services", component: Services },
     { path: "/OurTeam", name: "OurTeam", component: OurTeam },
     { path: "/Contacts", name: "Contacts", component: Contacts },
-    { path: "/CoachClient", name: "CoachClient", component: CoachClient },
-    { path: "/CoachProfile", name: "CoachProfile", component: CoachProfile },
+    { 
+      path: "/CoachClient", 
+      name: "CoachClient", 
+      component: CoachClient,
+      meta: { requiresAuth: true, role: "coach" },
+    },
+    { 
+      path: "/CoachProfile", 
+      name: "CoachProfile", 
+      component: CoachProfile,
+      meta: { requiresAuth: true, role: "coach" },
+    },
     {
       path: "/AdminMembercondition",
       name: "AdminMembercondition",

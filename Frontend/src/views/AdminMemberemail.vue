@@ -59,7 +59,6 @@
             <th>User ID</th>
             <th>Email</th>
             <th>Username</th>
-            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -68,12 +67,11 @@
             <td>{{ member.User_ID }}</td>
             <td>{{ member.Email }}</td>
             <td>{{ member.Username }}</td>
-            <td>{{ member.ArchiveStatus === 1 ? "Visible" : "Hidden" }}</td>
+            <td>{{ member.ArchiveStatus === 1 ? 'Visible' : 'Hidden'}}</td>
             <td>
               <a href="update.html?id=2" class="action-button">Update</a>
               <a
-                href="delete.html?id=3"
-                class="action-button"
+                href="delete.html?id=3" class="action-button"
                 onclick="return confirm('Are you sure you want to delete this record?');"
                 >Delete</a
               >
@@ -320,20 +318,18 @@ export default {
       },
     };
   },
-  mounted() {
-    apiClient.get("/Get/All").then((response) => {
-      if (
-        response.data.status.remarks === "success" &&
-        Array.isArray(response.data.payload)
-      ) {
+  mounted(){
+    apiClient.get("/Get/All")
+    .then((response) => {
+      if (response.data.status.remarks === "success" && Array.isArray(response.data.payload)) {
         this.members = response.data.payload.map((member) => ({
           User_ID: member.User_ID,
           Email: member.Email,
           Username: member.Username,
-          ArchiveStatus: member.ArchiveStatus,
-        }));
+          ArchiveStatus: member.ArchiveStatus
+        }))
       }
-    });
+    })
   },
   methods: {
     toggleSidebar() {
@@ -361,6 +357,32 @@ export default {
       } catch (error) {
         console.error("Logout Error:", error);
         this.error = "An error occurred while logging out. Please try again.";
+      }
+    },
+    async fetchData() {
+      apiClient.get("/Get/All")
+    .then((response) => {
+      if (response.data.status.remarks === "success" && Array.isArray(response.data.payload)) {
+        this.members = response.data.payload.map((member) => ({
+          User_ID: member.User_ID,
+          Email: member.Email,
+          Username: member.Username,
+          ArchiveStatus: member.ArchiveStatus
+        }))
+      }
+    })
+    },
+    async deleteMember(id){
+      try{
+        const response = await apiClient.post('/Admin/Delete', {User_ID: id}, {withCredentials: true} );
+        if(response.data.status.remarks === "success"){
+          await this.fetchData();
+        }else{
+          alert(`User ${id} failed to update or is already paid`);
+        }
+      }catch(error){
+        console.log(error);
+        this.error = "Error occured on update";
       }
     },
     beforeEnter(el) {

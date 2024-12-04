@@ -63,41 +63,6 @@ class ResponseMethodsProj implements ResponseInterfacePHPTemp
             }
         }
     }
-    // public function getUserTypeFromToken($$data = null) {
-    //     // If no token is passed, check for the Authorization cookie
-    //     if (isset($$data)) {
-    //         $jwt = explode(' ', $$data);
-    //         if ($jwt[0] === 'Bearer' && isset($jwt[1])) {
-    //             $token = $jwt[1];
-    //         }
-    //     }
-    
-    //     // Decode the token
-    //     $decoded = explode(".", $token);
-    //     if (count($decoded) !== 3) {
-    //         return null; // Invalid token format
-    //     }
-    
-    //     $payload = json_decode(base64_decode($decoded[1]));
-    //     if (!$payload) {
-    //         return null; // Unable to decode payload
-    //     }
-    
-    //     // Verify the token signature
-    //     $signature = hash_hmac('sha256', $decoded[0] . "." . $decoded[1], $_ENV['SECRET_KEY'], true);
-    //     $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-    
-    //     if ($base64UrlSignature !== $decoded[2]) {
-    //         return null; // Signature does not match
-    //     }
-    
-    //     // Retrieve the user type from the token payload
-    //     if (isset($payload->token_data->user_type)) {
-    //         return $payload->token_data->user_type;
-    //     }
-    
-    //     return null; // User type not found in the token
-    // }    
     public function getUserTypeFromToken($data) {
         // Initialize $token variable in case no token is passed
         $token = $data->Token;        
