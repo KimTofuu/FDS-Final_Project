@@ -66,30 +66,13 @@
         </thead>
 
         <tbody>
-          <tr>
-            <td>154</td>
-            <td>2024-11-14</td>
-            <td>2025-01-13</td>
-            <td>Master Plan</td>
-            <td>1</td>
-            <td>+60 Days</td>
-            <td>
-              <a href="update.html?id=2" class="action-button">Update</a>
-              <a
-                href="delete.html?id=3"
-                class="action-button"
-                onclick="return confirm('Are you sure you want to delete this record?');"
-                >Delete</a
-              >
-            </td>
-          </tr>
-          <tr>
-            <td>159</td>
-            <td>2024-11-18</td>
-            <td>2025-11-21</td>
-            <td>Basic Plan</td>
-            <td>1</td>
-            <td>+3 Days</td>
+          <tr v-for="(member, index) in members" :key="index">
+            <td>{{ member.User_ID }}</td>
+            <td>{{ member.startingDate }}</td>
+            <td>{{ member.expiryDate }}</td>
+            <td>{{ member.subPlan }}</td>
+            <td>{{ member.subscriptionStat === 1 ? "Paid" : "Unpaid" }}</td>
+            <td>{{ member.duration }}</td>
             <td>
               <a href="update.html?id=2" class="action-button">Update</a>
               <a
@@ -114,7 +97,23 @@ export default {
     return {
       showLogoutConfirm: false,
       showSidebar: true,
+      members: [],
     };
+  },
+  mounted(){
+    apiClient.get("/Get/All")
+    .then(response => {
+      if(response.data.status.remarks === "success" && Array.isArray(response.data.payload)){
+        this.members = response.data.payload.map(member => ({
+          User_ID: member.User_ID,
+          startingDate: member.startingDate,
+          expiryDate: member.expiryDate,
+          subPlan: member.subPlan,
+          subscriptionStat: member.SubscriptionStat,
+          duration: member.duration
+        }))
+      }
+    })
   },
   methods: {
     toggleSidebar() {

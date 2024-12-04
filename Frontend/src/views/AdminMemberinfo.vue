@@ -79,7 +79,7 @@
             <td>{{ member.eConNum }}</td>
             <td>{{ member.address }}</td>
             <td>{{ member.age }}</td>
-            <td>{{ member.sex }}</td>
+            <td>{{ member.sex === 1 ? "Male" : "Female" }}</td>
             <td>{{ member.gender }}</td>
             <td>{{ member.bodyType }}</td>
             <td>{{ member.activityLevel }}</td>

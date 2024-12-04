@@ -30,13 +30,11 @@ import CoachProfile from "@/views/CoachProfile.vue";
 
 async function getCookie(name) {
   const cookies = document.cookie;
-  console.log("All cookies:", cookies);
 
   const value = `; ${cookies}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) {
     const cookieValue = decodeURIComponent(parts.pop().split(";").shift());
-    console.log(`Retrieved cookie for ${name}:`, cookieValue);
     return cookieValue;
   }
 
@@ -54,7 +52,6 @@ async function isTokenValid() {
   return false;
   try {
     const response = await apiClient.post("/Front/verifyToken", tokendata);
-    console.log(response.data);
     return response.data?.is_valid; // API returns { is_valid: true/false }
   } catch (error) {
     console.error("Error validating token:", error);
@@ -69,7 +66,6 @@ async function getUserRole() {
   if (!token) return null;
   try {
     const response = await apiClient.post("/Front/getUserType", tokendata);
-    console.log(response.data);
     return response.data; // API response: { user_type: "member/admin/etc" }
   } catch (error) {
     console.error("Error retrieving user role:", error);
