@@ -53,48 +53,20 @@
         <thead>
           <tr>
             <th>User ID</th>
-            <th>Condition ID</th>
-            <th>Actions</th>
+            <th>Username</th>
+            <th>Conditions</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>154</td>
-            <td>1</td>
+          <tr v-for="(member, index) in members" :key="index">
+            <td>{{ member.User_ID }}</td>
+            <td>{{ member.Username }}</td>
             <td>
-              <a href="update.html?id=2" class="action-button">Update</a>
-              <a
-                href="delete.html?id=3"
-                class="action-button"
-                onclick="return confirm('Are you sure you want to delete this record?');"
-                >Delete</a
-              >
-            </td>
-          </tr>
-          <tr>
-            <td>154</td>
-            <td>2</td>
-            <td>
-              <a href="update.html?id=2" class="action-button">Update</a>
-              <a
-                href="delete.html?id=3"
-                class="action-button"
-                onclick="return confirm('Are you sure you want to delete this record?');"
-                >Delete</a
-              >
-            </td>
-          </tr>
-          <tr>
-            <td>154</td>
-            <td>3</td>
-            <td>
-              <a href="update.html?id=2" class="action-button">Update</a>
-              <a
-                href="delete.html?id=3"
-                class="action-button"
-                onclick="return confirm('Are you sure you want to delete this record?');"
-                >Delete</a
-              >
+              <ul>
+                <li v-for="(condition, cIndex) in member.Conditions" :key="cIndex">
+                  {{ condition }}
+                </li>
+              </ul>
             </td>
           </tr>
         </tbody>
@@ -111,7 +83,20 @@ export default {
     return {
       showLogoutConfirm: false,
       showSidebar: true,
+      members: [],
     };
+  },
+  mounted(){
+    apiClient.get("/Get/All")
+    .then(response => {
+      if (response.data.status.remarks === "success" && Array.isArray(response.data.payload)) {
+        this.members = response.data.payload.map(member => ({
+          User_ID: member.User_ID,
+          Username: member.Username,
+          Conditions: member.conditions || [],
+        }))
+      }
+    })
   },
   methods: {
     toggleSidebar() {

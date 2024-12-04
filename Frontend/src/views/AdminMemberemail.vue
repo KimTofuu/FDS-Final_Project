@@ -56,7 +56,7 @@
             <th>User ID</th>
             <th>Email</th>
             <th>Username</th>
-            <th>Archive Status</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -65,7 +65,7 @@
             <td>{{ member.User_ID }}</td>
             <td>{{ member.Email }}</td>
             <td>{{ member.Username }}</td>
-            <td>{{ member.ArchiveStatus }}</td>
+            <td>{{ member.ArchiveStatus === 1 ? 'Visible' : 'Hidden'}}</td>
             <td>
               <a href="update.html?id=2" class="action-button">Update</a>
               <a

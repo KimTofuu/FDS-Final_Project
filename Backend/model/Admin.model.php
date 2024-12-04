@@ -44,7 +44,7 @@ class adminControls implements adminInterface {
         switch (strtolower($data)) {
             case 'basic plan':
                 $result['plan'] = 'Basic Plan';
-                $result['duration'] = '+ 3 days';
+                $result['duration'] = '+ 14 days';
                 break;
             case 'advanced plan':
                 $result['plan'] = 'Advanced Plan';
@@ -219,18 +219,25 @@ class adminControls implements adminInterface {
     public function getAllAcc() {
         $sql = "SELECT m.User_ID, m.Email, m.Username, m.ArchiveStatus, s.SubscriptionStat, s.subPlan, 
             mi.name, mi.conNum, mi.eConNum, mi.address, mi.age, mi.sex, mi.gender, mi.bodyType, 
-            mi.activityLevel, mi.weight, mi.height, mi.BMI
+            mi.activityLevel, mi.weight, mi.height, mi.BMI, s.startingDate, s.expiryDate, s.duration,
+            GROUP_CONCAT(mc.medCondi_Name) AS conditions
             FROM member m
             LEFT JOIN membership_duration s ON m.User_ID = s.User_ID
             LEFT JOIN member_info mi ON m.User_ID = mi.User_ID
-            WHERE m.ArchiveStatus = 1";
-        $data = array(); 
+            LEFT JOIN user_conditions uc ON m.User_ID = uc.user_id
+            LEFT JOIN medcondi mc ON uc.condition_id = mc.medCondi_ID
+            WHERE m.ArchiveStatus = 1
+            GROUP BY m.User_ID";
+
+        $data = []; 
         
         try {
             $stmt = $this->pdo->prepare($sql);
             if ($stmt->execute()) {
                 if ($stmt->rowCount() > 0){
-                    foreach($stmt->fetchAll() as $d){
+                    foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $d){
+
+                        $d['conditions'] = $d['conditions'] ? explode(',', $d['conditions']) : [];
                         array_push($data, $d);
                     }
                     return $this->gm->responsePayload($data, 'success', 'Data retrieved successfully.', 200);
