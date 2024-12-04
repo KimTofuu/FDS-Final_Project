@@ -522,7 +522,7 @@ body {
 
 .content {
   margin-left: 20%;
-  padding: 75px;
+  padding: 10vh !important;
   flex: 1;
 }
 
