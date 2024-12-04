@@ -49,8 +49,11 @@
 
     <main class="content">
       <header>
-        <h1>MEMBERS SUBSCRIPTION</h1>
+        <h1>MEMBERS CONDITION</h1>
       </header>
+      <button class="create-profile-button" @click="toggleProfilePopup">
+        Create Account
+      </button>
 
       <table>
         <thead>
@@ -79,6 +82,210 @@
           </tr>
         </tbody>
       </table>
+      <div
+        v-if="showProfilePopup"
+        class="overlay"
+        @click="toggleProfilePopup"
+      ></div>
+      <div v-if="showProfilePopup" class="profile-popup">
+        <h2>Enter Client Details</h2>
+        <form @submit.prevent="createProfile">
+          <div class="input-group">
+            <label for="clientEmail">Email:</label>
+            <input
+              type="email"
+              id="clientEmail"
+              v-model="clientDetails.email"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="clientName">Username:</label>
+            <input
+              type="text"
+              id="clientName"
+              v-model="clientDetails.username"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="clientPassword">Password:</label>
+            <input
+              type="password"
+              id="clientPassword"
+              v-model="clientDetails.password"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="clientSubscription">Subscription Status:</label>
+            <select
+              id="clientSubscription"
+              v-model="clientDetails.subscription"
+              required
+              class="custom-dropdown"
+            >
+              <option value="" disabled selected>Subscription Status</option>
+              <option value="paid">Paid</option>
+              <option value="unpaid">Unpaid</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="clientSubplan">Subscription Plan:</label>
+            <select
+              id="clientSubplan"
+              v-model="clientDetails.subplan"
+              required
+              class="custom-dropdown"
+            >
+              <option value="" disabled selected>Subscription Plan</option>
+              <option value="basic">Basic Plan</option>
+              <option value="master">Master Plan</option>
+              <option value="advanced">Advanced Plan</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="clientCondition">Condition:</label>
+            <input
+              type="number"
+              id="clientCondition"
+              v-model="clientDetails.condition"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="clientName">Name:</label>
+            <input
+              type="text"
+              id="clientName"
+              v-model="clientDetails.name"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="clientconNum">Contact Number:</label>
+            <input
+              type="tel"
+              id="clientconNum"
+              v-model="clientDetails.conNum"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="clienteconNum">Emergency Contact Number:</label>
+            <input
+              type="tel"
+              id="clienteconNum"
+              v-model="clientDetails.econNum"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="clientAddress">Address:</label>
+            <input
+              type="text"
+              id="clientAddress"
+              v-model="clientDetails.address"
+            />
+          </div>
+          <div class="input-group">
+            <label for="clientage">Age:</label>
+            <input
+              type="number"
+              id="clientage"
+              v-model="clientDetails.age"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="clientsex">Sex:</label>
+            <select
+              id="clientsex"
+              v-model="clientDetails.sex"
+              required
+              class="custom-dropdown"
+            >
+              <option value="" disabled selected>Select your sex</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="clientgender">Gender:</label>
+            <select
+              id="clientgender"
+              v-model="clientDetails.gender"
+              required
+              class="custom-dropdown"
+            >
+              <option value="" disabled selected>Select your gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Non-Binary">Non-Binary</option>
+              <option value="Genderqueer">Genderqueer</option>
+              <option value="Genderfluid">Genderfluid</option>
+              <option value="Agender">Agender</option>
+              <option value="Bigender">Bigender</option>
+              <option value="Two-Spirit">Two-Spirit</option>
+              <option value="Prefer not to say">Prefer not to say</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="clientbodyType">Body Type:</label>
+            <select
+              id="clientbodyType"
+              v-model="clientDetails.bodyType"
+              required
+              class="custom-dropdown"
+            >
+              <option value="" disabled selected>Select your body type</option>
+              <option>Ectomorph</option>
+              <option>Mesomorph</option>
+              <option>Endomorph</option>
+              />
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="clientactivityLevel">Activity Level:</label>
+            <input
+              type="text"
+              id="clientactivityLevel"
+              v-model="clientDetails.activityLevel"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="clientweight">Weight:</label>
+            <input
+              type="number"
+              id="clientweight"
+              v-model="clientDetails.weight"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="clientHeight">Height:</label>
+            <input
+              type="number"
+              id="clientHeight"
+              v-model="clientDetails.height"
+              required
+            />
+          </div>
+
+          <div class="button-group">
+            <button
+              type="button"
+              class="close-button"
+              @click="toggleProfilePopup"
+            >
+              Close
+            </button>
+            <button type="submit" class="create-button">Create</button>
+          </div>
+        </form>
+      </div>
     </main>
   </div>
 </template>
@@ -92,6 +299,26 @@ export default {
       showLogoutConfirm: false,
       showSidebar: true,
       members: [],
+      showProfilePopup: false,
+      clientDetails: {
+        email: "",
+        Username: "",
+        Password: "",
+        SubscriptionStat: "",
+        subPlan: "",
+        condition_ids: "",
+        name: "",
+        conNum: "",
+        eConNum: "",
+        address: "",
+        age: "",
+        sex: "",
+        gender: "",
+        bodyType: "",
+        activityLevel: "",
+        weight: "",
+        height: "",
+      },
     };
   },
   mounted(){
@@ -111,10 +338,18 @@ export default {
           expiryDate: member.expiryDate,
           subPlan: member.subPlan,
           subscriptionStat: member.SubscriptionStat,
-          duration: member.duration
-        }))
+          duration: member.duration,
+        }));
       }
     })
+    },
+    toggleProfilePopup() {
+      this.showProfilePopup = !this.showProfilePopup;
+    },
+    createProfile() {
+      console.log("Client Details:", this.clientDetails);
+      alert("Profile created successfully!");
+      this.toggleProfilePopup();
     },
     async logout() {
       this.showLogoutConfirm = false;
@@ -324,6 +559,113 @@ body {
 .content h1 {
   color: #000000;
   margin-bottom: 8vh;
+}
+
+.create-profile-button {
+  background-color: #ac0700;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin-left: 120vh;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.create-profile-button:hover {
+  background-color: #ffffff;
+  color: #ac0700;
+}
+
+.profile-popup {
+  position: fixed;
+  top: 50%;
+  left: 56%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  color: #000;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  width: 90vh;
+  height: 80vh;
+  overflow: auto;
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.create-button,
+.close-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.create-button {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.create-button:hover {
+  background-color: #ffffff;
+  color: #000;
+}
+
+.close-button {
+  background-color: #ac0700;
+  color: white;
+}
+
+.close-button:hover {
+  background-color: #ffffff;
+  color: #ac0700;
+}
+
+.custom-dropdown {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
+  appearance: none;
+}
+
+.custom-dropdown:focus {
+  border-color: #4caf50;
+  outline: none;
+}
+
+.custom-dropdown option {
+  padding: 10px;
 }
 
 table {
