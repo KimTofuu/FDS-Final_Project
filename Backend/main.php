@@ -56,6 +56,7 @@ try{
             if ($tokenRes['is_valid'] == true) {
                 if ($req[1] == 'One') {echo json_encode($adminCon->getOneAcc($data));return;}
                 if ($req[1] == 'All') {echo json_encode($adminCon->getAllAcc());return;}
+                if ($req[1] == 'Coaches') {echo json_encode($adminCon->getAllCoach());return;}
             }
         }
 
@@ -143,6 +144,7 @@ try{
             $tokenResMem = $auth->verifyTokenBackend('admin');
             if ($tokenResMem['is_valid'] == true) {
                 if($req[1] == 'Delete'){echo json_encode($adminCon->delAcc($data));return;}
+                if($req[1] == 'DeleteCoach'){echo json_encode($adminCon->delCoach($data));return;}
             }
         }
 

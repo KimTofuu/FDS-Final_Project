@@ -11,14 +11,11 @@
 
       <nav>
         <ul>
-          <li>
-            <a href="/AdminMemberinfo">Members Information</a>
-          </li>
-          <li>
-            <a href="/AdminMemberemail" style="color: #ac0700">Members Email</a>
-          </li>
+          <li><a href="/AdminMemberinfo">Members Information</a></li>
+          <li><a href="/AdminMemberemail" style="color: #ac0700">Members Email</a></li>
           <li><a href="/AdminMembercondition">Members Condition</a></li>
           <li><a href="/AdminMembersubscription">Members Subscription</a></li>
+          <li><a href="/AdminCoach">Coaches Information</a></li>
         </ul>
       </nav>
       <button @click="showLogoutConfirm = true" class="logout-button">

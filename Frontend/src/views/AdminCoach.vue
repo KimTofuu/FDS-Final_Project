@@ -14,8 +14,8 @@
           <li><a href="/AdminMemberinfo">Members Information</a></li>
           <li><a href="/AdminMemberemail">Members Email</a></li>
           <li><a href="/AdminMembercondition">Members Condition</a></li>
-          <li><a href="/AdminMembersubscription" style="color: #ac0700">Members Subscription</a></li>
-          <li><a href="/AdminCoach">Coaches Information</a></li>
+          <li><a href="/AdminMembersubscription">Members Subscription</a></li>
+          <li><a href="/AdminCoach" style="color: #ac0700">Coaches Information</a></li>
         </ul>
       </nav>
       <button @click="showLogoutConfirm = true" class="logout-button">
@@ -44,39 +44,48 @@
 
     <main class="content">
       <header>
-        <h1>MEMBERS CONDITION</h1>
+        <h1>COACHES</h1>
       </header>
       <button class="create-profile-button" @click="toggleProfilePopup">
         Create Account
       </button>
-
       <table>
         <thead>
           <tr>
-            <th>User ID</th>
-            <th>Starting Date</th>
-            <th>Expiry Date</th>
-            <th>Plan</th>
-            <th>Subscription Stat</th>
-            <th>Duration</th>
-            <th>Actions</th>
+            <th>Coach ID</th>
+            <th>Coach Username</th>
+            <th>Coach Email</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Sex</th>
+            <th>Gemder</th>
+            <th>Height</th>
+            <th>Weight</th>
+            <th>Contact No.</th>
+            <th>Address</th>
+            <th>Action</th>
           </tr>
         </thead>
-
         <tbody>
-          <tr v-for="(member, index) in members" :key="index">
-            <td>{{ member.User_ID }}</td>
-            <td>{{ member.startingDate }}</td>
-            <td>{{ member.expiryDate }}</td>
-            <td>{{ member.subPlan }}</td>
-            <td>{{ member.subscriptionStat === 1 ? "Paid" : "Unpaid" }}</td>
-            <td>{{ member.duration }}</td>
+          <tr v-for="(coach, index) in coaches" :key="index">
+            <td>{{ coach.User_ID }}</td>
+            <td>{{ coach.Username }}</td>
+            <td>{{ coach.coachEmail }}</td>
+            <td>{{ coach.Name }}</td>
+            <td>{{ coach.Age }}</td>
+            <td>{{ coach.Sex }}</td>
+            <td>{{ coach.Gender }}</td>
+            <td>{{ coach.Height }}</td>
+            <td>{{ coach.Weight }}</td>
+            <td>{{ coach.ContactNo }}</td>
+            <td>{{ coach.Address }}</td>
             <td>
-              <button @click="updateMember(member.User_ID)" class="action-button">Update</button>
+                <button @click="deleteCoach(coach.User_ID)" class="action-button">Delete</button>
             </td>
           </tr>
         </tbody>
       </table>
+
       <div
         v-if="showProfilePopup"
         class="overlay"
@@ -293,50 +302,21 @@ export default {
     return {
       showLogoutConfirm: false,
       showSidebar: true,
-      members: [],
+      coaches: [],
       showProfilePopup: false,
-      clientDetails: {
+      coachDetails: {
         email: "",
         Username: "",
         Password: "",
-        SubscriptionStat: "",
-        subPlan: "",
-        condition_ids: "",
-        name: "",
-        conNum: "",
-        eConNum: "",
-        address: "",
-        age: "",
-        sex: "",
-        gender: "",
-        bodyType: "",
-        activityLevel: "",
-        weight: "",
-        height: "",
       },
     };
   },
-  mounted(){
+  mounted() {
     this.fetchData();
   },
   methods: {
     toggleSidebar() {
       this.showSidebar = !this.showSidebar;
-    },
-    async fetchData() {
-      apiClient.get("/Get/All")
-    .then(response => {
-      if(response.data.status.remarks === "success" && Array.isArray(response.data.payload)){
-        this.members = response.data.payload.map(member => ({
-          User_ID: member.User_ID,
-          startingDate: member.startingDate,
-          expiryDate: member.expiryDate,
-          subPlan: member.subPlan,
-          subscriptionStat: member.SubscriptionStat,
-          duration: member.duration,
-        }));
-      }
-    })
     },
     toggleProfilePopup() {
       this.showProfilePopup = !this.showProfilePopup;
@@ -361,20 +341,34 @@ export default {
         this.error = "An error occurred while logging out. Please try again.";
       }
     },
-    async updateMember(id){
-      const updateData = {
-        User_ID: id,
-      }
-      try{
-        const response = await apiClient.put('/Admin/setPaid', updateData, {withCredentials: true} );
-        if(response.data.status.remarks === "success"){
-          await this.fetchData();
-        }else{
-          alert(`User ${id} failed to update or is already paid`);
+    async fetchData() {
+        apiClient.get("/Get/Coaches").then((response) => {
+        if (
+            response.data.status.remarks === "success" &&
+            Array.isArray(response.data.payload)
+        ) {
+            this.coaches = response.data.payload.map((coach) => ({
+            User_ID: coach.User_ID,
+            Username: coach.Username,
+            Email: coach.coachEmail,
+            Name: coach.Name,
+            Age: coach.Age,
+            Sex: coach.Sex,
+            Gender: coach.Gender,
+            Height: coach.Height,
+            Weight: coach.Weight,
+            ContactNo: coach.ContactNo,
+            Address: coach.Address
+            }));
         }
+        });  
+    },
+    async deleteCoach(coachId) {
+      try{
+        const response = await apiClient.post('/Admin/DeleteCoach', {User_ID: coachId}, {withCredentials: true} );
+        if(response.data.status.remarks === "success"){await this.fetchData();}
       }catch(error){
-        console.log(error);
-        this.error = "Error occured on update";
+        console.error("Error deleting coach:", error);
       }
     },
     beforeEnter(el) {

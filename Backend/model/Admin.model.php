@@ -175,6 +175,7 @@ class adminControls implements adminInterface {
 
     public function coachCreate($data){
         $sqlCheckUser = 'SELECT COUNT(*) FROM coach WHERE LOWER(Username) = LOWER(?)';
+        $sqlCheckUserEmail = 'SELECT COUNT(*) FROM coach WHERE LOWER(coachEmail) = LOWER(?)';
         $sqlCoachInfo = 'INSERT INTO coach_info(Coach_ID) VALUES(?)';
         $sql = 'INSERT INTO coach(Username, coachEmail, Password) VALUES(?, ?, ?)';
 
@@ -189,8 +190,12 @@ class adminControls implements adminInterface {
             $stmtCheckUser = $this->pdo->prepare($sqlCheckUser);
             $stmtCheckUser->execute([$data->Username]);
             $userExists = $stmtCheckUser->fetchColumn();
+            $stmtCheckUserEmail = $this->pdo->prepare($sqlCheckUserEmail);
+            $stmtCheckUserEmail->execute([$data->coachEmail]);
+            $userExistsEmail = $stmtCheckUserEmail->fetchColumn();
 
-            if ($userExists > 0) {return $this->gm->responsePayload(null, 'failed', 'Username already exists.', 409);}
+            if ($userExists > 0) {return $this->gm->responsePayload(null, 'failed', 'Username or Email already exists.', 409);}
+            if ($userExistsEmail > 0) {return $this->gm->responsePayload(null, 'failed', 'Username or Email already exists.', 409);}
             
             $this->pdo->beginTransaction();
 
@@ -334,6 +339,46 @@ class adminControls implements adminInterface {
             }
         }catch(PDOException $e){
             return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+        }
+    }
+    public function getAllCoach(){
+        $getSql = "SELECT c.User_ID, c.Username, c.coachEmail, ci.Name, ci.Age, ci.Sex, ci.Gender, 
+        ci.Height, ci.Weight, ci.ContactNo, ci.Address
+        FROM coach c
+        LEFT JOIN coach_info ci on c.User_ID = ci.Coach_ID";
+
+        $result = [];
+
+        try{
+            $stmt = $this->pdo->prepare($getSql);
+            if($stmt->execute()){
+                if($stmt->rowCount() > 0){
+                    foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $d){
+                        array_push($result, $d);
+                    }
+                    return $this->gm->responsePayload($result, 'success', 'Data retrieved successfully.', 200);
+                }else{
+                    return $this->gm->responsePayload(null, 'failed', 'No data found.', 404);
+                }
+            }
+        }catch(PDOException $e){
+            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+        }
+    }
+    public function delCoach($data){
+        $sql = "DELETE FROM coach WHERE User_ID = ?";
+
+        try{
+            $stmt = $this->pdo->prepare($sql);
+            if($stmt->execute([$data->User_ID])){
+                if($stmt->rowCount() > 0){
+                    return $this->gm->responsePayload(null, 'success', 'Coach successfully deleted.', 200);
+                }else{
+                    return $this->gm->responsePayload(null, 'failed', 'Coach doesn\'t exist or is already deleted.', 404);
+                }
+            }
+        }catch(PDOException $e){
+            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);                                                                                        
         }
     }
 }
