@@ -69,7 +69,7 @@ try{
 
         if($req[0] == 'Coach'){
             $tokenResMem = $auth->verifyTokenBackend('coach');
-            if ($tokenResMem['is_valid'] !== true) {
+            if ($tokenResMem['is_valid'] == true) {
                 if ($req[1] == 'View-Clients') {echo json_encode($coach->getAllClients());return;}
                 if ($req[1] == 'View-one-Client') {echo json_encode($coach->seeMemDet($data));return;}
             }
@@ -122,8 +122,9 @@ try{
 
         if($req[0] == 'Coach'){
             $tokenResMem = $auth->verifyTokenBackend('coach');
-            if($tokenResMem['is_valid'] !== true && isset($_COOKIE['Authorization'])) {
+            if($tokenResMem['is_valid'] == true && isset($_COOKIE['Authorization'])) {
                 if($req[1] == "Send-Message"){echo json_encode($coach->sendMessage($data));return;}
+                if($req[1] == "Update-Info"){echo json_encode($coach->updateInfo($data));return;}
             }else{
                 echo json_encode(($rm->responsePayload(null, 'failed', 'Login first', 403)));
                 return;

@@ -78,10 +78,10 @@ export default {
       showLogoutConfirm: false,
       showSidebar: true,
       coach: {
-        name: "Coach Bamboo",
-        age: "40 years old",
-        contact: "09123456789",
-        address: "West Tapinac, Olongapo, Philippines",
+        name: "",
+        age: "",
+        contact: "",
+        address: "",
       },
     };
   },

@@ -88,4 +88,20 @@ class coach implements coachInterface{
             return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
         }
     }
+    public function updateInfo($data){
+        $coachID = $this->gm->getIDFromTokenBackend();
+
+        $sql = 'UPDATE coach_info SET Name = ?, Age = ?, Sex = ?, Gender = ?, Height = ?, Weight = ?, ContactNo = ?, Address = ?  WHERE Coach_ID = ?';
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            if ($stmt->execute([$data->Name, $data->Age, $data->Sex, $data->Gender, $data->Weight, $data->Height, $data->ContactNo, $data->Address, $coachID])) {
+                return $this->gm->responsePayload($data, 'success', 'Data uploaded', 200);
+            } else {
+                return $this->gm->responsePayload(null, 'failed', 'Upload failed', 403);
+            }
+        } catch (PDOException $e) {
+            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+        }
+    }
 }

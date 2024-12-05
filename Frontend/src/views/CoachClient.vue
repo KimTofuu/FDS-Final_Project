@@ -47,25 +47,19 @@
           </button>
         </header>
         <div class="clients-container">
-          <div
-            class="client-box"
-            v-for="(client, index) in clients"
-            :key="index"
-            @click.stop
-          >
+          <div class="client-box" v-for="(client, index) in clients" :key="index" @click.stop>
             <div class="client-icon">
               <img src="../assets/pfp.jpg" alt="Client Icon" />
             </div>
+            <div class="Client-Info" style="color: black;">
+              <h5>{{ client.name }}</h5>
+              <h2>{{ client.Username }}</h2>
+            </div>
             <div class="client-actions">
-              <button class="more-options" @click.stop="toggleOptions(index)">
-                ⋮
-              </button>
-
-              <div
-                v-if="activeDropdown === index"
-                class="options-menu"
-                @click.stop
-              >
+              <button @click="messageClient(index)" class="action-button">Message</button>
+              <button @click="" class="action-button">View</button>
+              <button class="more-options" @click.stop="toggleOptions(index)">⋮</button>
+              <div v-if="activeDropdown === index" class="options-menu" @click.stop>
                 <button @click="messageClient(index)">Message Client</button>
                 <button @click="deleteClient(index)">Delete</button>
               </div>
@@ -83,15 +77,28 @@ import apiClient from "@/api/axios";
 export default {
   data() {
     return {
-      showLogoutConfirm: false, // Controls logout confirmation visibility
-      showSidebar: true, // Toggles sidebar visibility
-      clients: Array(5).fill(null), // Dummy clients data
-      activeDropdown: null, // Tracks the active dropdown menu
-      error: null, // Stores logout error messages
+      showLogoutConfirm: false, 
+      showSidebar: true, 
+      clients: [], 
+      activeDropdown: null, 
+      clientDeets:{
+        Username: "",
+        name: "",
+        conNum: "",
+        age: 0,
+		    sex: 0,
+		    bodyType: "",
+		    activityLevel: "",
+		    weight: "",
+		    height: "",
+		    BMI: ""
+      }
     };
   },
+  mounted() {
+    this.fetchData();
+  },
   methods: {
-
     async logout() {
       this.showLogoutConfirm = false; // Hide logout confirmation dialog
       try {
@@ -105,6 +112,36 @@ export default {
       } catch (error) {
         console.error("Logout Error:", error); // Log any errors
         this.error = "An error occurred while logging out. Please try again."; // Fallback error message
+      }
+    },
+    async fetchData() {
+      apiClient.get("/Coach/View-Clients")
+    .then((response) => {
+      if (response.data.status.remarks === "success" && Array.isArray(response.data.payload)) {
+        this.clients = response.data.payload.map((member) => ({
+          Username: member.Username,
+          name: member.name
+        }))
+      }
+    })
+    },
+    async viewClient(id){
+      try{
+        const response = await apiClient.get('/Coach/View-Client', {User_ID: id}, {withCredentials: true} );
+        if(response.data.status.remarks === "success"){
+          this.clientDeets.Username = response.data.payload[0].Username;
+          this.clientDeets.name = response.data.payload[0].name;
+          this.clientDeets.conNum = response.data.payload[0].conNum;
+          this.clientDeets.age = response.data.payload[0].age;
+          this.clientDeets.sex = response.data.payload[0].sex;
+          this.clientDeets.bodyType = response.data.payload[0].bodyType;
+          this.clientDeets.activityLevel = response.data.payload[0].activityLevel;
+          this.clientDeets.weight = response.data.payload[0].weight;
+          this.clientDeets.height = response.data.payload[0].height;
+          this.clientDeets.BMI = response.data.payload[0].BMI;s
+        }
+      }catch(error){
+        console.error(error);
       }
     },
     beforeEnter(el) {
