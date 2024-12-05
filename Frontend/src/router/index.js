@@ -17,16 +17,9 @@ import AdminMembercondition from "@/views/AdminMembercondition.vue";
 import AdminMemberemail from "@/views/AdminMemberemail.vue";
 import AdminMemberinfo from "@/views/AdminMemberinfo.vue";
 import AdminMembersubscription from "@/views/AdminMembersubscription.vue";
+import AdminCoach from "@/views/AdminCoach.vue";
 import CoachClient from "@/views/CoachClient.vue";
 import CoachProfile from "@/views/CoachProfile.vue";
-
-// Helper function to read cookies
-// function getCookie(name) {
-//   const value = `; ${document.cookie}`;
-//   const parts = value.split(`; ${name}=`);
-//   if (parts.length === 2) return decodeURIComponent(parts.pop().split(";").shift());
-//   return null;
-// }
 
 async function getCookie(name) {
   const cookies = document.cookie;
@@ -119,6 +112,12 @@ const router = createRouter({
       path: "/AdminMembersubscription",
       name: "AdminMembersubscription",
       component: AdminMembersubscription,
+      meta: { requiresAuth: true, role: "admin" },
+    },
+    {
+      path: "/AdminCoach",
+      name: "AdminCoach",
+      component: AdminCoach,
       meta: { requiresAuth: true, role: "admin" },
     },
     {
