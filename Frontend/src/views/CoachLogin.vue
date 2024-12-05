@@ -17,19 +17,54 @@
 
     <div class="main">
       <div class="content">
-        <div class="form">
-          <h2><b>COACH LOGIN</b></h2>
-          <input type="text" placeholder="Username" />
-          <input type="password" placeholder="Password" />
-          <button><h3>LOGIN</h3></button>
-          <div class="return-button">
-            <router-link to="/MainLogin"> < RETURN </router-link>
-          </div>
-        </div>
+        <form @submit.prevent="login">
+            <input type="text" placeholder="Username" id="username" v-model="Username"/>
+            <input type="password" placeholder="Password" id="password" v-model="Password"/>
+            <button type="submit"><h3>LOGIN</h3></button>
+            <div v-if="error" style="color: red">{{ error }}</div>
+            <div class="return-button">
+              <router-link to="/MainLogin"> < RETURN </router-link>
+            </div>
+          </form>
       </div>
     </div>
   </div>
 </template>
+
+<script>
+import apiClient from "@/api/axios";
+
+export default{
+  data() {
+    return {
+      Username: '',
+      Password: '', 
+      error: ''
+    }
+  },
+  methods: {
+    async login() {
+      const loginData = {
+        Username: this.Username,
+        Password: this.Password
+      }
+
+      try{
+        const response = await apiClient.post('/Login/Coach', loginData);
+        if(response.data?.status?.remarks === 'success'){
+          this.$router.push('/CoachClient');
+        }else{
+          console.log(response.data);
+          this.error = response.data.message || "Login failed";
+        }
+      }catch(error){
+        console.error("Login Error:", error);
+        this.error = "An error occurred while logging in. Please try again.";
+      }
+    }
+  }
+}
+</script>
 
 <style scoped>
 * {
