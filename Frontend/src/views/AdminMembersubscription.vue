@@ -87,39 +87,19 @@
         <form @submit.prevent="createProfile">
           <div class="input-group">
             <label for="clientEmail">Email:</label>
-            <input
-              type="email"
-              id="clientEmail"
-              v-model="clientDetails.email"
-              required
-            />
+            <input type="email" id="clientEmail" v-model="clientDetails.Email" required/>
           </div>
           <div class="input-group">
-            <label for="clientName">Username:</label>
-            <input
-              type="text"
-              id="clientName"
-              v-model="clientDetails.username"
-              required
-            />
+            <label for="clientUsername">Username:</label>
+            <input type="text" id="clientUsername" v-model="clientDetails.Username" required/>
           </div>
           <div class="input-group">
             <label for="clientPassword">Password:</label>
-            <input
-              type="password"
-              id="clientPassword"
-              v-model="clientDetails.password"
-              required
-            />
+            <input type="password" id="clientPassword" v-model="clientDetails.Password" required/>
           </div>
           <div class="input-group">
             <label for="clientSubscription">Subscription Status:</label>
-            <select
-              id="clientSubscription"
-              v-model="clientDetails.subscription"
-              required
-              class="custom-dropdown"
-            >
+            <select id="clientSubscription" v-model="clientDetails.SubscriptionStat" required class="custom-dropdown">
               <option value="" disabled selected>Subscription Status</option>
               <option value="paid">Paid</option>
               <option value="unpaid">Unpaid</option>
@@ -127,79 +107,40 @@
           </div>
           <div class="input-group">
             <label for="clientSubplan">Subscription Plan:</label>
-            <select
-              id="clientSubplan"
-              v-model="clientDetails.subplan"
-              required
-              class="custom-dropdown"
-            >
+            <select id="clientSubplan" v-model="clientDetails.subPlan" required class="custom-dropdown">
               <option value="" disabled selected>Subscription Plan</option>
-              <option value="basic">Basic Plan</option>
-              <option value="master">Master Plan</option>
-              <option value="advanced">Advanced Plan</option>
+              <option value="basic plan">Basic Plan</option>
+              <option value="advanced plan">Advanced Plan</option>
+              <option value="master plan">Master Plan</option>
             </select>
           </div>
           <div class="input-group">
             <label for="clientCondition">Condition:</label>
-            <input
-              type="number"
-              id="clientCondition"
-              v-model="clientDetails.condition"
-              required
-            />
+            <input type="number" id="clientCondition" v-model="clientDetails.condition_ids" required/>
           </div>
           <div class="input-group">
             <label for="clientName">Name:</label>
-            <input
-              type="text"
-              id="clientName"
-              v-model="clientDetails.name"
-              required
-            />
+            <input type="text" id="clientName" v-model="clientDetails.name" required/>
           </div>
           <div class="input-group">
             <label for="clientconNum">Contact Number:</label>
-            <input
-              type="tel"
-              id="clientconNum"
-              v-model="clientDetails.conNum"
-              required
-            />
+            <input type="text" id="clientconNum" v-model="clientDetails.conNum" required/>
           </div>
           <div class="input-group">
             <label for="clienteconNum">Emergency Contact Number:</label>
-            <input
-              type="tel"
-              id="clienteconNum"
-              v-model="clientDetails.econNum"
-              required
-            />
+            <input type="text" id="clienteconNum" v-model="clientDetails.eConNum" required/>
           </div>
           <div class="input-group">
             <label for="clientAddress">Address:</label>
-            <input
-              type="text"
-              id="clientAddress"
-              v-model="clientDetails.address"
-            />
+            <input type="text" id="clientAddress" v-model="clientDetails.address"/>
           </div>
           <div class="input-group">
             <label for="clientage">Age:</label>
-            <input
-              type="number"
-              id="clientage"
-              v-model="clientDetails.age"
-              required
-            />
+            <input type="number" id="clientage" v-model="clientDetails.age" required/>
           </div>
           <div class="input-group">
             <label for="clientsex">Sex:</label>
-            <select
-              id="clientsex"
-              v-model="clientDetails.sex"
-              required
-              class="custom-dropdown"
-            >
+            <select id="clientsex" v-model="clientDetails.sex" required class="custom-dropdown">
               <option value="" disabled selected>Select your sex</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -207,12 +148,7 @@
           </div>
           <div class="input-group">
             <label for="clientgender">Gender:</label>
-            <select
-              id="clientgender"
-              v-model="clientDetails.gender"
-              required
-              class="custom-dropdown"
-            >
+            <select id="clientgender" v-model="clientDetails.gender" required class="custom-dropdown">
               <option value="" disabled selected>Select your gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -228,12 +164,7 @@
           </div>
           <div class="input-group">
             <label for="clientbodyType">Body Type:</label>
-            <select
-              id="clientbodyType"
-              v-model="clientDetails.bodyType"
-              required
-              class="custom-dropdown"
-            >
+            <select id="clientbodyType" v-model="clientDetails.bodyType" required class="custom-dropdown">
               <option value="" disabled selected>Select your body type</option>
               <option>Ectomorph</option>
               <option>Mesomorph</option>
@@ -243,38 +174,27 @@
           </div>
           <div class="input-group">
             <label for="clientactivityLevel">Activity Level:</label>
-            <input
-              type="text"
-              id="clientactivityLevel"
-              v-model="clientDetails.activityLevel"
-              required
-            />
+            <select id="clientactivityLevel" v-model="clientDetails.activityLevel" required class="custom-dropdown">
+              <option value="" disabled selected>Select your body type</option>
+              <option>Sedentary</option>
+              <option>Lightly Active</option>
+              <option>Modedately Active</option>
+              <option>Very Active</option>
+              <option>Extra Active</option>
+              />
+            </select>
           </div>
           <div class="input-group">
             <label for="clientweight">Weight:</label>
-            <input
-              type="number"
-              id="clientweight"
-              v-model="clientDetails.weight"
-              required
-            />
+            <input type="number" id="clientweight" v-model="clientDetails.weight" required/>
           </div>
           <div class="input-group">
             <label for="clientHeight">Height:</label>
-            <input
-              type="number"
-              id="clientHeight"
-              v-model="clientDetails.height"
-              required
-            />
+            <input type="number" id="clientHeight" v-model="clientDetails.height" required/>
           </div>
 
           <div class="button-group">
-            <button
-              type="button"
-              class="close-button"
-              @click="toggleProfilePopup"
-            >
+            <button type="button" class="close-button" @click="toggleProfilePopup">
               Close
             </button>
             <button type="submit" class="create-button">Create</button>
@@ -296,7 +216,7 @@ export default {
       members: [],
       showProfilePopup: false,
       clientDetails: {
-        email: "",
+        Email: "",
         Username: "",
         Password: "",
         SubscriptionStat: "",
@@ -375,6 +295,36 @@ export default {
       }catch(error){
         console.log(error);
         this.error = "Error occured on update";
+      }
+    },
+    async createProfile(){
+      const clientData = {
+        Email: this.clientDetails.Email,
+        Username: this.clientDetails.Username,
+        Password: this.clientDetails.Password,
+        SubscriptionStat: this.clientDetails.SubscriptionStat,
+        subPlan: this.clientDetails.subPlan,
+        condition_ids: this.clientDetails.condition_ids,
+        name: this.clientDetails.name,
+        conNum: this.clientDetails.conNum,
+        eConNum: this.clientDetails.eConNum,
+        address: this.clientDetails.address,
+        age: this.clientDetails.age,
+        sex: this.clientDetails.sex,
+        gender: this.clientDetails.gender,
+        bodyType: this.clientDetails.bodyType,
+        activityLevel: this.clientDetails.activityLevel,
+        weight: this.clientDetails.weight,
+        height: this.clientDetails.height
+      }
+      try{
+        const response = await apiClient.post("/Create/Member", clientData, {withCredentials: true});
+        if(response.data.status.remarks === 'success'){
+          alert("Account successfully created");
+
+        }
+      }catch(error){
+        console.log(error);
       }
     },
     beforeEnter(el) {
