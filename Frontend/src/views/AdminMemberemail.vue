@@ -460,7 +460,7 @@ body {
   background-color: #ac0700;
   border: none;
   cursor: pointer;
-  margin-top: 25vh;
+  margin-top: 20vh !important;
   padding: 5px 10px;
   border-radius: 20px;
   display: flex;
@@ -551,7 +551,7 @@ body {
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
-  margin-left: 120vh;
+  margin-left: 128vh;
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
