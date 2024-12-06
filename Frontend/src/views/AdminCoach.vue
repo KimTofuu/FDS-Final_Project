@@ -47,7 +47,7 @@
         <h1>COACHES</h1>
       </header>
       <button class="create-profile-button" @click="toggleProfilePopup">
-        Create Account
+        Create Coach Account
       </button>
       <table>
         <thead>
@@ -59,10 +59,10 @@
             <th>Age</th>
             <th>Sex</th>
             <th>Gemder</th>
-            <th>Height</th>
-            <th>Weight</th>
             <th>Contact No.</th>
             <th>Address</th>
+            <th>Height</th>
+            <th>Weight</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -75,10 +75,10 @@
             <td>{{ coach.Age }}</td>
             <td>{{ coach.Sex }}</td>
             <td>{{ coach.Gender }}</td>
-            <td>{{ coach.Height }}</td>
-            <td>{{ coach.Weight }}</td>
             <td>{{ coach.ContactNo }}</td>
             <td>{{ coach.Address }}</td>
+            <td>{{ coach.Height }}</td>
+            <td>{{ coach.Weight }}</td>
             <td>
                 <button @click="deleteCoach(coach.User_ID)" class="action-button">Delete</button>
             </td>
@@ -96,119 +96,35 @@
         <form @submit.prevent="createProfile">
           <div class="input-group">
             <label for="clientEmail">Email:</label>
-            <input
-              type="email"
-              id="clientEmail"
-              v-model="clientDetails.email"
-              required
-            />
+            <input type="email" id="clientEmail" v-model="coachDetails.coachEmail" required/>
           </div>
           <div class="input-group">
-            <label for="clientName">Username:</label>
-            <input
-              type="text"
-              id="clientName"
-              v-model="clientDetails.username"
-              required
-            />
+            <label for="clientUsername">Username:</label>
+            <input type="text" id="clientUsername" v-model="coachDetails.Username" required/>
           </div>
           <div class="input-group">
             <label for="clientPassword">Password:</label>
-            <input
-              type="password"
-              id="clientPassword"
-              v-model="clientDetails.password"
-              required
-            />
-          </div>
-          <div class="input-group">
-            <label for="clientSubscription">Subscription Status:</label>
-            <select
-              id="clientSubscription"
-              v-model="clientDetails.subscription"
-              required
-              class="custom-dropdown"
-            >
-              <option value="" disabled selected>Subscription Status</option>
-              <option value="paid">Paid</option>
-              <option value="unpaid">Unpaid</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <label for="clientSubplan">Subscription Plan:</label>
-            <select
-              id="clientSubplan"
-              v-model="clientDetails.subplan"
-              required
-              class="custom-dropdown"
-            >
-              <option value="" disabled selected>Subscription Plan</option>
-              <option value="basic">Basic Plan</option>
-              <option value="master">Master Plan</option>
-              <option value="advanced">Advanced Plan</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <label for="clientCondition">Condition:</label>
-            <input
-              type="number"
-              id="clientCondition"
-              v-model="clientDetails.condition"
-              required
-            />
+            <input type="password" id="clientPassword" v-model="coachDetails.Password" required/>
           </div>
           <div class="input-group">
             <label for="clientName">Name:</label>
-            <input
-              type="text"
-              id="clientName"
-              v-model="clientDetails.name"
-              required
-            />
+            <input type="text" id="clientName" v-model="coachDetails.Name" required/>
           </div>
           <div class="input-group">
             <label for="clientconNum">Contact Number:</label>
-            <input
-              type="tel"
-              id="clientconNum"
-              v-model="clientDetails.conNum"
-              required
-            />
-          </div>
-          <div class="input-group">
-            <label for="clienteconNum">Emergency Contact Number:</label>
-            <input
-              type="tel"
-              id="clienteconNum"
-              v-model="clientDetails.econNum"
-              required
-            />
+            <input type="text" id="clientconNum" v-model="coachDetails.ContactNo" required/>
           </div>
           <div class="input-group">
             <label for="clientAddress">Address:</label>
-            <input
-              type="text"
-              id="clientAddress"
-              v-model="clientDetails.address"
-            />
+            <input type="text" id="clientAddress" v-model="coachDetails.Address"/>
           </div>
           <div class="input-group">
             <label for="clientage">Age:</label>
-            <input
-              type="number"
-              id="clientage"
-              v-model="clientDetails.age"
-              required
-            />
+            <input type="number" id="clientage" v-model="coachDetails.Age" required/>
           </div>
           <div class="input-group">
             <label for="clientsex">Sex:</label>
-            <select
-              id="clientsex"
-              v-model="clientDetails.sex"
-              required
-              class="custom-dropdown"
-            >
+            <select id="clientsex" v-model="coachDetails.Sex" required class="custom-dropdown">
               <option value="" disabled selected>Select your sex</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -216,12 +132,7 @@
           </div>
           <div class="input-group">
             <label for="clientgender">Gender:</label>
-            <select
-              id="clientgender"
-              v-model="clientDetails.gender"
-              required
-              class="custom-dropdown"
-            >
+            <select id="clientgender" v-model="coachDetails.Gender" required class="custom-dropdown">
               <option value="" disabled selected>Select your gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -236,54 +147,16 @@
             </select>
           </div>
           <div class="input-group">
-            <label for="clientbodyType">Body Type:</label>
-            <select
-              id="clientbodyType"
-              v-model="clientDetails.bodyType"
-              required
-              class="custom-dropdown"
-            >
-              <option value="" disabled selected>Select your body type</option>
-              <option>Ectomorph</option>
-              <option>Mesomorph</option>
-              <option>Endomorph</option>
-              />
-            </select>
-          </div>
-          <div class="input-group">
-            <label for="clientactivityLevel">Activity Level:</label>
-            <input
-              type="text"
-              id="clientactivityLevel"
-              v-model="clientDetails.activityLevel"
-              required
-            />
-          </div>
-          <div class="input-group">
             <label for="clientweight">Weight:</label>
-            <input
-              type="number"
-              id="clientweight"
-              v-model="clientDetails.weight"
-              required
-            />
+            <input type="number" id="clientweight" v-model="coachDetails.Weight" required/>
           </div>
           <div class="input-group">
             <label for="clientHeight">Height:</label>
-            <input
-              type="number"
-              id="clientHeight"
-              v-model="clientDetails.height"
-              required
-            />
+            <input type="number" id="clientHeight" v-model="coachDetails.Height" required/>
           </div>
 
           <div class="button-group">
-            <button
-              type="button"
-              class="close-button"
-              @click="toggleProfilePopup"
-            >
+            <button type="button" class="close-button" @click="toggleProfilePopup">
               Close
             </button>
             <button type="submit" class="create-button">Create</button>
@@ -305,9 +178,17 @@ export default {
       coaches: [],
       showProfilePopup: false,
       coachDetails: {
-        email: "",
+        coachEmail: "",
         Username: "",
         Password: "",
+        Name: "",
+        Age: "",
+        Sex: "",
+        ContactNo: "",
+        Address: "",
+        Gender: "",
+        Weight: "",
+        Height: ""
       },
     };
   },
@@ -350,7 +231,7 @@ export default {
             this.coaches = response.data.payload.map((coach) => ({
             User_ID: coach.User_ID,
             Username: coach.Username,
-            Email: coach.coachEmail,
+            coachEmail: coach.coachEmail,
             Name: coach.Name,
             Age: coach.Age,
             Sex: coach.Sex,
@@ -369,6 +250,29 @@ export default {
         if(response.data.status.remarks === "success"){await this.fetchData();}
       }catch(error){
         console.error("Error deleting coach:", error);
+      }
+    },
+    async createProfile(){
+      const coachData = {
+        Username: this.coachDetails.Username,
+        Password: this.coachDetails.Password,
+        coachEmail: this.coachDetails.coachEmail,
+        Name: this.coachDetails.Name,
+        Age: this.coachDetails.Age,
+        Sex: this.coachDetails.Sex,
+        ContactNo: this.coachDetails.ContactNo,
+        Address: this.coachDetails.Address,
+        Gender: this.coachDetails.Gender,
+        Height: this.coachDetails.Height,
+        Weight: this.coachDetails.Weight
+      }
+      try{
+        const response = await apiClient.post("/Create/Coach", coachData, {withCredentials: true});
+        if(response.data.status.remarks === 'success'){
+          alert("Account successfully created");
+        }
+      }catch(error){
+        console.log(error);
       }
     },
     beforeEnter(el) {

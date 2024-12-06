@@ -92,7 +92,7 @@ class adminControls implements adminInterface {
         $option = ["cost" => 11];
         $hashedPass = password_hash($data->Password, PASSWORD_BCRYPT, $option);
     
-        if (empty($data->Email) || empty($data->Username) || empty($data->Password) || empty($data->SubscriptionStat)) {
+        if (!isset($data->Email) || !isset($data->Username) || !isset($data->Password) || !isset($data->SubscriptionStat)) {
             return $this->gm->responsePayload(null, 'failed', 'Fill up all required fields.', 400);
         }
     
@@ -126,15 +126,15 @@ class adminControls implements adminInterface {
                 $stmtSubStatus = $this->pdo->prepare($sqlSubStatus);
                 $stmtMemberInfo = $this->pdo->prepare($sqlMemberInfo);
 
-                $validBodyTypes = ['ectomorph', 'mesomorph', 'endomorph'];
-                $validActivityLevels = ['sedentary', 'lightly active', 'moderately active', 'very active', 'extra active'];
+                $validBodyTypes = ['Ectomorph', 'Mesomorph', 'Endomorph'];
+                $validActivityLevels = ['Sedentary', 'Lightly Active', 'Moderately Active', 'Very Active', 'Extra Active'];
 
                 // Check if body type and activity level are valid
                 if (!in_array($data->bodyType, $validBodyTypes)) {
                     return $this->gm->responsePayload(null, 'failed', 'Invalid body type. Please choose from: ' . implode(', ', $validBodyTypes), 400);
                 }
 
-                if (!in_array(strtolower($data->activityLevel), $validActivityLevels)) {
+                if (!in_array($data->activityLevel, $validActivityLevels)) {
                     return $this->gm->responsePayload(null, 'failed', 'Invalid activity level. Please choose from: ' . implode(', ', $validActivityLevels), 400);
                 }
     
@@ -176,13 +176,13 @@ class adminControls implements adminInterface {
     public function coachCreate($data){
         $sqlCheckUser = 'SELECT COUNT(*) FROM coach WHERE LOWER(Username) = LOWER(?)';
         $sqlCheckUserEmail = 'SELECT COUNT(*) FROM coach WHERE LOWER(coachEmail) = LOWER(?)';
-        $sqlCoachInfo = 'INSERT INTO coach_info(Coach_ID) VALUES(?)';
+        $sqlCoachInfo = 'INSERT INTO coach_info(Coach_ID, Name, Age, Sex, Gender, Height, Weight, ContactNo, Address) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)';
         $sql = 'INSERT INTO coach(Username, coachEmail, Password) VALUES(?, ?, ?)';
 
         $option = ["cost" => 11];
         $hashedPass = password_hash($data->Password, PASSWORD_BCRYPT, $option);
     
-        if (empty($data->Username) || empty($data->coachEmail) || empty($data->Password)) {
+        if (!isset($data->Username) || !isset($data->coachEmail) || !isset($data->Password)) {
             return $this->gm->responsePayload(null, 'failed', 'Fill up all required fields.', 400);
         }
 
@@ -205,7 +205,7 @@ class adminControls implements adminInterface {
                 $lastID = $this->pdo->lastInsertId();
                 $stmtCoachInfo = $this->pdo->prepare($sqlCoachInfo);
 
-                if($stmtCoachInfo->execute([$lastID])){
+                if($stmtCoachInfo->execute([$lastID, $data->Name, $data->Age, $data->Sex, $data->Gender, $data->Height, $data->Weight, $data->ContactNo, $data->Address])){
                     $this->pdo->commit();
                     return $this->gm->responsePayload(array("Name" => $data->Username, "Email" => $data->coachEmail), 'success', 'Account created.', 200);
                 }else{
