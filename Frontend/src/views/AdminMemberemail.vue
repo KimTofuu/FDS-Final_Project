@@ -108,8 +108,16 @@
             </select>
           </div>
           <div class="input-group">
-            <label for="clientCondition">Condition:</label>
-            <input type="number" id="clientCondition" v-model="clientDetails.condition_ids" required/>
+            <label>Condition:</label>
+            <div v-for="(condition, index) in conditions" :key="index" class="checkbox-group">
+              <input
+                type="checkbox"
+                :id="'condition_' + index"
+                :value="condition.value"
+                v-model="clientDetails.condition_ids"
+              />
+              <label :for="'condition_' + index">{{ condition.label }}</label>
+            </div>
           </div>
           <div class="input-group">
             <label for="clientName">Name:</label>
@@ -214,7 +222,7 @@ export default {
         Password: "",
         SubscriptionStat: "",
         subPlan: "",
-        condition_ids: "",
+        condition_ids: [],
         name: "",
         conNum: "",
         eConNum: "",
@@ -227,6 +235,33 @@ export default {
         weight: "",
         height: "",
       },
+      conditions: [
+        { value: "0", label: "None" },
+        { value: "1", label: "Hypertension" },
+        { value: "2", label: "Heart Disease" },
+        { value: "3", label: "Arrhythmia" },
+        { value: "4", label: "Congestive Heart Failure" },
+        { value: "5", label: "Peripheral Artery Disease" },
+        { value: "6", label: "Asthma" },
+        { value: "7", label: "Chronic Obstructive Pulmonary Disease (COPD)" },
+        { value: "8", label: "Emphysema" },
+        { value: "9", label: "Osteoarthritis" },
+        { value: "10", label: "Rheumatoid Arthritis" },
+        { value: "11", label: "Osteoporosis" },
+        { value: "12", label: "Joint Replacements" },
+        { value: "13", label: "Lower Back Pain" },
+        { value: "14", label: "Tendonitis" },
+        { value: "15", label: "Muscle Strains or Sprains" },
+        { value: "16", label: "Diabetes (Type 1 or Type 2)" },
+        { value: "17", label: "Obesity" },
+        { value: "18", label: "Hypothyroidism" },
+        { value: "19", label: "Hyperthyroidism" },
+        { value: "20", label: "Stroke Recovery" },
+        { value: "21", label: "Parkinson's Disease" },
+        { value: "22", label: "Multiple Sclerosis" },
+        { value: "23", label: "Epilepsy" },
+        { value: "24", label: "Previous Fractures" },
+      ],
     };
   },
   mounted(){
