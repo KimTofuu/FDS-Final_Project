@@ -17,6 +17,8 @@
 
     <div class="main">
       <div class="content">
+        <div class="form">
+          <h2><b>COACH LOGIN</b></h2>
         <form @submit.prevent="login">
             <input type="text" placeholder="Username" id="username" v-model="Username"/>
             <input type="password" placeholder="Password" id="password" v-model="Password"/>
@@ -26,6 +28,7 @@
               <router-link to="/MainLogin"> < RETURN </router-link>
             </div>
           </form>
+        </div>
       </div>
     </div>
   </div>
