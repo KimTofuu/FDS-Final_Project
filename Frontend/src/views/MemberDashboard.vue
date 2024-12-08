@@ -53,6 +53,7 @@
         <div class="bmi-box">
           <h2>TIME</h2>
         </div>
+
         <!-- <div class="schedule-section">
           <h2>Schedule</h2>
           <div

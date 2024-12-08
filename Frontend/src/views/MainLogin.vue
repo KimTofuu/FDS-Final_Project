@@ -30,7 +30,7 @@
           </router-link>
 
           <div class="return-button">
-            <router-link to="/LandingPage"> < RETURN </router-link>
+            <router-link to="/"> < RETURN </router-link>
           </div>
         </div>
       </div>
