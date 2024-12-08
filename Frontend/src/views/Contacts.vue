@@ -7,7 +7,7 @@
         </router-link>
         <nav class="navbar">
           <ul id="sidemenu">
-            <li><router-link to="/LandingPage">HOME</router-link></li>
+            <li><router-link to="/">HOME</router-link></li>
             <li><router-link to="/AboutUs">ABOUT US</router-link></li>
             <li><router-link to="/Services">SERVICES</router-link></li>
             <li><router-link to="/OurTeam">OUR TEAM</router-link></li>
