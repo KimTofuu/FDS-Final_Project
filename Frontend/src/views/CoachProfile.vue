@@ -43,49 +43,273 @@
       </transition>
     </div>
 
-    <main class="content">
-      <header>
-        <h1>COACH INFORMATION</h1>
-      </header>
-      <section class="profile-info">
-        <div class="form-group">
-          <input type="text" v-model="coach.name" placeholder="Coach Name" />
+    <main class="profile-container">
+      <div class="profile-content">
+        <div class="profile-details">
+          <div class="detail-item">
+            <label>Name:</label>
+            <p>{{ profile.name }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Contact Number:</label>
+            <p>{{ profile.conNumm }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Emergency Contact Number:</label>
+            <p>{{ profile.econNumm }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Address:</label>
+            <p>{{ profile.address }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Age:</label>
+            <p>{{ profile.age }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Sex:</label>
+            <p>{{ profile.sex }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Gender:</label>
+            <p>{{ profile.gender }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Body Type:</label>
+            <p>{{ profile.bodyType }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Level of Activity:</label>
+            <p>{{ profile.activityLevel }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Weight (kg):</label>
+            <p>{{ profile.weight }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Height (cm):</label>
+            <p>{{ profile.height }}</p>
+          </div>
         </div>
-        <div class="form-group">
-          <input type="number" v-model="coach.age" placeholder="Age" />
+        <button @click="openEditModal" class="update-button">Update</button>
+      </div>
+    </main>
+
+    <transition name="fade">
+      <div class="overlay" v-if="showEditModal" @click="closeEditModal">
+      <div v-if="showEditModal" class="edit-modal" @click.self="closeEditModal">
+        <div class="modal-content">
+          <h2>Edit Profile</h2>
+          <div class="form-group">
+            <label for="name">Name:</label>
+            <input
+              type="text"
+              id="name"
+              v-model="profile.name"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="conNumm">Contact Number:</label>
+            <input
+              type="text"
+              id="conNumm"
+              v-model="profile.conNumm"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="econNumm">Emergency Contact Number:</label>
+            <input
+              type="text"
+              id="econNumm"
+              v-model="profile.econNumm"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="address">Address:</label>
+            <input
+              type="text"
+              id="address"
+              v-model="profile.address"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="age">Age:</label>
+            <input
+              type="number"
+              id="age"
+              v-model="profile.age"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="sex">Sex:</label>
+            <input
+              type="text"
+              id="sex"
+              v-model="profile.sex"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="gender">Gender:</label>
+            <input
+              type="text"
+              id="gender"
+              v-model="profile.gender"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="gender">Body Type:</label>
+            <input
+              type="text"
+              id="gender"
+              v-model="profile.bodyType"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="gender">Level of Activity:</label>
+            <input
+              type="text"
+              id="gender"
+              v-model="profile.activityLevel"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="weight">Weight (kg):</label>
+            <input
+              type="number"
+              id="weight"
+              v-model="profile.weight"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="height">Height (cm):</label>
+            <input
+              type="number"
+              id="height"
+              v-model="profile.height"
+              class="form-input"
+            />
+          </div>
+          <div class="modal-buttons">
+            <button @click="updateInfo" class="save-button">Save</button>
+            <button @click="closeEditModal" class="cancel-button">
+              Cancel
+            </button>
+          </div>
         </div>
-        <div class="form-group">
-          <input type="text" v-model="coach.contact" placeholder="Contact Number" />
+      </div>
+    </div>  
+    </transition>
+
+    <main class="schedule">
+        <div class="schedule-section">
+          <h2>Schedule</h2>
+          <div
+            class="schedule-item"
+            v-for="(item, index) in schedule"
+            :key="index"
+          >
+            <p>{{ item.time }} - {{ item.topic }}</p>
+          </div>
         </div>
-        <div class="form-group">
-          <input
-            type="text"
-            v-model="coach.address"
-            placeholder="Address"
-          />
-        </div>
-        <button class="update-button" @click="updateProfile">UPDATE</button>
-      </section>
     </main>
   </div>
 </template>
 
-
 <script>
+import apiClient from "@/api/axios"; // Import the API client
+
 export default {
   data() {
     return {
       showLogoutConfirm: false,
       showSidebar: true,
-      coach: {
-        name: "",
-        age: "",
-        contact: "",
-        address: "",
+      showEditModal: false,
+      loadingProfile: false, // Loading state for profile fetching
+      profileError: null, // Error state for profile fetching
+      profile: {
+        name: "John Doe",
+        conNumm: "09XX-XXX-XXXX",
+        econNumm: "09XX-XXX-XXXX",
+        address: "123 Main St. This City, This Country",
+        age: 0,
+        sex: "XX/XY",
+        gender: "RAINBOW<<3",
+        bodyType: "XXXXXXX",
+        activityLevel: "XXXXXX",
+        weight: 0,
+        height: 0,
       },
+      tempProfile: {},
     };
   },
+  created() {
+    this.fetchProfile(); // Fetch profile data when the component is created
+  },
   methods: {
+    async fetchProfile() {
+      this.loadingProfile = true;
+      this.profileError = null;
+      try {
+        const response = await apiClient.get("/Member/ViewInfo", {
+          withCredentials: true,
+        });
+        if (response.data?.status?.remarks === "success") {
+          this.profile = response.data.payload[0]; // Assuming the payload structure
+        } else {
+          this.profileError =
+            response.data?.message || "Failed to load profile data.";
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        this.profileError =
+          "An error occurred while fetching profile data. Please try again.";
+      } finally {
+        this.loadingProfile = false;
+      }
+    },
+    async updateInfo() {
+      this.loadingProfile = true;
+      this.profileError = null;
+      const updateData = {
+        name: this.profile.name,
+        conNum: this.profile.conNumm,
+        eConNum: this.profile.econNumm,
+        address: this.profile.address,
+        age: this.profile.age,
+        sex: this.profile.sex,
+        gender: this.profile.gender,
+        bodyType: this.profile.bodyType,
+        activityLevel: this.profile.activityLevel,
+        weight: this.profile.weight,
+        height: this.profile.height,
+      };
+      try {
+        const response = await apiClient.put("/Member/UpdateInfo", updateData, {
+          withCredentials: true,
+        });
+        if (response.data.status.remarks === "success") {
+          this.profile = response.data.payload[0]; // Update profile with the response data
+          console.log("Profile updated successfully");
+          this.closeEditModal(); // Close the edit modal after successful update
+        }
+      } catch (error) {
+        console.error("Error updating profile:", error);
+        this.profileError =
+          "An error occurred while updating profile data. Please try again.";
+      } finally {
+        this.loadingProfile = false;
+      }
+    },
     toggleSidebar() {
       this.showSidebar = !this.showSidebar;
     },
@@ -103,15 +327,18 @@ export default {
         this.error = "An error occurred while logging out. Please try again.";
       }
     },
-    updateProfile() {
-      console.log("Updated profile information:", this.coach);
-      // Implement API call to update coach profile data here
+    openEditModal() {
+      this.tempProfile = { ...this.profile }; // Store a copy of the current profile
+      this.showEditModal = true;
+    },
+    closeEditModal() {
+      this.showEditModal = false;
     },
     beforeEnter(el) {
       el.style.opacity = 0;
     },
     enter(el, done) {
-      el.offsetHeight;
+      el.offsetHeight; // Trigger reflow
       el.style.transition = "opacity 0.3s ease-in-out";
       el.style.opacity = 1;
       done();
@@ -124,7 +351,6 @@ export default {
   },
 };
 </script>
-
 
 <style>
 * {
@@ -162,7 +388,7 @@ body {
 }
 
 .logo {
-  margin-bottom: 20px;
+  margin-bottom: 10vh;
 }
 
 .logo-img {
@@ -184,7 +410,7 @@ body {
   background-color: #ac0700;
   border: none;
   cursor: pointer;
-  margin-top: 25vh;
+  margin-top: 30vh!important;
   padding: 5px 10px;
   border-radius: 20px;
   display: flex;
@@ -323,5 +549,128 @@ body {
 .update-button:hover {
   background-color: #ac0700;
   color: #fff;
+}
+
+.edit-modal {
+  position: fixed;
+  top: 50%;
+  left: 55%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  padding: 20px;
+  width: 40%;
+  height: 60%;
+  z-index: 1100;
+  overflow: hidden;
+}
+
+.modal-content {
+  width: 100%;
+  height: calc(100% - 40px);
+  overflow-y: auto;
+  padding: 20px;
+  box-sizing: border-box;
+  color: #000;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.save-button,
+.cancel-button {
+  background-color: #ac0700;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.cancel-button {
+  background-color: #ddd;
+  color: black;
+}
+
+.save-button:hover,
+.cancel-button:hover {
+  opacity: 0.8;
+}
+
+.profile-container {
+  margin-left: 0vh;
+  margin-top: 3%;
+  padding: 20px;
+  width: calc(90% - 200px);
+  box-sizing: border-box;
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 70vh;
+  height: 81vh;
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.schedule-section {
+  margin-top: 10vh;
+  margin-left: -30vh;
+  padding: 25vh;
+  width: 70vh;
+  height: 80vh;
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.schedule-container h2 {
+  color: black;
+}
+
+.dashboard-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-top: 20px;
 }
 </style>
