@@ -44,12 +44,7 @@
         <h1>MY CLIENTS</h1>
       </header>
       <div class="clients-container">
-        <div
-          class="client-box"
-          v-for="(client, index) in clients"
-          :key="index"
-          @click.stop
-        >
+        <div class="client-box" v-for="(client, index) in clients" :key="index" @click.stop>
           <div class="client-icon">
             <img src="../assets/pfp.jpg" alt="Client Icon" />
           </div>
@@ -58,20 +53,12 @@
             <h2>{{ client.Username }}</h2>
           </div>
           <div class="client-actions">
-            <button @click="messageClient(index)" class="action-button">
-              Message
-            </button>
-            <button @click="viewClientPopup(index)" class="action-button">
-              View
-            </button>
+            <button @click="messageClient(index)" class="action-button">Message</button>
+            <button @click="viewClientPopup(client.Username)" class="action-button">View</button>
             <button class="more-options" @click.stop="toggleOptions(index)">
               ⋮
             </button>
-            <div
-              v-if="activeDropdown === index"
-              class="options-menu"
-              @click.stop
-            >
+            <div v-if="activeDropdown === index" class="options-menu" @click.stop>
               <button @click="deleteClient(index)">Delete</button>
             </div>
           </div>
@@ -100,9 +87,7 @@
           <p><strong>Sex:</strong> {{ clientDeets.sex }}</p>
           <p><strong>Body Type:</strong> {{ clientDeets.bodyType }}</p>
           <p><strong>Condition:</strong> {{ clientDeets.condition }}</p>
-          <p>
-            <strong>Activity Level:</strong> {{ clientDeets.activityLevel }}
-          </p>
+          <p><strong>Activity Level:</strong> {{ clientDeets.activityLevel }}</p>
           <p><strong>Weight:</strong> {{ clientDeets.weight }}</p>
           <p><strong>Height:</strong> {{ clientDeets.height }}</p>
           <p><strong>BMI:</strong> {{ clientDeets.BMI }}</p>
