@@ -44,7 +44,12 @@
         <h1>MY CLIENTS</h1>
       </header>
       <div class="clients-container">
-        <div class="client-box" v-for="(client, index) in clients" :key="index" @click.stop>
+        <div
+          class="client-box"
+          v-for="(client, index) in clients"
+          :key="index"
+          @click.stop
+        >
           <div class="client-icon">
             <img src="../assets/pfp.jpg" alt="Client Icon" />
           </div>
@@ -53,12 +58,20 @@
             <h2>{{ client.Username }}</h2>
           </div>
           <div class="client-actions">
-            <button @click="messageClient(index)" class="action-button">Message</button>
-            <button @click="viewClientPopup(client.Username)" class="action-button">View</button>
+            <button @click="messageClient(client)" class="action-button">
+              Message
+            </button>
+            <button @click="viewClientPopup(client)" class="action-button">
+              View
+            </button>
             <button class="more-options" @click.stop="toggleOptions(index)">
               ⋮
             </button>
-            <div v-if="activeDropdown === index" class="options-menu" @click.stop>
+            <div
+              v-if="activeDropdown === index"
+              class="options-menu"
+              @click.stop
+            >
               <button @click="deleteClient(index)">Delete</button>
             </div>
           </div>
@@ -134,15 +147,20 @@ export default {
     this.fetchData();
   },
   methods: {
-    messageClient(index) {
-      this.selectedClientIndex = index;
+    messageClient(client) {
+      this.selectedClientIndex = client;
       this.showMessagePopup = true;
     },
     closePopup() {
       this.showMessagePopup = false;
       this.messageContent = "";
     },
-    sendMessage() {
+    async sendMessage(client) {
+      const messageData = {
+        Username: client.Username,
+        Subject: `Message from Coach`,
+        Message: this.messageContent
+      }
       if (this.messageContent.trim()) {
         const client = this.clients[this.selectedClientIndex];
         console.log(`Message sent to ${client.name}: ${this.messageContent}`);
@@ -188,22 +206,31 @@ export default {
         console.error("Error fetching clients:", error);
       }
     },
-    async viewClientPopup(index) {
-      const client = this.clients[index];
-      this.showClientPopup = true; // Show the popup
-      await this.viewClient(client.Username); // Pass Username to viewClient
-    },
-    async viewClient(username) {
+    async viewClientPopup(client) {
+      const clientDataArg = {
+        Username: client.Username
+      };
+      this.showClientPopup = true; 
       try {
-        const response = await apiClient.get("/Coach/View-Client", {
-          params: { User_ID: username },
-        });
+        const response = await apiClient.post("/Coach/View-one-Client", clientDataArg, {withCredentials: true});
         if (response.data.status.remarks === "success") {
-          const clientData = response.data.payload[0];
-          this.clientDeets = { ...clientData }; // Populate the client details
+          console.log(response.data);
+          this.clientDeets.name = response.data.payload[0].name;
+          this.clientDeets.Username = response.data.payload[0].Username;
+          this.clientDeets.email = response.data.payload[0].Email;
+          this.clientDeets.conNum = response.data.payload[0].conNum;
+          this.clientDeets.age = response.data.payload[0].age;
+          this.clientDeets.sex = response.data.payload[0].sex;
+          this.clientDeets.bodyType = response.data.payload[0].bodyType;
+          this.clientDeets.condition = response.data.payload[0].condition;
+          this.clientDeets.activityLevel = response.data.payload[0].activityLevel;
+          this.clientDeets.weight = response.data.payload[0].weight;
+          this.clientDeets.height = response.data.payload[0].height;
+          this.clientDeets.BMI = response.data.payload[0].BMI;
         }
       } catch (error) {
         console.error(error);
+        console.log(client.Username);
       }
     },
     closeClientPopup() {

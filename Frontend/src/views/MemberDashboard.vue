@@ -53,16 +53,7 @@
         <div class="bmi-box">
           <h2>TIME</h2>
         </div>
-        <div class="schedule-section">
-          <h2>Schedule</h2>
-          <div
-            class="schedule-item"
-            v-for="(item, index) in schedule"
-            :key="index"
-          >
-            <p>{{ item.time }} - {{ item.topic }}</p>
-          </div>
-        </div>
+        
 
         <transition
           name="fade"

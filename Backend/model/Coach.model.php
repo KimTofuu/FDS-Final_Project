@@ -11,8 +11,12 @@ class coach implements coachInterface{
     }
 
     public function seeMemDet($data){
+        if (!isset($data->Username)) {
+            // Handle the case where $data does not have the Username property
+            return $this->gm->responsePayload(null, 'error', 'Invalid request data', 400);
+        }
         $coachID = $this->gm->getIDFromTokenBackend();
-        $getClient = 'SELECT m.User_ID, m.Username, n.name, n.conNum, 
+        $getClient = 'SELECT m.User_ID, m.Email, m.Username, n.name, n.conNum, 
             n.age, n.sex, n.bodyType, n.activityLevel, n.weight, n.height, 
             n.BMI 
             FROM member m
@@ -23,8 +27,8 @@ class coach implements coachInterface{
         try{
             $getClient = $this->pdo->prepare($getClient);
             $getClient->execute([$coachID, $data->Username]); 
-            $data = $getClient->fetch();
-            if (!empty($data)){
+            $data = $getClient->fetchAll(PDO::FETCH_ASSOC);
+            if (isset($data)){
                 return $this->gm->responsePayload($data, 'success', 'Client details retrieved successfully', 200);
             }else{
                 return $this->gm->responsePayload(null, 'failed', 'Client not found', 403);
