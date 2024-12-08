@@ -69,11 +69,11 @@ async function getUserRole() {
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    { path: "/", name: "LandingPage", component: Landing },
     { path: "/MainLogin", name: "MainLogin", component: Main },
     { path: "/AdminLogin", name: "AdminLogin", component: Admin },
     { path: "/CoachLogin", name: "CoachLogin", component: Coach },
     { path: "/MemberLogin", name: "MemberLogin", component: Member },
-    { path: "/LandingPage", name: "LandingPage", component: Landing },
     { path: "/AboutUs", name: "AboutUs", component: AboutUs },
     { path: "/Services", name: "Services", component: Services },
     { path: "/OurTeam", name: "OurTeam", component: OurTeam },
@@ -167,6 +167,12 @@ router.beforeEach(async (to, from, next) => {
       `Unauthorized access. Expected role: ${to.meta.role}, got: ${userRole}.`
     );
     return next("/MainLogin");
+  }
+
+  if (to.path === "/") {
+    if (userRole === "admin") return next("/AdminMemberinfo");
+    if (userRole === "coach") return next("/CoachClient");
+    if (userRole === "member") return next("/MemberDashboard");
   }
 
   // Token valid and role matched
