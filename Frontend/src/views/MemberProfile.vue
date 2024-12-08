@@ -865,7 +865,7 @@ body {
   background-color: #ac0700;
   border: none;
   cursor: pointer;
-  margin-top: 25vh;
+  margin-top: 10vh !important;
   padding: 5px 10px;
   border-radius: 20px;
   display: flex;

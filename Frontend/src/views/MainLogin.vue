@@ -156,4 +156,88 @@ header {
   color: #ac0700;
   transition: color 0.3s;
 }
+
+@media (max-width: 1024px) {
+  .logo {
+    height: 60px;
+  }
+
+  .navbar ul {
+    gap: 10px;
+  }
+
+  .navbar a {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+
+  .form h2 {
+    font-size: 20px;
+  }
+
+  .form button {
+    font-size: 16px;
+    height: 45px;
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .logo {
+    margin: 10px 0;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .main {
+    padding: 10px;
+  }
+
+  .form {
+    padding: 15px;
+  }
+
+  .form h2 {
+    font-size: 18px;
+  }
+
+  .form button {
+    font-size: 14px;
+    height: 40px;
+  }
+
+  .return-button a {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar a {
+    font-size: 12px;
+    padding: 5px 8px;
+  }
+
+  .form h2 {
+    font-size: 16px;
+  }
+
+  .form button {
+    font-size: 12px;
+    height: 35px;
+    width: 85%;
+  }
+
+  .return-button a {
+    font-size: 12px;
+  }
+}
 </style>
