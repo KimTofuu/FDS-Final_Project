@@ -53,7 +53,7 @@
         <div class="bmi-box">
           <h2>TIME</h2>
         </div>
-        <div class="schedule-section">
+        <!-- <div class="schedule-section">
           <h2>Schedule</h2>
           <div
             class="schedule-item"
@@ -62,7 +62,7 @@
           >
             <p>{{ item.time }} - {{ item.topic }}</p>
           </div>
-        </div>
+        </div> -->
 
         <transition
           name="fade"
@@ -522,8 +522,9 @@ body {
 
 .content {
   margin-left: 20%;
-  padding: 15vh !important;
+  padding: 5vh !important;
   flex: 1;
+  overflow: auto;
 }
 
 .content h1 {
