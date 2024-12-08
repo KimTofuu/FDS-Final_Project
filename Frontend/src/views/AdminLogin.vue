@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import apiClient from "@/api/axios"; // Import your Axios instance
+import apiClient from "@/api/axios"; 
 
 export default {
   data() {
@@ -53,10 +53,9 @@ export default {
       };
 
       try {
-        const response = await apiClient.post("/Login/Admin", loginData); // Adjust the endpoint if needed
+        const response = await apiClient.post("/Login/Admin", loginData); 
         if (response.data.status.remarks === "success") {
-          // Handle successful login
-          this.$router.push("/AdminMemberInfo"); // Redirect to the dashboard or another page
+          this.$router.push("/AdminMemberInfo"); 
         } else {
           this.error = response.data.message || "Login failed";
         }

@@ -43,10 +43,10 @@
       </transition>
     </div>
 
-    <main class="profile-container">
-      <div class="profile-content">
-        <div class="profile-details">
-          <div class="detail-item">
+    <main class="profile-cont">
+      <div class="profile-conts">
+        <div class="profile-deets">
+          <div class="deets-item">
             <label>Name:</label>
             <p>{{ profile.name }}</p>
           </div>
@@ -210,11 +210,11 @@
     </div>  
     </transition>
 
-    <main class="schedule">
-        <div class="schedule-section">
+    <main class="sched">
+        <div class="sched-section">
           <h2>Schedule</h2>
           <div
-            class="schedule-item"
+            class="sched-item"
             v-for="(item, index) in schedule"
             :key="index"
           >
@@ -620,7 +620,7 @@ body {
   opacity: 0.8;
 }
 
-.profile-container {
+.profile-cont {
   margin-left: 0vh;
   margin-top: 3%;
   padding: 20px;
@@ -628,14 +628,14 @@ body {
   box-sizing: border-box;
 }
 
-.profile-content {
+.profile-conts {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
 }
 
-.profile-details {
+.profile-deets {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -647,7 +647,26 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.schedule-section {
+.deets-item {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+.deets-item label {
+  font-weight: bold;
+  color: #333;
+}
+
+.deets-item p {
+  margin: 0;
+  color: #666;
+  text-align: right;
+}
+
+
+.sched-section {
   margin-top: 10vh;
   margin-left: -30vh;
   padding: 25vh;
@@ -663,11 +682,11 @@ body {
   flex: 1;
 }
 
-.schedule-container h2 {
+.sched-container h2 {
   color: black;
 }
 
-.dashboard-content {
+.dash-content {
   display: grid;
   grid-template-columns: 1fr;
   gap: 20px;
