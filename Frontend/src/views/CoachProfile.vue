@@ -55,10 +55,6 @@
             <p>{{ profile.conNumm }}</p>
           </div>
           <div class="detail-item">
-            <label>Emergency Contact Number:</label>
-            <p>{{ profile.econNumm }}</p>
-          </div>
-          <div class="detail-item">
             <label>Address:</label>
             <p>{{ profile.address }}</p>
           </div>
@@ -75,20 +71,12 @@
             <p>{{ profile.gender }}</p>
           </div>
           <div class="detail-item">
-            <label>Body Type:</label>
-            <p>{{ profile.bodyType }}</p>
-          </div>
-          <div class="detail-item">
-            <label>Level of Activity:</label>
-            <p>{{ profile.activityLevel }}</p>
-          </div>
-          <div class="detail-item">
             <label>Weight (kg):</label>
-            <p>{{ profile.weight }}</p>
+            <p>{{ profile.height }}</p>
           </div>
           <div class="detail-item">
             <label>Height (cm):</label>
-            <p>{{ profile.height }}</p>
+            <p>{{ profile.weight }}</p>
           </div>
         </div>
         <button @click="openEditModal" class="update-button">Update</button>
@@ -97,7 +85,7 @@
 
     <transition name="fade">
       <div class="overlay" v-if="showEditModal" @click="closeEditModal">
-      <div v-if="showEditModal" class="edit-modal" @click.self="closeEditModal">
+      <div v-if="showEditModal" class="edit-modal" @click.stop>
         <div class="modal-content">
           <h2>Edit Profile</h2>
           <div class="form-group">
@@ -115,15 +103,6 @@
               type="text"
               id="conNumm"
               v-model="profile.conNumm"
-              class="form-input"
-            />
-          </div>
-          <div class="form-group">
-            <label for="econNumm">Emergency Contact Number:</label>
-            <input
-              type="text"
-              id="econNumm"
-              v-model="profile.econNumm"
               class="form-input"
             />
           </div>
@@ -164,29 +143,11 @@
             />
           </div>
           <div class="form-group">
-            <label for="gender">Body Type:</label>
-            <input
-              type="text"
-              id="gender"
-              v-model="profile.bodyType"
-              class="form-input"
-            />
-          </div>
-          <div class="form-group">
-            <label for="gender">Level of Activity:</label>
-            <input
-              type="text"
-              id="gender"
-              v-model="profile.activityLevel"
-              class="form-input"
-            />
-          </div>
-          <div class="form-group">
             <label for="weight">Weight (kg):</label>
             <input
               type="number"
               id="weight"
-              v-model="profile.weight"
+              v-model="profile.height"
               class="form-input"
             />
           </div>
@@ -195,7 +156,7 @@
             <input
               type="number"
               id="height"
-              v-model="profile.height"
+              v-model="profile.weight"
               class="form-input"
             />
           </div>
@@ -239,13 +200,10 @@ export default {
       profile: {
         name: "John Doe",
         conNumm: "09XX-XXX-XXXX",
-        econNumm: "09XX-XXX-XXXX",
         address: "123 Main St. This City, This Country",
         age: 0,
         sex: "XX/XY",
         gender: "RAINBOW<<3",
-        bodyType: "XXXXXXX",
-        activityLevel: "XXXXXX",
         weight: 0,
         height: 0,
       },
@@ -260,11 +218,19 @@ export default {
       this.loadingProfile = true;
       this.profileError = null;
       try {
-        const response = await apiClient.get("/Member/ViewInfo", {
+        const response = await apiClient.get("/Coach/View-Info", {
           withCredentials: true,
         });
         if (response.data?.status?.remarks === "success") {
-          this.profile = response.data.payload[0]; // Assuming the payload structure
+          this.profile.name = response.data.payload[0].Name;
+          this.profile.conNumm = response.data.payload[0].ContactNo;
+          this.profile.address = response.data.payload[0].Address;
+          this.profile.age = response.data.payload[0].Age;
+          if(response.data.payload[0].Sex === 1) this.profile.sex = "Male";
+          if(response.data.payload[0].Sex === 0) this.profile.sex = "Female";
+          this.profile.gender = response.data.payload[0].Gender;
+          this.profile.weight = response.data.payload[0].Weight;
+          this.profile.height = response.data.payload[0].Height;
         } else {
           this.profileError =
             response.data?.message || "Failed to load profile data.";
@@ -281,24 +247,29 @@ export default {
       this.loadingProfile = true;
       this.profileError = null;
       const updateData = {
-        name: this.profile.name,
-        conNum: this.profile.conNumm,
-        eConNum: this.profile.econNumm,
-        address: this.profile.address,
-        age: this.profile.age,
-        sex: this.profile.sex,
-        gender: this.profile.gender,
-        bodyType: this.profile.bodyType,
-        activityLevel: this.profile.activityLevel,
-        weight: this.profile.weight,
-        height: this.profile.height,
+        Name: this.profile.name,
+        ContactNo: this.profile.conNumm,
+        Address: this.profile.address,
+        Age: this.profile.age,
+        Sex: this.profile.sex,
+        Gender: this.profile.gender,
+        Weight: this.profile.weight,
+        Height: this.profile.height,
       };
       try {
-        const response = await apiClient.put("/Member/UpdateInfo", updateData, {
+        const response = await apiClient.post("/Coach/Update-Info", updateData, {
           withCredentials: true,
         });
-        if (response.data.status.remarks === "success") {
-          this.profile = response.data.payload[0]; // Update profile with the response data
+        console.log(response.data);
+        if (response.data?.status?.remarks === "success") {
+          this.profile.name= response.data.payload[0].Name; 
+          this.profile.conNumm= response.data.payload[0].ContactNo; 
+          this.profile.address= response.data.payload[0].address; 
+          this.profile.age= response.data.payload[0].Age; 
+          this.profile.sex= response.data.payload[0].Sex; 
+          this.profile.gender= response.data.payload[0].Gender; 
+          this.profile.weight= response.data.payload[0].Weight; 
+          this.profile.height= response.data.payload[0].Height;
           console.log("Profile updated successfully");
           this.closeEditModal(); // Close the edit modal after successful update
         }

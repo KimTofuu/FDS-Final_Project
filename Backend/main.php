@@ -71,6 +71,7 @@ try{
             $tokenResMem = $auth->verifyTokenBackend('coach');
             if ($tokenResMem['is_valid'] == true) {
                 if ($req[1] == 'View-Clients') {echo json_encode($coach->getAllClients());return;}
+                if ($req[1] == 'View-Info') {echo json_encode($coach->viewInfo());return;}
             }
         }
 

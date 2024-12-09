@@ -5,4 +5,5 @@ interface coachInterface{
     public function sendMessage($data);
     public function getAllClients();
     public function updateInfo($data);
+    public function viewInfo();
 }
