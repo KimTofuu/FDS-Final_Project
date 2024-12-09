@@ -53,7 +53,17 @@
         <div class="bmi-box">
           <h2>TIME</h2>
         </div>
-        
+
+        <!-- <div class="schedule-section">
+          <h2>Schedule</h2>
+          <div
+            class="schedule-item"
+            v-for="(item, index) in schedule"
+            :key="index"
+          >
+            <p>{{ item.time }} - {{ item.topic }}</p>
+          </div>
+        </div> -->
 
         <transition
           name="fade"
@@ -427,7 +437,7 @@ body {
   background-color: #ac0700;
   border: none;
   cursor: pointer;
-  margin-top: 25vh;
+  margin-top: 5vh !important;
   padding: 5px 10px;
   border-radius: 20px;
   display: flex;
@@ -513,8 +523,9 @@ body {
 
 .content {
   margin-left: 20%;
-  padding: 10vh !important;
+  padding: 5vh !important;
   flex: 1;
+  overflow: auto;
 }
 
 .content h1 {
