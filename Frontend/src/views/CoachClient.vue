@@ -58,13 +58,41 @@
             <h2>{{ client.Username }}</h2>
           </div>
           <div class="client-actions">
-            <button @click="messageClient(client)" class="action-button">
+            <button
+              @click="messageClient(client)"
+              class="action-button"
+            >
               Message
             </button>
-            <button @click="viewClientPopup(client)" class="action-button">
+            <div 
+              v-if="showMessagePopup && selectedClientIndex !== null" 
+              class="overlay" 
+              @click="closePopup">
+              <div class="message-popup" @click.stop>
+                <h2>Send Your Message</h2>
+                <textarea
+                  v-model="messageContent"
+                  placeholder="Type your message here..."
+                ></textarea>
+                <div class="button-group">
+                  <button @click="closePopup">Cancel</button>
+                  <button @click="sendMessage(clients[selectedClientIndex]?.Username)" :disabled="loading">
+                    <span v-if="loading">Sending...</span>
+                    <span v-else>Send</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <button
+              @click="viewClientPopup(client)"
+              class="action-button"
+            >
               View
             </button>
-            <button class="more-options" @click.stop="toggleOptions(index)">
+            <button
+              class="more-options"
+              @click.stop="toggleOptions(index)"
+            >
               ⋮
             </button>
             <div
@@ -72,21 +100,8 @@
               class="options-menu"
               @click.stop
             >
-              <button @click="deleteClient(index)">Delete</button>
+              <button @click="deleteClient(client.Username)">Delete</button>
             </div>
-          </div>
-        </div>
-      </div>
-      <div v-if="showMessagePopup" class="overlay" @click="closePopup">
-        <div class="message-popup" @click.stop>
-          <h2>Send Your Message</h2>
-          <textarea
-            v-model="messageContent"
-            placeholder="Type your message here..."
-          ></textarea>
-          <div class="button-group">
-            <button @click="closePopup">Cancel</button>
-            <button @click="sendMessage">Send</button>
           </div>
         </div>
       </div>
@@ -140,125 +155,139 @@ export default {
         height: "",
         BMI: "",
       },
-      showClientPopup: false, // Add a flag to control the view client popup visibility
+      showClientPopup: false, 
+      loading: false,
     };
   },
   mounted() {
     this.fetchData();
   },
   methods: {
-    messageClient(client) {
-      this.selectedClientIndex = client;
-      this.showMessagePopup = true;
-    },
-    closePopup() {
-      this.showMessagePopup = false;
-      this.messageContent = "";
-    },
-    async sendMessage(client) {
+  messageClient(client) {
+    this.selectedClientIndex = this.clients.findIndex(
+      (c) => c.Username === client.Username
+    );
+    this.showMessagePopup = true;
+  },
+  closePopup() {
+    this.showMessagePopup = false;
+    this.messageContent = "";
+    this.selectedClientIndex = null; // Reset the selected index
+  },
+  async sendMessage(clientUsername) {
+    if (this.messageContent.trim()) {
+      this.loading = true;
       const messageData = {
-        Username: client.Username,
+        Username: clientUsername,
         Subject: `Message from Coach`,
-        Message: this.messageContent
-      }
-      if (this.messageContent.trim()) {
-        const client = this.clients[this.selectedClientIndex];
-        console.log(`Message sent to ${client.name}: ${this.messageContent}`);
-        this.closePopup();
-      } else {
-        alert("Message cannot be empty.");
-      }
-    },
-    toggleOptions(index) {
-      this.activeDropdown = this.activeDropdown === index ? null : index;
-    },
-    addClient() {
-      console.log("Add client button clicked");
-    },
-    async logout() {
-      this.showLogoutConfirm = false;
-      try {
-        const response = await apiClient.post("/Logout");
-        console.log(response.data);
-        if (response.data?.status?.remarks === "success") {
-          this.$router.push("/MainLogin");
-        } else {
-          this.error = response.data.message || "Logout failed";
-        }
-      } catch (error) {
-        console.error("Logout Error:", error);
-        this.error = "An error occurred while logging out. Please try again.";
-      }
-    },
-    async fetchData() {
-      try {
-        const response = await apiClient.get("/Coach/View-Clients");
-        if (
-          response.data.status.remarks === "success" &&
-          Array.isArray(response.data.payload)
-        ) {
-          this.clients = response.data.payload.map((member) => ({
-            Username: member.Username,
-            name: member.name,
-          }));
-        }
-      } catch (error) {
-        console.error("Error fetching clients:", error);
-      }
-    },
-    async viewClientPopup(client) {
-      const clientDataArg = {
-        Username: client.Username
+        Message: this.messageContent,
       };
-      this.showClientPopup = true; 
       try {
-        const response = await apiClient.post("/Coach/View-one-Client", clientDataArg, {withCredentials: true});
-        if (response.data.status.remarks === "success") {
-          console.log(response.data);
-          this.clientDeets.name = response.data.payload[0].name;
-          this.clientDeets.Username = response.data.payload[0].Username;
-          this.clientDeets.email = response.data.payload[0].Email;
-          this.clientDeets.conNum = response.data.payload[0].conNum;
-          this.clientDeets.age = response.data.payload[0].age;
-          this.clientDeets.sex = response.data.payload[0].sex;
-          this.clientDeets.bodyType = response.data.payload[0].bodyType;
-          this.clientDeets.condition = response.data.payload[0].condition;
-          this.clientDeets.activityLevel = response.data.payload[0].activityLevel;
-          this.clientDeets.weight = response.data.payload[0].weight;
-          this.clientDeets.height = response.data.payload[0].height;
-          this.clientDeets.BMI = response.data.payload[0].BMI;
+        const response = await apiClient.post("/Coach/Send-Message", messageData, {withCredentials: true});
+        console.log(response.data);
+        if(response.data?.status?.remarks === "success") {
+          alert("Message sent successfully!");
+          this.closePopup();
         }
       } catch (error) {
-        console.error(error);
-        console.log(client.Username);
+        console.error("Error sending message:", error);
+      } finally {
+        this.loading = false;
       }
-    },
-    closeClientPopup() {
-      this.showClientPopup = false; // Close the client popup
-    },
-    beforeEnter(el) {
-      el.style.opacity = 0;
-    },
-    enter(el, done) {
-      el.offsetHeight;
-      el.style.transition = "opacity 0.3s ease-in-out";
-      el.style.opacity = 1;
-      done();
-    },
-    leave(el, done) {
-      el.style.transition = "opacity 0.3s ease-in-out";
-      el.style.opacity = 0;
-      done();
-    },
-    toggleSidebar() {
-      this.showSidebar = !this.showSidebar;
-    },
-    deleteClient(index) {
-      console.log(`Delete client at index ${index}`);
-    },
-    closeDropdownOnOutsideClick() {
-      this.activeDropdown = null;
-    },
+    } else {
+      alert("Message cannot be empty.");
+    }
+  },
+  toggleOptions(index) {
+    this.activeDropdown = this.activeDropdown === index ? null : index;
+  },
+  addClient() {
+    console.log("Add client button clicked");
+  },
+  async logout() {
+    this.showLogoutConfirm = false;
+    try {
+      const response = await apiClient.post("/Logout");
+      console.log(response.data);
+      if (response.data?.status?.remarks === "success") {
+        this.$router.push("/MainLogin");
+      } else {
+        this.error = response.data.message || "Logout failed";
+      }
+    } catch (error) {
+      console.error("Logout Error:", error);
+      this.error = "An error occurred while logging out. Please try again.";
+    }
+  },
+  async fetchData() {
+    try {
+      const response = await apiClient.get("/Coach/View-Clients");
+      if (
+        response.data.status.remarks === "success" &&
+        Array.isArray(response.data.payload)
+      ) {
+        this.clients = response.data.payload.map((member) => ({
+          Username: member.Username,
+          name: member.name,
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching clients:", error);
+    }
+  },
+  async viewClientPopup(client) {
+    const clientDataArg = {
+      Username: client.Username
+    };
+    this.showClientPopup = true; 
+    try {
+      const response = await apiClient.post("/Coach/View-one-Client", clientDataArg, {withCredentials: true});
+      if (response.data.status.remarks === "success") {
+        console.log(response.data);
+        this.clientDeets.name = response.data.payload[0].name;
+        this.clientDeets.Username = response.data.payload[0].Username;
+        this.clientDeets.email = response.data.payload[0].Email;
+        this.clientDeets.conNum = response.data.payload[0].conNum;
+        this.clientDeets.age = response.data.payload[0].age;
+        this.clientDeets.sex = response.data.payload[0].sex;
+        this.clientDeets.bodyType = response.data.payload[0].bodyType;
+        this.clientDeets.condition = response.data.payload[0].condition;
+        this.clientDeets.activityLevel = response.data.payload[0].activityLevel;
+        this.clientDeets.weight = response.data.payload[0].weight;
+        this.clientDeets.height = response.data.payload[0].height;
+        this.clientDeets.BMI = response.data.payload[0].BMI;
+      }
+    } catch (error) {
+      console.error(error);
+      console.log(client.Username);
+    }
+  },
+  closeClientPopup() {
+    this.showClientPopup = false; // Close the client popup
+  },
+  beforeEnter(el) {
+    el.style.opacity = 0;
+  },
+  enter(el, done) {
+    el.offsetHeight;
+    el.style.transition = "opacity 0.3s ease-in-out";
+    el.style.opacity = 1;
+    done();
+  },
+  leave(el, done) {
+    el.style.transition = "opacity 0.3s ease-in-out";
+    el.style.opacity = 0;
+    done();
+  },
+  toggleSidebar() {
+    this.showSidebar = !this.showSidebar;
+  },
+  deleteClient(index) {
+    console.log(`Delete client at index ${index}`);
+  },
+  closeDropdownOnOutsideClick() {
+    this.activeDropdown = null;
+  },
   },
 };
 

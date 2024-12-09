@@ -9,7 +9,12 @@ class coach implements coachInterface{
         $this->gm = $gm;
         $this->mailer = $mailer;
     }
-
+    public function SexIdentifier($data) {
+        if(strtolower($data) === 'male'){
+            return 1;
+        }
+        return 0;
+    }
     public function seeMemDet($data){
         if (!isset($data->Username)) {
             // Handle the case where $data does not have the Username property
@@ -99,7 +104,25 @@ class coach implements coachInterface{
 
         try {
             $stmt = $this->pdo->prepare($sql);
-            if ($stmt->execute([$data->Name, $data->Age, $data->Sex, $data->Gender, $data->Weight, $data->Height, $data->ContactNo, $data->Address, $coachID])) {
+            if ($stmt->execute([$data->Name, $data->Age, $this->SexIdentifier($data->Sex), $data->Gender, $data->Weight, $data->Height, $data->ContactNo, $data->Address, $coachID])) {
+                return $this->gm->responsePayload($data, 'success', 'Data uploaded', 200);
+            } else {
+                return $this->gm->responsePayload(null, 'failed', 'Upload failed', 403);
+            }
+        } catch (PDOException $e) {
+            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+        }
+    }
+    public function viewInfo(){
+        $coachID = $this->gm->getIDFromTokenBackend();
+        $sql = 'SELECT c.Username, ci.Name, ci.Age, ci.Sex, ci.Gender, ci.Height, ci.Weight, ci.ContactNo, ci.Address
+                FROM coach c
+                LEFT JOIN coach_info ci ON c.User_ID = ci.Coach_ID 
+                WHERE Coach_ID = ?';
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            if ($stmt->execute([$coachID])) {
+                $data = $stmt->fetchAll(PDO ::FETCH_ASSOC);
                 return $this->gm->responsePayload($data, 'success', 'Data uploaded', 200);
             } else {
                 return $this->gm->responsePayload(null, 'failed', 'Upload failed', 403);
