@@ -52,18 +52,8 @@
         </div>
         <div class="bmi-box">
           <h2>TIME</h2>
+          <h2>{{ currentTime }}</h2>
         </div>
-
-        <!-- <div class="schedule-section">
-          <h2>Schedule</h2>
-          <div
-            class="schedule-item"
-            v-for="(item, index) in schedule"
-            :key="index"
-          >
-            <p>{{ item.time }} - {{ item.topic }}</p>
-          </div>
-        </div> -->
 
         <transition
           name="fade"
@@ -111,19 +101,6 @@
             </div>
           </div>
         </transition>
-        <!-- <div class="dietplan" v-if="recom.dietplan">
-          <h2>DIET PLAN</h2>
-          <p>{{ recom.dietplan }}</p>
-        </div>
-        <div class="workoutplan" v-if="recom.workoutplan">
-          <h2>WORKOUT PLAN</h2>
-          <p>{{ recom.workoutplan }}</p>
-        </div>
-        <div class="additionalnotes" v-if="recom.additionalnotes">
-          <h2>ADDITIONAL NOTES</h2>
-          <p>{{ recom.additionalnotes }}</p>
-        </div>
-        <button @click="getRecom" class="recom-button">Get Recommendations</button> -->
         <div class="calorie-box">
           <h2>Daily Caloric Needs</h2>
           <form @submit.prevent="computeDailyCalories">
@@ -229,11 +206,14 @@ export default {
       },
       BMI: 0,
       username: "",
+      currentTime: "",
     };
   },
 
   created() {
     this.getData();  
+    this.updateTime();
+    setInterval(this.updateTime, 1000);
   },
 
   methods: {
@@ -346,6 +326,14 @@ export default {
     },
     async saveFoodDetails() {
       await this.calculateFoodCalories();
+    },
+    updateTime() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const seconds = now.getSeconds().toString().padStart(2, '0');
+      
+      this.currentTime = `${hours}:${minutes}:${seconds}`;
     },
     beforeEnter(el) {
       el.style.opacity = 0;

@@ -51,12 +51,13 @@ else $req = array("errorcatcher");
 try{
     switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
+        $genToken = $auth->verifyTokenBackend();
+        if($genToken['is_valid'] == true){
         if ($req[0] == 'Get') {
             $tokenRes = $auth->verifyTokenBackend('admin');
             if ($tokenRes['is_valid'] == true) {
                 if ($req[1] == 'One') {echo json_encode($adminCon->getOneAcc($data));return;}
                 if ($req[1] == 'All') {echo json_encode($adminCon->getAllAcc());return;}
-                if ($req[1] == 'Coaches') {echo json_encode($adminCon->getAllCoach());return;}
             }
         }
 
@@ -71,11 +72,14 @@ try{
             $tokenResMem = $auth->verifyTokenBackend('coach');
             if ($tokenResMem['is_valid'] == true) {
                 if ($req[1] == 'View-Clients') {echo json_encode($coach->getAllClients());return;}
-                if ($req[1] == 'View-Info') {echo json_encode($coach->viewInfo());return;}
+                if ($req[1] == 'View-Coach-Info') {echo json_encode($coach->viewInfo());return;}
             }
         }
 
+        if ($req[0] == 'Coaches') {echo json_encode($adminCon->getAllCoach());return;}
+
         $rm->notFound();
+    }
         break;
 
     case 'POST':
@@ -114,6 +118,9 @@ try{
                 if($req[1] == 'Food-Calories'){echo json_encode($member->calcFoodCalor($data));return;}
                 if($req[1] == 'Get-Recommendation'){echo json_encode($member->getRecomm($data));return;}
                 if($req[1] == 'Enroll-Class'){echo json_encode($member->enrollClass($data));return;}
+                if($req[1] == 'CoachesInfo'){echo json_encode($member->ViewCoachInfo($data));return;}
+                if($req[1] == 'isEnrolled'){echo json_encode($member->isUserEnrolledInClass($data));return;}
+                if($req[1] == 'Drop-Coach'){echo json_encode($member->dropCoach($data));return;}
             }else{
                 echo json_encode(($rm->responsePayload($_COOKIE['Authorization'], 'failed', 'Login first', 403)));
                 return;

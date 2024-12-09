@@ -218,7 +218,7 @@ export default {
       this.loadingProfile = true;
       this.profileError = null;
       try {
-        const response = await apiClient.get("/Coach/View-Info", {
+        const response = await apiClient.get("/View-Coach-Info", {
           withCredentials: true,
         });
         if (response.data?.status?.remarks === "success") {
