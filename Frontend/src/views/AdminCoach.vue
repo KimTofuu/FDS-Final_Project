@@ -223,7 +223,7 @@ export default {
       }
     },
     async fetchData() {
-        apiClient.get("/Get/Coaches").then((response) => {
+        apiClient.get("/Coaches").then((response) => {
         if (
             response.data.status.remarks === "success" &&
             Array.isArray(response.data.payload)
