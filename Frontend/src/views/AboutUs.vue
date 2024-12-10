@@ -85,8 +85,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 40px 10px 10px;
-}
+  margin-bottom: -10vh;
+  margin-top: 30px;
+  margin-left: 10px;}
 
 .logo {
   height: 100px;
@@ -100,6 +101,7 @@ body {
 
 .navbar li {
   margin: 20px;
+  margin-bottom:12vh;
 }
 
 .navbar a {
