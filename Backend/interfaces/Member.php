@@ -9,4 +9,7 @@ interface memberInterface{
     public function calcBodCalcNeed($data);
     public function getRecomm($data);
     public function enrollClass($data);
+    public function ViewCoachInfo($data);
+    public function isUserEnrolledInClass($data);
+    public function dropCoach($data);
 }

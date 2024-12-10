@@ -328,4 +328,84 @@ class member implements memberInterface {
             return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
         }
     }
+
+    public function ViewCoachInfo($data){
+        $sql = 'SELECT c.Username, ci.Name, ci.Age, ci.Sex, ci.Gender, ci.Height, ci.Weight, ci.ContactNo, ci.Address
+                FROM coach c
+                LEFT JOIN coach_info ci ON c.User_ID = ci.Coach_ID 
+                WHERE LOWER(c.Username) = LOWER(?)';
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            if ($stmt->execute([$data->Username])) {
+                $data = $stmt->fetchAll(PDO ::FETCH_ASSOC);
+                return $this->gm->responsePayload($data, 'success', 'Data uploaded', 200);
+            } else {
+                return $this->gm->responsePayload(null, 'failed', 'Upload failed', 403);
+            }
+        } catch (PDOException $e) {
+            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+        }
+    }
+    public function isUserEnrolledInClass($data) {
+        $userID = $this->gm->getIDFromTokenBackend();
+    
+        $getCoachID = 'SELECT User_ID FROM coach WHERE LOWER(Username) = LOWER(?)';
+        $checkEnrollment = 'SELECT COUNT(*) FROM coach_classes WHERE user_id = ? AND coach_id = ?';
+    
+        try {
+            // Get the coach ID from the coach table
+            $stmt1 = $this->pdo->prepare($getCoachID);
+            $stmt1->execute([$data->Username]);
+            $coachID = $stmt1->fetchColumn();
+    
+            if (!$coachID) {
+                return $this->gm->responsePayload(false, 'failed', 'Coach not found', 404);
+            }
+    
+            // Check if the user is enrolled with the coach
+            $stmt2 = $this->pdo->prepare($checkEnrollment);
+            $stmt2->execute([$userID, $coachID]);
+    
+            if ($stmt2->fetchColumn() == 1) {
+                return $this->gm->responsePayload(true, 'success', 'User is enrolled with this coach', 200);
+            } else {
+                return $this->gm->responsePayload(false, 'success', 'User is not enrolled with this coach', 200);
+            }
+        } catch (PDOException $e) {
+            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+        }
+    }
+    public function dropCoach($data) {
+        $userID = $this->gm->getIDFromTokenBackend();
+
+        $getCoachID = 'SELECT User_ID FROM coach WHERE LOWER(Username) = LOWER(?)';
+        $checkEnrollment = 'SELECT COUNT(*) FROM coach_classes WHERE user_id = ? AND coach_id = ?';
+        $deleteEnrollment = 'DELETE FROM coach_classes WHERE user_id = ? AND coach_id = ?';
+    
+        try {
+            // Get the coach ID from the coach table
+            $stmt1 = $this->pdo->prepare($getCoachID);
+            $stmt1->execute([$data->Username]);
+            $coachID = $stmt1->fetchColumn();
+    
+            if (!$coachID) {
+                return $this->gm->responsePayload(false, 'failed', 'Coach not found', 404);
+            }
+    
+            // Check if the user is enrolled with the coach
+            $stmt2 = $this->pdo->prepare($checkEnrollment);
+            $stmt2->execute([$userID, $coachID]);
+    
+            if ($stmt2->fetchColumn()) {
+                $stmt3 = $this->pdo->prepare($deleteEnrollment);
+                $stmt3->execute([$userID, $coachID]);
+                return $this->gm->responsePayload(true, 'success', 'User is dropped from the class', 200);
+            } else {
+                return $this->gm->responsePayload(false, 'success', 'User is not enrolled with this coach', 200);
+            }
+        } catch (PDOException $e) {
+            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+        }
+    
+    }
 }
