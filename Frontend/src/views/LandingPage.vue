@@ -74,8 +74,8 @@ body {
 .header-container {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
-  margin-top: 40px;
+  margin-bottom: -10vh;
+  margin-top: 30px;
   margin-left: 10px;
 }
 
@@ -99,6 +99,7 @@ body {
 
 .navbar li {
   margin: 30px;
+  margin-bottom:12vh;
 }
 
 .navbar a {

@@ -12,7 +12,9 @@
       <nav>
         <ul>
           <li><a href="/AdminMemberinfo">Members Information</a></li>
-          <li><a href="/AdminMemberemail" style="color: #ac0700">Members Email</a></li>
+          <li>
+            <a href="/AdminMemberemail" style="color: #ac0700">Members Email</a>
+          </li>
           <li><a href="/AdminMembercondition">Members Condition</a></li>
           <li><a href="/AdminMembersubscription">Members Subscription</a></li>
           <li><a href="/AdminCoach">Coaches Information</a></li>
@@ -65,7 +67,12 @@
             <td>{{ member.Email }}</td>
             <td>{{ member.Username }}</td>
             <td>
-              <button @click="deleteMember(member.User_ID)" class="action-button">Delete</button>
+              <button
+                @click="deleteMember(member.User_ID)"
+                class="action-button"
+              >
+                Delete
+              </button>
             </td>
           </tr>
         </tbody>
@@ -80,19 +87,39 @@
         <form @submit.prevent="createProfile">
           <div class="input-group">
             <label for="clientEmail">Email:</label>
-            <input type="email" id="clientEmail" v-model="clientDetails.Email" required/>
+            <input
+              type="email"
+              id="clientEmail"
+              v-model="clientDetails.Email"
+              required
+            />
           </div>
           <div class="input-group">
             <label for="clientUsername">Username:</label>
-            <input type="text" id="clientUsername" v-model="clientDetails.Username" required/>
+            <input
+              type="text"
+              id="clientUsername"
+              v-model="clientDetails.Username"
+              required
+            />
           </div>
           <div class="input-group">
             <label for="clientPassword">Password:</label>
-            <input type="password" id="clientPassword" v-model="clientDetails.Password" required/>
+            <input
+              type="password"
+              id="clientPassword"
+              v-model="clientDetails.Password"
+              required
+            />
           </div>
           <div class="input-group">
             <label for="clientSubscription">Subscription Status:</label>
-            <select id="clientSubscription" v-model="clientDetails.SubscriptionStat" required class="custom-dropdown">
+            <select
+              id="clientSubscription"
+              v-model="clientDetails.SubscriptionStat"
+              required
+              class="custom-dropdown"
+            >
               <option value="" disabled selected>Subscription Status</option>
               <option value="paid">Paid</option>
               <option value="unpaid">Unpaid</option>
@@ -100,7 +127,12 @@
           </div>
           <div class="input-group">
             <label for="clientSubplan">Subscription Plan:</label>
-            <select id="clientSubplan" v-model="clientDetails.subPlan" required class="custom-dropdown">
+            <select
+              id="clientSubplan"
+              v-model="clientDetails.subPlan"
+              required
+              class="custom-dropdown"
+            >
               <option value="" disabled selected>Subscription Plan</option>
               <option value="basic plan">Basic Plan</option>
               <option value="advanced plan">Advanced Plan</option>
@@ -109,39 +141,74 @@
           </div>
           <div class="input-group">
             <label>Condition:</label>
-            <div v-for="(condition, index) in conditions" :key="index" class="checkbox-group">
-              <input
-                type="checkbox"
-                :id="'condition_' + index"
-                :value="condition.value"
-                v-model="clientDetails.condition_ids"
-              />
-              <label :for="'condition_' + index">{{ condition.label }}</label>
+            <div class="checkbox-dropdown">
+              <div
+                v-for="(condition, index) in conditions"
+                :key="index"
+                class="checkbox-option"
+              >
+                <input
+                  type="checkbox"
+                  :id="'condition-' + index"
+                  :value="condition.value"
+                  v-model="clientDetails.condition_ids"
+                />
+                <label :for="'condition-' + index">{{ condition.label }}</label>
+              </div>
             </div>
           </div>
           <div class="input-group">
             <label for="clientName">Name:</label>
-            <input type="text" id="clientName" v-model="clientDetails.name" required/>
+            <input
+              type="text"
+              id="clientName"
+              v-model="clientDetails.name"
+              required
+            />
           </div>
           <div class="input-group">
             <label for="clientconNum">Contact Number:</label>
-            <input type="text" id="clientconNum" v-model="clientDetails.conNum" required/>
+            <input
+              type="text"
+              id="clientconNum"
+              v-model="clientDetails.conNum"
+              required
+            />
           </div>
           <div class="input-group">
             <label for="clienteconNum">Emergency Contact Number:</label>
-            <input type="text" id="clienteconNum" v-model="clientDetails.eConNum" required/>
+            <input
+              type="text"
+              id="clienteconNum"
+              v-model="clientDetails.eConNum"
+              required
+            />
           </div>
           <div class="input-group">
             <label for="clientAddress">Address:</label>
-            <input type="text" id="clientAddress" v-model="clientDetails.address"/>
+            <input
+              type="text"
+              id="clientAddress"
+              v-model="clientDetails.address"
+            />
           </div>
           <div class="input-group">
             <label for="clientage">Age:</label>
-            <input type="number" id="clientage" v-model="clientDetails.age" required/>
+            <input
+              type="number"
+              id="clientage"
+              v-model="clientDetails.age"
+              required
+            />
           </div>
           <div class="input-group">
             <label for="clientsex">Sex:</label>
-            <select id="clientsex" v-model="clientDetails.sex" required class="custom-dropdown">
+            <select
+              id="clientsex"
+              v-model="clientDetails.sex"
+              required
+              class="custom-dropdown"
+            >
               <option value="" disabled selected>Select your sex</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -149,7 +216,12 @@
           </div>
           <div class="input-group">
             <label for="clientgender">Gender:</label>
-            <select id="clientgender" v-model="clientDetails.gender" required class="custom-dropdown">
+            <select
+              id="clientgender"
+              v-model="clientDetails.gender"
+              required
+              class="custom-dropdown"
+            >
               <option value="" disabled selected>Select your gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -165,7 +237,12 @@
           </div>
           <div class="input-group">
             <label for="clientbodyType">Body Type:</label>
-            <select id="clientbodyType" v-model="clientDetails.bodyType" required class="custom-dropdown">
+            <select
+              id="clientbodyType"
+              v-model="clientDetails.bodyType"
+              required
+              class="custom-dropdown"
+            >
               <option value="" disabled selected>Select your body type</option>
               <option>Ectomorph</option>
               <option>Mesomorph</option>
@@ -175,7 +252,12 @@
           </div>
           <div class="input-group">
             <label for="clientactivityLevel">Activity Level:</label>
-            <select id="clientactivityLevel" v-model="clientDetails.activityLevel" required class="custom-dropdown">
+            <select
+              id="clientactivityLevel"
+              v-model="clientDetails.activityLevel"
+              required
+              class="custom-dropdown"
+            >
               <option value="" disabled selected>Select your body type</option>
               <option>Sedentary</option>
               <option>Lightly Active</option>
@@ -187,15 +269,29 @@
           </div>
           <div class="input-group">
             <label for="clientweight">Weight:</label>
-            <input type="number" id="clientweight" v-model="clientDetails.weight" required/>
+            <input
+              type="number"
+              id="clientweight"
+              v-model="clientDetails.weight"
+              required
+            />
           </div>
           <div class="input-group">
             <label for="clientHeight">Height:</label>
-            <input type="number" id="clientHeight" v-model="clientDetails.height" required/>
+            <input
+              type="number"
+              id="clientHeight"
+              v-model="clientDetails.height"
+              required
+            />
           </div>
 
           <div class="button-group">
-            <button type="button" class="close-button" @click="toggleProfilePopup">
+            <button
+              type="button"
+              class="close-button"
+              @click="toggleProfilePopup"
+            >
               Close
             </button>
             <button type="submit" class="create-button">Create</button>
@@ -264,7 +360,7 @@ export default {
       ],
     };
   },
-  mounted(){
+  mounted() {
     this.fetchData();
   },
   methods: {
@@ -296,32 +392,38 @@ export default {
       }
     },
     async fetchData() {
-      apiClient.get("/Get/All")
-    .then((response) => {
-      if (response.data.status.remarks === "success" && Array.isArray(response.data.payload)) {
-        this.members = response.data.payload.map((member) => ({
-          User_ID: member.User_ID,
-          Email: member.Email,
-          Username: member.Username,
-          ArchiveStatus: member.ArchiveStatus
-        }))
-      }
-    })
+      apiClient.get("/Get/All").then((response) => {
+        if (
+          response.data.status.remarks === "success" &&
+          Array.isArray(response.data.payload)
+        ) {
+          this.members = response.data.payload.map((member) => ({
+            User_ID: member.User_ID,
+            Email: member.Email,
+            Username: member.Username,
+            ArchiveStatus: member.ArchiveStatus,
+          }));
+        }
+      });
     },
-    async deleteMember(id){
-      try{
-        const response = await apiClient.post('/Admin/Delete', {User_ID: id}, {withCredentials: true} );
-        if(response.data.status.remarks === "success"){
+    async deleteMember(id) {
+      try {
+        const response = await apiClient.post(
+          "/Admin/Delete",
+          { User_ID: id },
+          { withCredentials: true }
+        );
+        if (response.data.status.remarks === "success") {
           await this.fetchData();
-        }else{
+        } else {
           alert(`User ${id} failed to update or is already paid`);
         }
-      }catch(error){
+      } catch (error) {
         console.log(error);
         this.error = "Error occured on update";
       }
     },
-    async createProfile(){
+    async createProfile() {
       const clientData = {
         Email: this.clientDetails.Email,
         Username: this.clientDetails.Username,
@@ -339,15 +441,16 @@ export default {
         bodyType: this.clientDetails.bodyType,
         activityLevel: this.clientDetails.activityLevel,
         weight: this.clientDetails.weight,
-        height: this.clientDetails.height
-      }
-      try{
-        const response = await apiClient.post("/Create/Member", clientData, {withCredentials: true});
-        if(response.data.status.remarks === 'success'){
+        height: this.clientDetails.height,
+      };
+      try {
+        const response = await apiClient.post("/Create/Member", clientData, {
+          withCredentials: true,
+        });
+        if (response.data.status.remarks === "success") {
           alert("Account successfully created");
-
         }
-      }catch(error){
+      } catch (error) {
         console.log(error);
       }
     },
@@ -635,6 +738,33 @@ body {
 
 .custom-dropdown option {
   padding: 10px;
+}
+
+.checkbox-dropdown {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  background-color: white;
+  display: block;
+  overflow-y: auto;
+}
+
+.checkbox-dropdown .checkbox-option {
+  display: block;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.checkbox-dropdown .checkbox-option:last-child {
+  border-bottom: none; 
+}
+
+
+.checkbox-dropdown input[type="checkbox"]:checked + label {
+  color: #4caf50; 
 }
 
 table {
