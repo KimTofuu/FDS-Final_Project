@@ -104,12 +104,12 @@
         <div class="calorie-box">
           <h2>Daily Caloric Needs</h2>
           <form @submit.prevent="computeDailyCalories">
-            <select v-model="goal">
+            <select v-model="CalorieReq.goal">
               <option value="lose weight">Lose weight</option>
               <option value="gain weight">Gain weight</option>
               <option value="null">Maintenance</option>
             </select>
-            <select v-model="activityLevel">
+            <select v-model="CalorieReq.activityLevel">
               <option value="sedentary">
                 Sedentary (little or no exercise)
               </option>
@@ -213,7 +213,7 @@ export default {
   created() {
     this.getData();  
     this.updateTime();
-    setInterval(this.updateTime, 1000);
+    // setInterval(this.updateTime, 1000);
   },
 
   methods: {
@@ -260,6 +260,7 @@ export default {
           withCredentials: true,
         });
         console.log(response.data);
+        console.log(data)
         if (response.data.status.remarks == "success") {
           this.CalorieReq.dailyCalories = response.data.payload;
         }
