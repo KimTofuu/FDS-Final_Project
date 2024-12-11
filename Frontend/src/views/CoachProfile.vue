@@ -644,6 +644,7 @@ body {
   width: 70vh;
   height: 80vh;
   background-color: #fff;
+  color: #000;
   padding: 25px;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -654,7 +655,7 @@ body {
 }
 
 .sched-container h2 {
-  color: black;
+  color: #000
 }
 
 .dash-content {
