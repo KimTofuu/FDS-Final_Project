@@ -46,7 +46,7 @@
 
     <main class="content">
       <header>
-        <h1>MEMBERS CONDITION</h1>
+        <h1>MEMBERS EMAIL</h1>
       </header>
       <button class="create-profile-button" @click="toggleProfilePopup">
         Create Account
