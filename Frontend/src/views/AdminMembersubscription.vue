@@ -48,7 +48,7 @@
 
     <main class="content">
       <header>
-        <h1>MEMBERS CONDITION</h1>
+        <h1>MEMBERS SUBSCRIPTION</h1>
       </header>
       <button class="create-profile-button" @click="toggleProfilePopup">
         Create Account
@@ -277,7 +277,7 @@
             </select>
           </div>
           <div class="input-group">
-            <label for="clientweight">Weight:</label>
+            <label for="clientweight">Weight (kg):</label>
             <input
               type="number"
               id="clientweight"
@@ -286,7 +286,7 @@
             />
           </div>
           <div class="input-group">
-            <label for="clientHeight">Height:</label>
+            <label for="clientHeight">Height (cm):</label>
             <input
               type="number"
               id="clientHeight"
@@ -512,6 +512,7 @@ body {
   padding-top: 8%;
   transition: transform 0.3s ease;
   transform: translateX(-100%);
+  z-index: 1;
 }
 
 .sidebar.show {
@@ -644,23 +645,27 @@ body {
   margin-bottom: 8vh;
 }
 
+.create-profile-button:hover {
+  background-color: #ffffff;
+  color: #ac0700;
+}
+
 .create-profile-button {
   background-color: #ac0700;
   color: white;
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
-  margin-left: 128vh;
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
   margin-bottom: 5px;
+  margin-top: 70px;
   transition: background-color 0.3s ease;
-}
-
-.create-profile-button:hover {
-  background-color: #ffffff;
-  color: #ac0700;
+  position: absolute;
+  top: 0;
+  right: 20px;
+  z-index: 1;
 }
 
 .profile-popup {
@@ -677,6 +682,44 @@ body {
   width: 90vh;
   height: 80vh;
   overflow: auto;
+}
+
+@media(max-width: 1024px) {
+  .profile-popup {
+  position: fixed;
+  top: 50%;
+  left: 56%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  color: #000;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  width: 90vh;
+  height: 80vh;
+  overflow: auto;
+  max-width: 500px;
+  }
+}
+
+@media(max-width: 425px) {
+  .profile-popup {
+  position: fixed;
+  top: 50%;
+  left: 56%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  color: #000;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  width: 90vh;
+  height: 80vh;
+  overflow: auto;
+  max-width: 300px;
+  }
 }
 
 .input-group {
@@ -778,6 +821,11 @@ body {
   color: #4caf50; 
 }
 
+.table-wrapper {
+  position: relative;
+  width: 100%;
+}
+
 table {
   width: 100%;
   margin: 20px auto;
@@ -786,7 +834,9 @@ table {
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
 }
+
 th,
 td {
   border: 1px solid #ddd;
