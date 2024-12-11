@@ -47,7 +47,7 @@
 
     <main class="content">
       <header>
-        <h1>MEMBERS CONDITION</h1>
+        <h1>MEMBERS INFORMATION</h1>
       </header>
       <button class="create-profile-button" @click="toggleProfilePopup">
         Create Account</button
@@ -703,8 +703,7 @@ body {
   margin-top: 20px;
 }
 
-.create-button,
-.close-button {
+.create-button, .close-button {
   padding: 10px 20px;
   font-size: 1rem;
   font-weight: bold;
