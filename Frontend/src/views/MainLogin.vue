@@ -295,21 +295,21 @@ header {
 
 @media (max-width: 425px) {
   .form {
-    width: 100%; /* Adjust width for better fitting */
-    padding: 20px; /* Reduced padding for better fit */
-    border-radius: 15px; /* Optional, adds a bit of style */
+    width: 100%; 
+    padding: 20px; 
+    border-radius: 15px; 
   }
 
   .form h2 {
     font-size: 16px; 
-    margin-bottom: 10px; /* Adds some space between the heading and the buttons */
+    margin-bottom: 10px; 
   }
 
   .form button {
     font-size: 12px; 
     height: 35px; 
-    width: 100%; /* Make button take up the full width */
-    margin-bottom: 10px; /* Adds space between buttons */
+    width: 100%; 
+    margin-bottom: 10px; 
   }
 
   .return-button a {

@@ -6,7 +6,13 @@
           <img src="../assets/logo.png" alt="Logo" class="logo" />
         </router-link>
         <nav class="navbar">
-          <ul id="sidemenu">
+          <img
+            @click="toggleNavbar"
+            class="navbartoggle"
+            src="../assets/navbartoggle.png"
+            alt="Menu"
+          />
+          <ul :class="{ visible: navbarVisible }">
             <li><router-link to="/">HOME</router-link></li>
             <li><router-link to="/AboutUs">ABOUT US</router-link></li>
             <li><router-link to="/Services">SERVICES</router-link></li>
@@ -46,6 +52,34 @@
   </div>
 </template>
 
+<script>
+export default {
+  data() {
+    return {
+      navbarVisible: false,
+    };
+  },
+  methods: {
+    toggleNavbar() {
+      this.navbarVisible = !this.navbarVisible;
+    },
+    closeNavbarOnOutsideClick(event) {
+      const navbar = this.$el.querySelector(".navbar");
+      const toggle = this.$el.querySelector(".navbartoggle");
+      if (!navbar.contains(event.target) && !toggle.contains(event.target)) {
+        this.navbarVisible = false;
+      }
+    },
+  },
+  mounted() {
+    document.addEventListener("click", this.closeNavbarOnOutsideClick);
+  },
+  beforeDestroy() {
+    document.removeEventListener("click", this.closeNavbarOnOutsideClick);
+  },
+};
+</script>
+
 <style>
 @font-face {
   font-family: "Grifter";
@@ -71,9 +105,8 @@ body {
 #header {
   width: 100%;
   min-height: 100vh;
-  background-color: #000; 
+  background-color: #000;
 }
-
 
 .container {
   padding: 0vh 10%;
@@ -87,7 +120,8 @@ body {
   justify-content: space-between;
   margin-bottom: -10vh;
   margin-top: 30px;
-  margin-left: 10px;}
+  margin-left: 10px;
+}
 
 .logo {
   height: 100px;
@@ -96,12 +130,36 @@ body {
 .navbar ul {
   display: flex;
   list-style-type: none;
+  margin: 0;
+  padding: 0;
   gap: 20px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
+
+.navbar ul.hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.navbar ul.visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.navbartoggle {
+  display: none;
+  margin-top: 2vh;
+  max-width: 6vh;
+  max-height: 6vh;
+  cursor: pointer;
+}
+
 
 .navbar li {
   margin: 20px;
-  margin-bottom:12vh;
+  margin-bottom: 12vh;
 }
 
 .navbar a {
@@ -149,20 +207,44 @@ body {
   color: #fff;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .header-container {
     flex-direction: column;
     align-items: center;
   }
 
   .logo {
-    height: 80px;
-    margin-bottom: 20px;
+    margin: 0;
+    margin-bottom: 10vh !important;
+    height: 10vh;
+  }
+
+  .navbartoggle {
+    display: block;
+    width: 6vh;
+    height: 6vh;
+    margin: 0vh;
+    position: relative;
+    top: -18vh;
+    left: 18vh;
   }
 
   .navbar ul {
     flex-direction: column;
-    gap: 10px;
+    position: fixed;
+    top: 12vh;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    text-align: center;
+    gap: 15vh;
+    padding: 10px 0;
+    display: none;
+  }
+
+  .navbar ul.visible {
+    display: flex;
   }
 
   .navbar li {
@@ -170,7 +252,7 @@ body {
   }
 
   .sub-title {
-    font-size: 40px;
+    font-size: 50px;
     text-align: center;
   }
 
@@ -185,7 +267,73 @@ body {
   }
 
   .justified-text {
-    font-size: 18px;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .logo {
+    margin: 0;
+    margin-bottom: 0vh !important;
+    height: 10vh;
+  }
+
+  .navbartoggle {
+    display: block;
+    width: 6vh;
+    height: 6vh;
+    margin: 0vh;
+    position: relative;
+    margin-top: 10vh;
+    top: -18vh;
+    left: 18vh;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    position: fixed;
+    top: 12vh;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    text-align: center;
+    gap: 15vh;
+    padding: 10px 0;
+    display: none;
+  }
+
+  .navbar ul.visible {
+    display: flex;
+  }
+
+  .navbar li {
+    margin: 10px;
+  }
+
+  .sub-title {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .about-col-1,
+  .about-col-2 {
+    flex-basis: 100%;
+    text-align: center;
+  }
+
+  .about-col-1 img {
+    width: 65%;
+    margin-top: -10vh;
+  }
+
+  .justified-text {
+    font-size: 10px;
   }
 }
 
@@ -211,7 +359,7 @@ body {
   }
 
   .justified-text {
-    font-size: 16px;
+    font-size: 10px;
   }
 }
 
@@ -251,7 +399,7 @@ body {
   }
 
   .sub-title {
-    font-size: 24px;
+    font-size: 15px;
   }
 
   .navbar a {
@@ -259,11 +407,11 @@ body {
   }
 
   .about-col-1 img {
-    width: 95%;
+    width: 70%;
   }
 
   .justified-text {
-    font-size: 14px;
+    font-size: 10px;
   }
 }
 </style>

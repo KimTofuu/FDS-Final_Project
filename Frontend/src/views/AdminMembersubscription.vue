@@ -810,6 +810,7 @@ td {
   height: 30px;
   background: #ac0700;
   border-radius: 5px;
+  border-style: none;
   text-decoration: none;
   color: white;
   padding: 5px 10px;

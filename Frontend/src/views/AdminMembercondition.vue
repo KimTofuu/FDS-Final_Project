@@ -22,7 +22,7 @@
           <li><a href="/AdminCoach">Coaches Information</a></li>
         </ul>
       </nav>
-      <button @click="showLogoutConfirm = true" class="logout-button">
+      <button @click="showLogoutConfirm = true" class="logout-buttons">
         <img src="../assets/logout.png" alt="Logout" class="logout-img" />
         <span class="logout-text">Logout</span>
       </button>
@@ -36,7 +36,7 @@
         @enter="enter"
         @leave="leave"
       >
-        <div v-if="showLogoutConfirm" class="logout-confirmation">
+        <div v-if="showLogoutConfirm" class="logout-confirm">
           <p>Are you sure you want to logout?</p>
           <div class="button-group">
             <button @click="logout">Yes</button>
@@ -523,11 +523,11 @@ body {
   z-index: 1000;
 }
 
-.logout-button {
+.logout-buttons {
   background-color: #ac0700;
   border: none;
   cursor: pointer;
-  margin-top: 20vh !important;
+  margin-top: 10vh !important;
   padding: 5px 10px;
   border-radius: 20px;
   display: flex;
@@ -557,16 +557,16 @@ body {
   white-space: nowrap;
 }
 
-.logout-button:hover {
+.logout-buttons:hover {
   width: 15vh;
   padding: 5px 10px;
 }
 
-.logout-button:hover .logout-text {
+.logout-buttons:hover .logout-text {
   opacity: 1;
 }
 
-.logout-confirmation {
+.logout-confirm {
   position: fixed;
   top: 50%;
   left: 60%;
@@ -581,9 +581,10 @@ body {
   opacity: 0;
   pointer-events: auto;
   transition: opacity 0.3s ease-in-out;
+  z-index: 1001;
 }
 
-.logout-confirmation p {
+.logout-confirm p {
   font-size: 1.5rem;
   margin-bottom: 5%;
 }
