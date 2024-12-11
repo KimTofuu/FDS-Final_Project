@@ -309,7 +309,7 @@ header {
     font-size: 12px; 
     height: 35px; 
     width: 100%; 
-    margin-bottom: 10px; 
+    margin-bottom: 10px;
   }
 
   .return-button a {
