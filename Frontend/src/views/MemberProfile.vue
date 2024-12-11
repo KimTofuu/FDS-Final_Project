@@ -17,7 +17,7 @@
           <li><a href="/MemberUpgrade">Upgrade</a></li>
         </ul>
       </nav>
-      <button @click="showLogoutConfirm = true" class="logout-button">
+      <button @click="showLogoutConfirm = true" class="logout-buttons">
         <img src="../assets/logout.png" alt="Logout" class="logout-img" />
         <span class="logout-text">Logout</span>
       </button>
@@ -31,7 +31,7 @@
         @enter="enter"
         @leave="leave"
       >
-        <div v-if="showLogoutConfirm" class="logout-confirmation">
+        <div v-if="showLogoutConfirm" class="logout-confirm">
           <p>Are you sure you want to logout?</p>
           <div class="button-group">
             <button @click="logout">Yes</button>
@@ -861,7 +861,7 @@ body {
   z-index: 1000;
 }
 
-.logout-button {
+.logout-buttons {
   background-color: #ac0700;
   border: none;
   cursor: pointer;
@@ -895,16 +895,16 @@ body {
   white-space: nowrap;
 }
 
-.logout-button:hover {
+.logout-buttons:hover {
   width: 15vh;
   padding: 5px 10px;
 }
 
-.logout-button:hover .logout-text {
+.logout-buttons:hover .logout-text {
   opacity: 1;
 }
 
-.logout-confirmation {
+.logout-confirm {
   position: fixed;
   top: 50%;
   left: 60%;
@@ -919,15 +919,14 @@ body {
   opacity: 0;
   pointer-events: auto;
   transition: opacity 0.3s ease-in-out;
-  z-index: 1100;
 }
 
-.logout-confirmation p {
+.logout-confirm p {
   font-size: 1.5rem;
   margin-bottom: 5%;
 }
 
-.logout-confirmation button {
+.logout-confirm button {
   padding: 0px 10px;
   border-radius: 10px;
   cursor: pointer;
@@ -940,7 +939,7 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
 }
 
-.logout-confirmation button:hover {
+.logout-confirm button:hover {
   background-color: #ac0700;
   color: #fff;
   transform: scale(1.05);

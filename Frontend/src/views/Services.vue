@@ -6,7 +6,13 @@
           <img src="../assets/logo.png" alt="Logo" class="logo" />
         </router-link>
         <nav class="navbar">
-          <ul id="sidemenu">
+          <img
+            @click="toggleNavbar"
+            class="navbartoggle"
+            src="../assets/navbartoggle.png"
+            alt="Menu"
+          />
+          <ul :class="{ visible: navbarVisible }">
             <li><router-link to="/">HOME</router-link></li>
             <li><router-link to="/AboutUs">ABOUT US</router-link></li>
             <li><router-link to="/Services">SERVICES</router-link></li>
@@ -44,6 +50,34 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      navbarVisible: false,
+    };
+  },
+  methods: {
+    toggleNavbar() {
+      this.navbarVisible = !this.navbarVisible;
+    },
+    closeNavbarOnOutsideClick(event) {
+      const navbar = this.$el.querySelector(".navbar");
+      const toggle = this.$el.querySelector(".navbartoggle");
+      if (!navbar.contains(event.target) && !toggle.contains(event.target)) {
+        this.navbarVisible = false;
+      }
+    },
+  },
+  mounted() {
+    document.addEventListener("click", this.closeNavbarOnOutsideClick);
+  },
+  beforeDestroy() {
+    document.removeEventListener("click", this.closeNavbarOnOutsideClick);
+  },
+};
+</script>
 
 <style scoped>
 @font-face {
@@ -110,7 +144,7 @@ body {
 
 .navbar li {
   margin: 20px;
-  margin-bottom:12vh;
+  margin-bottom: 12vh;
 }
 
 .navbar a {
@@ -174,5 +208,282 @@ body {
 
 .service-item p {
   font-size: 15px;
+}
+
+@media (max-width: 1024px) {
+  .header-container {
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+  }
+
+  .logo {
+    margin: 0;
+    margin-bottom: 10vh !important;
+    height: 10vh;
+  }
+
+  .navbartoggle {
+    display: block;
+    width: 6vh;
+    height: 6vh;
+    margin: 0vh;
+    position: relative;
+    top: -18vh;
+    left: 18vh;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    position: fixed;
+    top: 13vh;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    text-align: center;
+    gap: 15vh;
+    padding: 10px 0;
+    display: none;
+  }
+
+  .navbar ul.visible {
+    display: flex;
+  }
+
+  .navbar li {
+    margin: 10px;
+  }
+
+  .navbar a {
+    font-size: 18px;
+  }
+
+  .services-list {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .service-item {
+    padding: 20px;
+  }
+
+  .service-item h2 {
+    font-size: 20px;
+  }
+
+  .service-item p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .logo {
+    height: 80px;
+    margin: 0;
+    margin-bottom: 5vh;
+  }
+
+  .navbartoggle {
+    display: block;
+    width: 6vh;
+    height: 6vh;
+    margin: 0vh;
+    position: relative;
+    top: -19vh;
+    left: 21vh;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    position: fixed;
+    top: 15vh;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    text-align: center;
+    gap: 15vh;
+    padding: 10px 0;
+    display: none;
+  }
+
+  .navbar ul.visible {
+    display: flex;
+  }
+
+  .services-list {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    margin-top: 10px;
+  }
+
+  .service-item h2 {
+    font-size: 18px;
+  }
+
+  .service-item p {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 425px) {
+  .logo {
+    margin: 0;
+    margin-bottom: 0vh !important;
+    height: 10vh;
+  }
+
+  .navbartoggle {
+    display: block;
+    width: 6vh;
+    height: 6vh;
+    margin: 0vh;
+    position: relative;
+    margin-top: 10vh;
+    top: -18vh;
+    left: 18vh;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    position: fixed;
+    top: 12vh;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    text-align: center;
+    gap: 15vh;
+    padding: 10px 0;
+    display: none;
+  }
+
+  .navbar ul.visible {
+    display: flex;
+  }
+
+  .services-list {
+    gap: 15px;
+  }
+
+  .service-item {
+    padding: 15px;
+  }
+
+  .service-item h2 {
+    font-size: 16px;
+  }
+
+  .service-item p {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 375px) {
+  .logo {
+    height: 80px;
+    margin: 0;
+    margin-bottom: 5vh;
+  }
+
+  .navbartoggle {
+    display: block;
+    width: 6vh;
+    height: 6vh;
+    margin: 0vh;
+    position: relative;
+    top: -19vh;
+    left: 21vh;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    position: fixed;
+    top: 15vh;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    text-align: center;
+    gap: 15vh;
+    padding: 10px 0;
+    display: none;
+  }
+
+  .navbar ul.visible {
+    display: flex;
+  }
+  .navbar a {
+    font-size: 14px;
+  }
+
+  .services-list {
+    gap: 10px;
+  }
+
+  .service-item h2 {
+    font-size: 14px;
+  }
+
+  .service-item p {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 320px) {
+  .logo {
+    height:80px;
+    margin: 0;
+    margin-bottom: 10vh!important;
+  }
+
+  .navbartoggle {
+    display: block;
+    width: 6vh;
+    height: 6vh;
+    margin: 0vh;
+    position: relative;
+    top: -19vh;
+    left: 21vh;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    position: fixed;
+    top: 15vh;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    text-align: center;
+    gap: 15vh;
+    padding: 10px 0;
+    display: none;
+  }
+
+  .navbar ul.visible {
+    display: flex;
+  }
+  .navbar a {
+    font-size: 14px;
+  }
+
+  .services-list {
+    gap: 10px;
+  }
+
+  .service-item h2 {
+    font-size: 14px;
+  }
+
+  .service-item p {
+    font-size: 10px;
+  }
 }
 </style>

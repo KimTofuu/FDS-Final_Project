@@ -6,7 +6,13 @@
           <img src="../assets/logo.png" alt="Logo" class="logo" />
         </router-link>
         <nav class="navbar">
-          <ul id="sidemenu">
+          <img
+            @click="toggleNavbar"
+            class="navbartoggle"
+            src="../assets/navbartoggle.png"
+            alt="Menu"
+          />
+          <ul :class="{ visible: navbarVisible }">
             <li><router-link to="/AboutUs">ABOUT US</router-link></li>
             <li><router-link to="/Services">SERVICES</router-link></li>
             <li><router-link to="/OurTeam">OUR TEAM</router-link></li>
@@ -33,6 +39,37 @@
   </div>
 </template>
 
+<script>
+export default {
+  data() {
+    return {
+      navbarVisible: false, // State for the navbar
+    };
+  },
+  methods: {
+    toggleNavbar() {
+      this.navbarVisible = !this.navbarVisible; // Toggle navbar visibility
+    },
+    closeNavbarOnOutsideClick(event) {
+      // Check if the click is outside the navbar or toggle
+      const navbar = this.$el.querySelector(".navbar");
+      const toggle = this.$el.querySelector(".navbartoggle");
+      if (!navbar.contains(event.target) && !toggle.contains(event.target)) {
+        this.navbarVisible = false; // Close the navbar
+      }
+    },
+  },
+  mounted() {
+    // Add an event listener for clicks on the document
+    document.addEventListener("click", this.closeNavbarOnOutsideClick);
+  },
+  beforeDestroy() {
+    // Remove the event listener to prevent memory leaks
+    document.removeEventListener("click", this.closeNavbarOnOutsideClick);
+  },
+};
+</script>
+
 <style scoped>
 @font-face {
   font-family: Grifter;
@@ -44,7 +81,6 @@
   padding: 0;
   font-family: "Figtree";
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 html {
@@ -95,6 +131,27 @@ body {
   margin: 0;
   padding: 0;
   gap: 20px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.navbar ul.hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.navbar ul.visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.navbartoggle {
+  display: none;
+  margin-top: 2vh;
+  max-width: 6vh;
+  max-height: 6vh;
+  cursor: pointer;
 }
 
 .navbar li {
@@ -183,5 +240,174 @@ button:hover {
   color: #313c1c;
 }
 
+@media screen and (max-width: 1024px) {
+  .container {
+    padding: 0 8%;
+  }
 
+  .logo {
+    height: 90px;
+  }
+
+  .navbar ul {
+    gap: 15px;
+  }
+
+  .header-text h1 {
+    font-size: 70px;
+  }
+
+  .header-text h2 {
+    font-size: 80px;
+  }
+
+  .header-text p {
+    font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .header-container {
+    flex-direction: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 0;
+  }
+
+  .logo {
+    margin: 0;
+    margin-bottom: 20vh;
+    height: 10vh;
+  }
+
+  .navbartoggle {
+    display: none;
+    width: 6vh;
+    height: 6vh;
+    margin: 0vh;
+    position: relative;
+    top: -18vh;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    position: fixed;
+    top: 12vh;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    text-align: center;
+    gap: 15vh;
+    padding: 10px 0;
+    display: none;
+  }
+
+  .navbar ul.visible {
+    display: flex;
+  }
+
+  .header-text {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .header-text h1 {
+    font-size: 50px;
+    margin-bottom: 10px;
+  }
+
+  .header-text h2 {
+    font-size: 55px;
+  }
+
+  .header-text p {
+    font-size: 20px;
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  button {
+    font-size: 18px;
+    padding: 10px 30px;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .logo {
+    height: 50px;
+  }
+
+  .header-text h1 {
+    font-size: 40px;
+  }
+
+  .header-text h2 {
+    font-size: 50px;
+  }
+
+  .header-text p {
+    font-size: 10px;
+  }
+
+  button {
+    font-size: 16px;
+    padding: 8px 20px;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .header-container {
+    flex-direction: column;
+  }
+
+  .logo {
+    height: 60px;
+  }
+
+  .header-text h1 {
+    font-size: 40px;
+  }
+
+  .header-text h2 {
+    font-size: 50px;
+  }
+
+  .header-text p {
+    font-size: 10px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 6px 15px;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .header-container {
+    padding: 0 2%;
+  }
+
+  .logo {
+    height: 60px;
+  }
+
+  .header-text h1 {
+    font-size: 30px;
+  }
+
+  .header-text h2 {
+    font-size: 45px;
+  }
+
+  .header-text p {
+    font-size: 15px;
+  }
+
+  button {
+    margin-top: 6vh;
+    font-size: 12px;
+    padding: 10px 20px;
+  }
+}
 </style>
