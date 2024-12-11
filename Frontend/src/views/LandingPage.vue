@@ -156,7 +156,7 @@ body {
 
 .navbar li {
   margin: 30px;
-  margin-bottom: 12vh;
+  margin-bottom:12vh;
 }
 
 .navbar a {
