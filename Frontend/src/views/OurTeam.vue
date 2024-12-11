@@ -6,8 +6,13 @@
           <img src="../assets/logo.png" alt="Logo" class="logo" />
         </router-link>
         <nav class="navbar">
-          <ul id="sidemenu">
-            <li><router-link to="/">HOME</router-link></li>
+          <img
+            @click="toggleNavbar"
+            class="navbartoggle"
+            src="../assets/navbartoggle.png"
+            alt="Menu"
+          />
+          <ul :class="{ visible: navbarVisible }">            <li><router-link to="/">HOME</router-link></li>
             <li><router-link to="/AboutUs">ABOUT US</router-link></li>
             <li><router-link to="/Services">SERVICES</router-link></li>
             <li><router-link to="/OurTeam">OUR TEAM</router-link></li>
@@ -55,6 +60,34 @@
   </div>
 </template>
 
+<script>
+export default {
+  data() {
+    return {
+      navbarVisible: false,
+    };
+  },
+  methods: {
+    toggleNavbar() {
+      this.navbarVisible = !this.navbarVisible;
+    },
+    closeNavbarOnOutsideClick(event) {
+      const navbar = this.$el.querySelector(".navbar");
+      const toggle = this.$el.querySelector(".navbartoggle");
+      if (!navbar.contains(event.target) && !toggle.contains(event.target)) {
+        this.navbarVisible = false;
+      }
+    },
+  },
+  mounted() {
+    document.addEventListener("click", this.closeNavbarOnOutsideClick);
+  },
+  beforeDestroy() {
+    document.removeEventListener("click", this.closeNavbarOnOutsideClick);
+  },
+};
+</script>
+
 <style scoped>
 @font-face {
   font-family: "Grifter";
@@ -97,6 +130,13 @@ body {
   margin-bottom: -10vh;
   margin-top: 30px;
   margin-left: 10px;
+}
+
+.sub-title {
+  font-size: 36px;
+  text-align: center;
+  margin: 20px 0 40px;
+  color: white;
 }
 
 .logo {
@@ -150,7 +190,7 @@ body {
 
 .work-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   grid-gap: 40px;
   margin-top: 50px;
 }
@@ -198,4 +238,295 @@ body {
 .work:hover .layer {
   height: 100%;
 }
+
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 8%;
+  }
+
+  .header-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-left: 0;
+    margin-bottom: 20px;
+  }
+
+  .logo {
+    margin: 0;
+    margin-bottom: 0vh !important;
+    height: 10vh;
+  }
+
+  .navbartoggle {
+    display: block;
+    width: 6vh;
+    height: 6vh;
+    margin: 0vh;
+    position: relative;
+    margin-top: 10vh;
+    top: -18vh;
+    left: 18vh;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    position: fixed;
+    top: 18vh;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 1.9);
+    text-align: center;
+    gap: 8vh;
+    padding: 10px 0;
+    display: none;
+    z-index: 1000;
+  }
+
+  .navbar ul.visible {
+    display: flex;
+  }
+
+  .navbar li {
+    margin: 15px 0;
+  }
+
+  .navbar a {
+    font-size: 15px;
+  }
+
+  .sub-title {
+    font-size: 40px; 
+    margin-bottom: 3vh;
+    margin-top: -19vh;
+    margin-left: 10vh;
+  }
+
+  .work-list {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 3%;
+  }
+
+  .header-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .logo {
+    margin: 0;
+    margin-bottom: 0vh !important;
+    height: 10vh;
+  }
+
+  .navbartoggle {
+    display: block;
+    width: 6vh;
+    height: 6vh;
+    margin: 0vh;
+    position: relative;
+    margin-top: 10vh;
+    top: -18vh;
+    left: 18vh;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    position: fixed;
+    top: 18vh;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 1.9);
+    text-align: center;
+    gap: 8vh;
+    padding: 10px 0;
+    display: none;
+    z-index: 1000;
+  }
+
+  .navbar ul.visible {
+    display: flex;
+  }
+
+  .navbar li {
+    margin: 10px 0;
+  }
+
+  .navbar a {
+    font-size: 14px;
+  }
+
+  .sub-title {
+    font-size: 24px; 
+    margin-bottom: 28vh;
+    margin-top: -19vh;
+    margin-left: 5vh;
+  }
+
+  .work-list {
+    grid-template-columns: repeat(2, 1fr) !important;
+    margin-left: 8vh !important;
+    margin-top: -23vh !important;
+  }
+}
+
+@media (max-width: 425px) {
+  .container {
+    padding: 0 5%;
+  }
+
+  .logo {
+    height: 50px !important;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    position: fixed;
+    top: 18vh;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 1.9);
+    text-align: center;
+    gap: 8vh;
+    padding: 10px 0;
+    display: none;
+    z-index: 1000;
+  }
+
+  .navbar ul.visible {
+    display: flex;
+  }
+  .navbar a {
+    font-size: 12px;
+  }
+
+  .work-list {
+    grid-template-columns: 1fr !important;
+    width: auto;
+    margin: 0 auto;
+    margin-top: -23vh;
+    margin-left: 5vh;
+    height: auto;
+  }
+
+  .sub-title {
+    font-size: 20px; 
+    margin-bottom: 28vh;
+    margin-top: -19vh;
+    margin-left: 5vh;
+  }
+
+  .layer {
+    font-size: 12px;
+    padding: 0 20px;
+  }
+
+  .layer h3 {
+    font-size: 14px !important;
+  }
+}
+
+@media (max-width: 375px) {
+  .header-container {
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .logo {
+    margin: 0;
+    margin-top: 5vh !important;
+    height: 10vh !important;
+  }
+
+  .navbartoggle {
+    display: block;
+    width: 6vh;
+    height: 6vh;
+    margin: 0vh;
+    position: relative;
+    margin-top: 10vh;
+    top: -19vh;
+    left: 18vh;
+  }
+
+  .navbar ul {
+    gap: 5px;
+  }
+
+  .navbar a {
+    font-size: 12px;
+    padding: 5px;
+  }
+
+  .sub-title {
+    font-size: 20px; 
+    margin-bottom: 28vh;
+    margin-top: -15vh;
+    margin-left: 7vh;
+  }
+
+  .work-list {
+    grid-template-columns:1fr !important;
+    width: 40vh;
+    height: 60vh !important;
+    gap: 10px;
+    margin-top: -20vh;
+    margin-left: 5vh!important;
+  }
+
+
+  .work img {
+    border-radius: 5px;
+  }
+
+  .layer {
+    font-size: 10px;
+    padding: 0 10px;
+  }
+
+  .layer h3 {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 320px) {
+  .container {
+    padding: 0 2%;
+  }
+
+  .logo {
+    height: 40px;
+  }
+
+  .navbar ul {
+    gap: 5px;
+  }
+
+  .navbar a {
+    font-size: 11px;
+  }
+
+  .work img {
+    border-radius: 5px;
+  }
+
+  .layer {
+    font-size: 9px;
+    padding: 0 5px;
+  }
+
+  .layer h3 {
+    font-size: 12px;
+  }
+}
+
 </style>
