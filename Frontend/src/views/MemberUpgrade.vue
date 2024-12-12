@@ -23,7 +23,7 @@
     </aside>
 
     <div v-show="showLogoutConfirm">
-        <div class="overlay" @click="showLogoutConfirm = false"></div>  
+      <div class="overlay" @click="showLogoutConfirm = false"></div>
       <transition
         name="fade"
         @before-enter="beforeEnter"
@@ -38,7 +38,7 @@
           </div>
         </div>
       </transition>
-      </div>
+    </div>
 
     <main class="content">
       <div class="subscriptions">
@@ -120,7 +120,7 @@ export default {
         console.error("Logout Error:", error);
         this.error = "An error occurred while logging out. Please try again.";
       }
-    },  
+    },
 
     // Transition effects for animations
     beforeEnter(el) {
@@ -248,7 +248,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5); 
+  background: rgba(0, 0, 0, 0.5);
   z-index: 1000;
 }
 
@@ -397,7 +397,32 @@ body {
   color: #ac0700;
 }
 
+@media (max-width: 1024px) {
+  :root {
+    --content-max-width: 900px;
+    --content-padding: 25px;
+  }
+
+  .content {
+    display: block;
+  }
+
+  .subscription-card {
+    width: 400px; 
+    margin: 0 auto;
+  }
+}
+
 @media (max-width: 768px) {
+  :root {
+    --content-max-width: 700px;
+    --content-padding: 20px;
+  }
+  .content > * {
+    margin-bottom: 5rem; 
+    width: 100%; 
+  }
+
   .sidebar-toggle {
     display: block;
   }
@@ -412,11 +437,6 @@ body {
     transform: translateX(0);
   }
 
-  .content {
-    margin-left: 0;
-    padding: 20px;
-  }
-
   .sidebar .logo img {
     width: 60px;
     height: 70px;
@@ -426,11 +446,28 @@ body {
     right: 30px;
     left: 0;
   }
+
+  .subscription-card {
+    width: 200px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  }
 }
 
 @media (max-width: 425px) {
+  :root {
+    --content-max-width: 100%;
+    --content-padding: 20px;
+  }
+
+  .content > * {
+    display: block; 
+    margin-bottom: 15px; 
+    width: 100%; 
+  }
+
   .sidebar {
-    width: 100%;
+    width: 100%; 
   }
 
   .sidebar .logo img {
@@ -439,26 +476,25 @@ body {
     margin-bottom: 15px;
   }
 
-  .user-info-box {
-    padding: 8px 15px;
-    font-size: 0.9rem;
-  }
-
-  .sidebar nav ul li {
-    margin: 25px 0;
-  }
-
-  .content {
-    padding: 20px;
-  }
-
   .content h1 {
     font-size: 1.8rem;
   }
+
+  .subscription-card {
+    width: 250px!important; /* Adjust card size */
+    margin-left: -2vh;
+  }
 }
 
+/* Styles for 375px and below */
 @media (max-width: 375px) {
-  .sidebar {
+  :root {
+    --content-padding: 15px;
+  }
+
+  .content > * {
+    display: block;
+    margin-bottom: 12px;
     width: 100%;
   }
 
@@ -468,26 +504,25 @@ body {
     margin-bottom: 10px;
   }
 
-  .user-info-box {
-    padding: 6px 12px;
-    font-size: 0.85rem;
-  }
-
-  .sidebar nav ul li {
-    margin: 20px 0;
-  }
-
-  .content {
-    padding: 15px;
-  }
-
   .content h1 {
     font-size: 1.6rem;
   }
+
+  .subscription-card {
+    width: 20 0px!important; /* Adjust card size */
+    margin-left: -2vh;
+  }
 }
 
+/* Styles for 320px and below */
 @media (max-width: 320px) {
-  .sidebar {
+  :root {
+    --content-padding: 10px;
+  }
+
+  .content > * {
+    display: block;
+    margin-bottom: 10px;
     width: 100%;
   }
 
@@ -497,22 +532,9 @@ body {
     margin-bottom: 10px;
   }
 
-  .user-info-box {
-    padding: 5px 10px;
-    font-size: 0.8rem;
-  }
-
-  .sidebar nav ul li {
-    margin: 18px 0;
-  }
-
-  .content {
-    padding: 10px;
-  }
-
   .content h1 {
     font-size: 1.4rem;
-    margin-right: 0%;
+    margin-right: 0;
   }
 }
 </style>
