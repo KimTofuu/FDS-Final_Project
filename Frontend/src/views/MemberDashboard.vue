@@ -146,6 +146,7 @@
               <option value="intermediate">Intermediate</option>
               <option value="expert">Expert</option>
             </select>
+            <!-- <p></p> -->
             <label for="goal">Goal:</label>
             <select id="goal" v-model="goal">
               <option value="" disabled selected>Select a goal</option>

@@ -154,6 +154,11 @@ body {
   overflow: hidden;
 }
 
+label[for="goal"] {
+  display: block;
+  margin-top: 10px;
+}
+
 .sidebar-layout {
   display: flex;
   height: 100vh;
@@ -350,6 +355,7 @@ body {
   padding: 20px;
   text-align: center;
   width: 350px;
+  margin-bottom: 10px!important;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
 }
 
