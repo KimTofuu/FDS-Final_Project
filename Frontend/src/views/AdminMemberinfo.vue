@@ -513,6 +513,7 @@ body {
   padding-top: 8%;
   transition: transform 0.3s ease;
   transform: translateX(-100%);
+  z-index: 2!important;
 }
 
 .sidebar.show {
@@ -655,13 +656,36 @@ body {
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  margin-bottom: -2vh !important;
+  /* margin-bottom: -2vh !important; */
   transition: background-color 0.3s ease;
 }
 
 .create-profile-button:hover {
   background-color: #ffffff;
   color: #ac0700;
+}
+
+@media (max-width: 768px) {
+  .create-profile-button {
+    min-width: 100px;
+  }
+  table{
+    margin-top: 80px;
+  }
+}
+
+@media (max-width: 425px) {
+  .create-profile-button {
+    margin-top: 150px!important;
+  }
+  h1{
+    font-size: 40px!important;
+  }
+}
+@media (max-width: 1440px) {
+  table {
+    margin-top: 30px;
+  }
 }
 
 .profile-popup {

@@ -759,6 +759,28 @@ body {
   background-color: #28a745;
   color: #fff;
 }
+@media (max-width: 768px) {
+  .create-button {
+    min-width: 100px;
+  }
+  table{
+    margin-top: 80px;
+  }
+}
+
+@media (max-width: 425px) {
+  .create-button {
+    margin-top: 150px!important;
+  }
+  h1{
+    font-size: 40px!important;
+  }
+}
+@media (max-width: 1440px) {
+  table {
+    margin-top: 30px;
+  }
+}
 
 .create-button:hover {
   background-color: #ffffff;
