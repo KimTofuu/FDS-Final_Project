@@ -85,103 +85,99 @@
 
     <transition name="fade">
       <div class="overlay" v-if="showEditModal" @click="closeEditModal">
-      <div v-if="showEditModal" class="edit-modal" @click.stop>
-        <div class="modal-content">
-          <h2>Edit Profile</h2>
-          <div class="form-group">
-            <label for="name">Name:</label>
-            <input
-              type="text"
-              id="name"
-              v-model="profile.name"
-              class="form-input"
-            />
-          </div>
-          <div class="form-group">
-            <label for="conNumm">Contact Number:</label>
-            <input
-              type="text"
-              id="conNumm"
-              v-model="profile.conNumm"
-              class="form-input"
-            />
-          </div>
-          <div class="form-group">
-            <label for="address">Address:</label>
-            <input
-              type="text"
-              id="address"
-              v-model="profile.address"
-              class="form-input"
-            />
-          </div>
-          <div class="form-group">
-            <label for="age">Age:</label>
-            <input
-              type="number"
-              id="age"
-              v-model="profile.age"
-              class="form-input"
-            />
-          </div>
-          <div class="form-group">
-            <label for="sex">Sex:</label>
-            <input
-              type="text"
-              id="sex"
-              v-model="profile.sex"
-              class="form-input"
-            />
-          </div>
-          <div class="form-group">
-            <label for="gender">Gender:</label>
-            <input
-              type="text"
-              id="gender"
-              v-model="profile.gender"
-              class="form-input"
-            />
-          </div>
-          <div class="form-group">
-            <label for="weight">Weight (kg):</label>
-            <input
-              type="number"
-              id="weight"
-              v-model="profile.height"
-              class="form-input"
-            />
-          </div>
-          <div class="form-group">
-            <label for="height">Height (cm):</label>
-            <input
-              type="number"
-              id="height"
-              v-model="profile.weight"
-              class="form-input"
-            />
-          </div>
-          <div class="modal-buttons">
-            <button @click="updateInfo" class="save-button">Save</button>
-            <button @click="closeEditModal" class="cancel-button">
-              Cancel
-            </button>
+        <div v-if="showEditModal" class="edit-modal" @click.stop>
+          <div class="modal-content">
+            <h2>Edit Profile</h2>
+            <div class="form-group">
+              <label for="name">Name:</label>
+              <input
+                type="text"
+                id="name"
+                v-model="profile.name"
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label for="conNumm">Contact Number:</label>
+              <input
+                type="text"
+                id="conNumm"
+                v-model="profile.conNumm"
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label for="address">Address:</label>
+              <input
+                type="text"
+                id="address"
+                v-model="profile.address"
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label for="age">Age:</label>
+              <input
+                type="number"
+                id="age"
+                v-model="profile.age"
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label for="sex">Sex:</label>
+              <input
+                type="text"
+                id="sex"
+                v-model="profile.sex"
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label for="gender">Gender:</label>
+              <input
+                type="text"
+                id="gender"
+                v-model="profile.gender"
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label for="weight">Weight (kg):</label>
+              <input
+                type="number"
+                id="weight"
+                v-model="profile.height"
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label for="height">Height (cm):</label>
+              <input
+                type="number"
+                id="height"
+                v-model="profile.weight"
+                class="form-input"
+              />
+            </div>
+            <div class="modal-buttons">
+              <button @click="updateInfo" class="save-button">Save</button>
+              <button @click="closeEditModal" class="cancel-button">
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>  
     </transition>
 
     <main class="sched">
-        <div class="sched-section">
-          <h2>Schedule</h2>
-          <div
-            class="sched-item"
-            v-for="(item, index) in schedule"
-            :key="index"
-          >
-            <p>{{ item.time }} - {{ item.topic }}</p>
-          </div>
+      <div class="sched-section">
+        <h2>Schedule</h2>
+        <div class="sched-item" v-for="(item, index) in schedule" :key="index">
+          <p>{{ item.time }} - {{ item.topic }}</p>
         </div>
+      </div>
     </main>
   </div>
 </template>
@@ -226,8 +222,8 @@ export default {
           this.profile.conNumm = response.data.payload[0].ContactNo;
           this.profile.address = response.data.payload[0].Address;
           this.profile.age = response.data.payload[0].Age;
-          if(response.data.payload[0].Sex === 1) this.profile.sex = "Male";
-          if(response.data.payload[0].Sex === 0) this.profile.sex = "Female";
+          if (response.data.payload[0].Sex === 1) this.profile.sex = "Male";
+          if (response.data.payload[0].Sex === 0) this.profile.sex = "Female";
           this.profile.gender = response.data.payload[0].Gender;
           this.profile.weight = response.data.payload[0].Weight;
           this.profile.height = response.data.payload[0].Height;
@@ -257,19 +253,23 @@ export default {
         Height: this.profile.height,
       };
       try {
-        const response = await apiClient.post("/Coach/Update-Info", updateData, {
-          withCredentials: true,
-        });
+        const response = await apiClient.post(
+          "/Coach/Update-Info",
+          updateData,
+          {
+            withCredentials: true,
+          }
+        );
         console.log(response.data);
         if (response.data?.status?.remarks === "success") {
-          this.profile.name= response.data.payload[0].Name; 
-          this.profile.conNumm= response.data.payload[0].ContactNo; 
-          this.profile.address= response.data.payload[0].address; 
-          this.profile.age= response.data.payload[0].Age; 
-          this.profile.sex= response.data.payload[0].Sex; 
-          this.profile.gender= response.data.payload[0].Gender; 
-          this.profile.weight= response.data.payload[0].Weight; 
-          this.profile.height= response.data.payload[0].Height;
+          this.profile.name = response.data.payload[0].Name;
+          this.profile.conNumm = response.data.payload[0].ContactNo;
+          this.profile.address = response.data.payload[0].address;
+          this.profile.age = response.data.payload[0].Age;
+          this.profile.sex = response.data.payload[0].Sex;
+          this.profile.gender = response.data.payload[0].Gender;
+          this.profile.weight = response.data.payload[0].Weight;
+          this.profile.height = response.data.payload[0].Height;
           console.log("Profile updated successfully");
           this.closeEditModal(); // Close the edit modal after successful update
         }
@@ -334,6 +334,7 @@ body {
   height: 100%;
   font-family: "Figtree", sans-serif;
   background-color: #fff;
+  overflow: auto;
 }
 
 .sidebar-layout {
@@ -381,7 +382,7 @@ body {
   background-color: #ac0700;
   border: none;
   cursor: pointer;
-  margin-top: 30vh!important;
+  margin-top: 30vh !important;
   padding: 5px 10px;
   border-radius: 20px;
   display: flex;
@@ -518,50 +519,50 @@ body {
 }
 
 @media (max-width: 768px) {
-.sidebar-toggle {
-  display: block;
-}
+  .sidebar-toggle {
+    display: block;
+  }
 
-.sidebar {
-  transform: translateX(-100%);
-  min-height: 100vh;
-  width: 250px;
-}
+  .sidebar {
+    transform: translateX(-100%);
+    min-height: 100vh;
+    width: 250px;
+  }
 
-.sidebar.show {
-  transform: translateX(0);
-}
+  .sidebar.show {
+    transform: translateX(0);
+  }
 
-.sidebar .logo img {
-  width: 60px;
-  height: 70px;
-  margin-bottom: 10px;
-  position: relative;
-  top: 40px;
-  right: 30px;
-  left: 0;
-}
+  .sidebar .logo img {
+    width: 60px;
+    height: 70px;
+    margin-bottom: 10px;
+    position: relative;
+    top: 40px;
+    right: 30px;
+    left: 0;
+  }
 
   .profile-conts {
-      display: flex;
-      flex-direction: column; 
-      gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
   }
 
   .sched-section {
-      margin-top: 0; 
-      margin-left: 0; 
-      width: 100%;
+    margin-top: 0;
+    margin-left: 0;
+    width: 100%;
   }
 
   .edit-modal {
-      position: relative; 
-      margin-top: 20px; 
-      width: 100%; 
-      height: auto; 
-      transform: none; 
-      left: auto; 
-      top: auto; 
+    position: relative;
+    margin-top: 20px;
+    width: 100%;
+    height: auto;
+    transform: none;
+    left: auto;
+    top: auto;
   }
 }
 
@@ -684,7 +685,6 @@ body {
   text-align: right;
 }
 
-
 .sched-section {
   margin-top: 10vh;
   margin-left: -30vh;
@@ -703,7 +703,7 @@ body {
 }
 
 .sched-container h2 {
-  color: #000
+  color: #000;
 }
 
 .dash-content {
@@ -719,16 +719,16 @@ body {
   }
 
   .sidebar nav ul {
-  list-style: none;
-  width: 100%;
-  padding: 0;
-  text-align: center;
-  margin-top: 120%;
-}
+    list-style: none;
+    width: 100%;
+    padding: 0;
+    text-align: center;
+    margin-top: 120%;
+  }
 
   .sidebar-layout {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
   }
 
   .sidebar {
@@ -753,60 +753,59 @@ body {
 
   .profile-cont {
     margin-left: 10px;
-    margin-top: 3%; 
-    width: 100%; 
-    box-sizing: border-box; 
+    margin-top: 3%;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .profile-conts {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     align-items: center;
     gap: 20px;
   }
-  
+
   .profile-deets {
-    width: 100%; 
-    height: auto; 
-    padding: 20px; 
-  }
-  
-  .sched-section {
     width: 100%;
-    height: auto; 
-    padding: 20px; 
-    box-sizing: border-box; 
+    height: auto;
+    padding: 20px;
+  }
+
+  .sched-section {
+    width: 98%;
+    height: auto;
+    padding: 20px;
+    box-sizing: border-box;
     margin-left: 10px;
   }
 
   .edit-modal {
-    width: 60%; 
+    width: 60%;
     height: 70%;
-    padding: 10px; 
-    margin-top: 5%; 
+    padding: 10px;
+    margin-top: 5%;
   }
 
   .modal-content {
-    padding: 10px; 
-    box-sizing: border-box; 
+    padding: 10px;
+    box-sizing: border-box;
   }
 
   .update-button {
-    margin: 0 auto; 
+    margin: 0 auto;
     display: block;
     width: auto;
   }
 }
 
 @media (max-width: 768px) {
-  
   .sidebar-toggle {
     display: block;
   }
 
   .sidebar-layout {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
   }
 
   .sidebar {
@@ -831,60 +830,59 @@ body {
 
   .profile-cont {
     margin-left: 10px;
-    margin-top: 3%; 
-    width: 100%; 
-    box-sizing: border-box; 
+    margin-top: 3%;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .profile-conts {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     align-items: center;
     gap: 20px;
   }
-  
+
   .profile-deets {
-    width: 100%; 
-    height: 90%; 
-    padding: 20px; 
-  }
-  
-  .sched-section {
     width: 100%;
-    height: 90%; 
-    padding: 20px; 
-    box-sizing: border-box; 
+    height: 90%;
+    padding: 20px;
+  }
+
+  .sched-section {
+    width: 98%;
+    height: 90%;
+    padding: 20px;
+    box-sizing: border-box;
     margin-left: 10px;
   }
 
   .edit-modal {
-    width: 60%; 
+    width: 60%;
     height: 70%;
-    padding: 10px; 
-    margin-top: 5%; 
+    padding: 10px;
+    margin-top: 5%;
   }
 
   .modal-content {
-    padding: 10px; 
-    box-sizing: border-box; 
+    padding: 10px;
+    box-sizing: border-box;
   }
 
-.update-button {
-    margin: 0 auto; 
+  .update-button {
+    margin: 0 auto;
     display: block;
     width: auto;
   }
 }
 
 @media (max-width: 425px) {
-  
   .sidebar-toggle {
     display: block;
   }
 
   .sidebar-layout {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
   }
 
   .sidebar {
@@ -909,62 +907,60 @@ body {
 
   .profile-cont {
     margin-left: 10px;
-    margin-top: 3%; 
-    width: 100%; 
-    box-sizing: border-box; 
+    margin-top: 3%;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .profile-conts {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     align-items: center;
     gap: 20px;
   }
-  
+
   .profile-deets {
-    width: 100%; 
-    height: 90%; 
-    padding: 20px; 
-  }
-  
-  .sched-section {
     width: 100%;
-    height: 90%; 
-    padding: 20px; 
-    box-sizing: border-box; 
+    height: 90%;
+    padding: 20px;
+  }
+
+  .sched-section {
+    width: 98%;
+    height: 90%;
+    padding: 20px;
+    box-sizing: border-box;
     margin-left: 10px;
   }
 
   .edit-modal {
-    width: 80%; 
+    width: 80%;
     height: 80%;
-    padding: 10px; 
-    margin-top: 3%; 
-    margin-left: -3vh; 
-   
+    padding: 10px;
+    margin-top: 3%;
+    margin-left: -3vh;
   }
 
   .modal-content {
-    padding: 5px; 
-    box-sizing: border-box; 
+    padding: 5px;
+    box-sizing: border-box;
   }
 
-.update-button {
-    margin: 0 auto; 
+  .update-button {
+    margin: 0 auto;
     display: block;
     width: auto;
   }
 }
 
 @media (max-width: 375px) {
-  
   .sidebar-toggle {
     display: block;
   }
 
   .sidebar-layout {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
   }
 
   .sidebar {
@@ -989,48 +985,47 @@ body {
 
   .profile-cont {
     margin-left: 10px;
-    margin-top: 3%; 
-    width: 100%; 
-    box-sizing: border-box; 
+    margin-top: 3%;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .profile-conts {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     align-items: center;
     gap: 20px;
   }
-  
+
   .profile-deets {
-    width: 100%; 
-    height: 90%; 
-    padding: 20px; 
-  }
-  
-  .sched-section {
     width: 100%;
-    height: 90%; 
-    padding: 20px; 
-    box-sizing: border-box; 
+    height: 90%;
+    padding: 20px;
+  }
+
+  .sched-section {
+    width: 95%;
+    height: 90%;
+    padding: 20px;
+    box-sizing: border-box;
     margin-left: 10px;
   }
 
   .edit-modal {
-    width: 80%; 
+    width: 60%;
     height: 80%;
-    padding: 10px; 
-    margin-top: 3%; 
-    margin-left: -2vh; 
-   
+    padding: 10px;
+    margin-top: 3%;
+    margin-left: -2vh;
   }
 
   .modal-content {
-    padding: 5px; 
-    box-sizing: border-box; 
+    padding: 5px;
+    box-sizing: border-box;
   }
 
-.update-button {
-    margin: 0 auto; 
+  .update-button {
+    margin: 0 auto;
     display: block;
     width: auto;
   }

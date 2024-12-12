@@ -58,16 +58,14 @@
             <h2>{{ client.Username }}</h2>
           </div>
           <div class="client-actions">
-            <button
-              @click="messageClient(client)"
-              class="action-button"
-            >
+            <button @click="messageClient(client)" class="action-button">
               Message
             </button>
-            <div 
-              v-if="showMessagePopup && selectedClientIndex !== null" 
-              class="overlay" 
-              @click="closePopup">
+            <div
+              v-if="showMessagePopup && selectedClientIndex !== null"
+              class="overlay"
+              @click="closePopup"
+            >
               <div class="message-popup" @click.stop>
                 <h2>Send Your Message</h2>
                 <textarea
@@ -76,23 +74,20 @@
                 ></textarea>
                 <div class="button-group">
                   <button @click="closePopup">Cancel</button>
-                  <button @click="sendMessage(clients[selectedClientIndex]?.Username)" :disabled="loading">
+                  <button
+                    @click="sendMessage(clients[selectedClientIndex]?.Username)"
+                    :disabled="loading"
+                  >
                     <span v-if="loading">Sending...</span>
                     <span v-else>Send</span>
                   </button>
                 </div>
               </div>
             </div>
-            <button
-              @click="viewClientPopup(client)"
-              class="action-button"
-            >
+            <button @click="viewClientPopup(client)" class="action-button">
               View
             </button>
-            <button
-              class="more-options"
-              @click.stop="toggleOptions(index)"
-            >
+            <button class="more-options" @click.stop="toggleOptions(index)">
               ⋮
             </button>
             <div
@@ -115,7 +110,9 @@
           <p><strong>Sex:</strong> {{ clientDeets.sex }}</p>
           <p><strong>Body Type:</strong> {{ clientDeets.bodyType }}</p>
           <p><strong>Condition:</strong> {{ clientDeets.condition }}</p>
-          <p><strong>Activity Level:</strong> {{ clientDeets.activityLevel }}</p>
+          <p>
+            <strong>Activity Level:</strong> {{ clientDeets.activityLevel }}
+          </p>
           <p><strong>Weight:</strong> {{ clientDeets.weight }}</p>
           <p><strong>Height:</strong> {{ clientDeets.height }}</p>
           <p><strong>BMI:</strong> {{ clientDeets.BMI }}</p>
@@ -155,7 +152,7 @@ export default {
         height: "",
         BMI: "",
       },
-      showClientPopup: false, 
+      showClientPopup: false,
       loading: false,
     };
   },
@@ -163,134 +160,142 @@ export default {
     this.fetchData();
   },
   methods: {
-  messageClient(client) {
-    this.selectedClientIndex = this.clients.findIndex(
-      (c) => c.Username === client.Username
-    );
-    this.showMessagePopup = true;
-  },
-  closePopup() {
-    this.showMessagePopup = false;
-    this.messageContent = "";
-    this.selectedClientIndex = null; // Reset the selected index
-  },
-  async sendMessage(clientUsername) {
-    if (this.messageContent.trim()) {
-      this.loading = true;
-      const messageData = {
-        Username: clientUsername,
-        Subject: `Message from Coach`,
-        Message: this.messageContent,
-      };
+    messageClient(client) {
+      this.selectedClientIndex = this.clients.findIndex(
+        (c) => c.Username === client.Username
+      );
+      this.showMessagePopup = true;
+    },
+    closePopup() {
+      this.showMessagePopup = false;
+      this.messageContent = "";
+      this.selectedClientIndex = null; // Reset the selected index
+    },
+    async sendMessage(clientUsername) {
+      if (this.messageContent.trim()) {
+        this.loading = true;
+        const messageData = {
+          Username: clientUsername,
+          Subject: `Message from Coach`,
+          Message: this.messageContent,
+        };
+        try {
+          const response = await apiClient.post(
+            "/Coach/Send-Message",
+            messageData,
+            { withCredentials: true }
+          );
+          console.log(response.data);
+          if (response.data?.status?.remarks === "success") {
+            alert("Message sent successfully!");
+            this.closePopup();
+          }
+        } catch (error) {
+          console.error("Error sending message:", error);
+        } finally {
+          this.loading = false;
+        }
+      } else {
+        alert("Message cannot be empty.");
+      }
+    },
+    toggleOptions(index) {
+      this.activeDropdown = this.activeDropdown === index ? null : index;
+    },
+    addClient() {
+      console.log("Add client button clicked");
+    },
+    async logout() {
+      this.showLogoutConfirm = false;
       try {
-        const response = await apiClient.post("/Coach/Send-Message", messageData, {withCredentials: true});
+        const response = await apiClient.post("/Logout");
         console.log(response.data);
-        if(response.data?.status?.remarks === "success") {
-          alert("Message sent successfully!");
-          this.closePopup();
+        if (response.data?.status?.remarks === "success") {
+          this.$router.push("/MainLogin");
+        } else {
+          this.error = response.data.message || "Logout failed";
         }
       } catch (error) {
-        console.error("Error sending message:", error);
-      } finally {
-        this.loading = false;
+        console.error("Logout Error:", error);
+        this.error = "An error occurred while logging out. Please try again.";
       }
-    } else {
-      alert("Message cannot be empty.");
-    }
-  },
-  toggleOptions(index) {
-    this.activeDropdown = this.activeDropdown === index ? null : index;
-  },
-  addClient() {
-    console.log("Add client button clicked");
-  },
-  async logout() {
-    this.showLogoutConfirm = false;
-    try {
-      const response = await apiClient.post("/Logout");
-      console.log(response.data);
-      if (response.data?.status?.remarks === "success") {
-        this.$router.push("/MainLogin");
-      } else {
-        this.error = response.data.message || "Logout failed";
+    },
+    async fetchData() {
+      try {
+        const response = await apiClient.get("/Coach/View-Clients");
+        if (
+          response.data.status.remarks === "success" &&
+          Array.isArray(response.data.payload)
+        ) {
+          this.clients = response.data.payload.map((member) => ({
+            Username: member.Username,
+            name: member.name,
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching clients:", error);
       }
-    } catch (error) {
-      console.error("Logout Error:", error);
-      this.error = "An error occurred while logging out. Please try again.";
-    }
-  },
-  async fetchData() {
-    try {
-      const response = await apiClient.get("/Coach/View-Clients");
-      if (
-        response.data.status.remarks === "success" &&
-        Array.isArray(response.data.payload)
-      ) {
-        this.clients = response.data.payload.map((member) => ({
-          Username: member.Username,
-          name: member.name,
-        }));
+    },
+    async viewClientPopup(client) {
+      const clientDataArg = {
+        Username: client.Username,
+      };
+      this.showClientPopup = true;
+      try {
+        const response = await apiClient.post(
+          "/Coach/View-one-Client",
+          clientDataArg,
+          { withCredentials: true }
+        );
+        if (response.data.status.remarks === "success") {
+          console.log(response.data);
+          this.clientDeets.name = response.data.payload[0].name;
+          this.clientDeets.Username = response.data.payload[0].Username;
+          this.clientDeets.email = response.data.payload[0].Email;
+          this.clientDeets.conNum = response.data.payload[0].conNum;
+          this.clientDeets.age = response.data.payload[0].age;
+          this.clientDeets.sex = response.data.payload[0].sex;
+          this.clientDeets.bodyType = response.data.payload[0].bodyType;
+          this.clientDeets.condition = response.data.payload[0].condition;
+          this.clientDeets.activityLevel =
+            response.data.payload[0].activityLevel;
+          this.clientDeets.weight = response.data.payload[0].weight;
+          this.clientDeets.height = response.data.payload[0].height;
+          this.clientDeets.BMI = response.data.payload[0].BMI;
+        }
+      } catch (error) {
+        console.error(error);
+        console.log(client.Username);
       }
-    } catch (error) {
-      console.error("Error fetching clients:", error);
-    }
-  },
-  async viewClientPopup(client) {
-    const clientDataArg = {
-      Username: client.Username
-    };
-    this.showClientPopup = true; 
-    try {
-      const response = await apiClient.post("/Coach/View-one-Client", clientDataArg, {withCredentials: true});
-      if (response.data.status.remarks === "success") {
-        console.log(response.data);
-        this.clientDeets.name = response.data.payload[0].name;
-        this.clientDeets.Username = response.data.payload[0].Username;
-        this.clientDeets.email = response.data.payload[0].Email;
-        this.clientDeets.conNum = response.data.payload[0].conNum;
-        this.clientDeets.age = response.data.payload[0].age;
-        this.clientDeets.sex = response.data.payload[0].sex;
-        this.clientDeets.bodyType = response.data.payload[0].bodyType;
-        this.clientDeets.condition = response.data.payload[0].condition;
-        this.clientDeets.activityLevel = response.data.payload[0].activityLevel;
-        this.clientDeets.weight = response.data.payload[0].weight;
-        this.clientDeets.height = response.data.payload[0].height;
-        this.clientDeets.BMI = response.data.payload[0].BMI;
-      }
-    } catch (error) {
-      console.error(error);
-      console.log(client.Username);
-    }
-  },
-  closeClientPopup() {
-    this.showClientPopup = false; // Close the client popup
-  },
-  beforeEnter(el) {
-    el.style.opacity = 0;
-  },
-  enter(el, done) {
-    el.offsetHeight;
-    el.style.transition = "opacity 0.3s ease-in-out";
-    el.style.opacity = 1;
-    done();
-  },
-  leave(el, done) {
-    el.style.transition = "opacity 0.3s ease-in-out";
-    el.style.opacity = 0;
-    done();
-  },
-  toggleSidebar() {
-    this.showSidebar = !this.showSidebar;
-  },
-  deleteClient(index) {
-    console.log(`Delete client at index ${index}`);
-  },
-  closeDropdownOnOutsideClick() {
-    this.activeDropdown = null;
-  },
+    },
+    closeClientPopup() {
+      this.showClientPopup = false; // Close the client popup
+    },
+    beforeEnter(el) {
+      el.style.opacity = 0;
+    },
+    enter(el, done) {
+      el.offsetHeight;
+      el.style.transition = "opacity 0.3s ease-in-out";
+      el.style.opacity = 1;
+      done();
+    },
+    leave(el, done) {
+      el.style.transition = "opacity 0.3s ease-in-out";
+      el.style.opacity = 0;
+      done();
+    },
+    toggleSidebar() {
+      this.showSidebar = !this.showSidebar;
+    },
+    deleteClient(index) {
+      console.log(`Delete client at index ${index}`);
+    },
+    closeDropdownOnOutsideClick() {
+      this.activeDropdown = null;
+    },
   },
 };
-
 </script>
 
 <style>
@@ -369,7 +374,7 @@ body {
   background-color: #ac0700;
   border: none;
   cursor: pointer;
-  margin-top: 30vh!important;
+  margin-top: 30vh !important;
   padding: 5px 10px;
   border-radius: 20px;
   display: flex;
@@ -699,15 +704,31 @@ body {
   }
 
   .sidebar nav ul {
-  list-style: none;
-  width: 100%;
-  padding: 0;
-  text-align: center;
-  margin-top: 120%;
-}
+    list-style: none;
+    width: 100%;
+    padding: 0;
+    text-align: center;
+    margin-top: 120%;
+  }
 
-}
+  .sidebar {
+    width: 25vw;
+    z-index: 1000 !important;
+  }
 
+  .sidebar-toggle {
+    z-index: 1001 !important;
+  }
+  .content {
+    margin-left: 25vw;
+  }
+
+  .client-box {
+    flex: 1 1 calc(100% - 20px);
+    z-index: 10 !important;
+    position: relative;
+  }
+}
 
 @media (max-width: 768px) {
   .sidebar-toggle {
@@ -736,54 +757,87 @@ body {
 }
 
 @media (max-width: 425px) {
-  .sidebar-toggle {
-    display: block;
-  }
-
-  .sidebar {
-    transform: translateX(-100%);
-    min-height: 100vh;
-    width: 250px;
-  }
-
-  .sidebar.show {
-    transform: translateX(0);
-  }
-
-  .sidebar .logo img {
-    width: 60px;
-    height: 70px;
-    margin-bottom: 10px;
+  .client-box {
+    flex: 1 1 100%;
+    z-index: 10 !important;
+    margin-left: -4vh !important;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
     position: relative;
-    top: 40px;
-    right: 30px;
-    left: 0;
+  }
+
+  .client-info {
+    margin-bottom: 10px;
+  }
+
+  .client-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .client-actions .action-button {
+    padding: 10px;
+    border-radius: 8px;
+    margin-left: 15vh;
+  }
+
+  .client-actions .more-options {
+    position: absolute; 
+    top: 10px;         
+    right: 10px;       
+    transform: rotate(90deg);
+    font-size: 18px;   
+    cursor: pointer;   
   }
 }
 
-@media (max-width: 375px) {
-  .sidebar-toggle {
-    display: block;
+@media (max-width: 375px) { 
+  .client-box {
+    flex: 1 1 auto; 
+    z-index: 10 !important;
+    width: 100%; 
+    max-width: 300px; 
+    padding: 8px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
+    text-align: center; 
+    gap: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
   }
 
-  .sidebar {
-    transform: translateX(-100%);
-    min-height: 100vh;
-    width: 250px;
+  .client-info {
+    margin-bottom: 5px;
+    font-size: 12px; 
+    word-wrap: break-word; 
   }
 
-  .sidebar.show {
-    transform: translateX(0);
+  .client-actions {
+    display: flex;
+    flex-direction: column; 
+    gap: 5px; 
+    width: 80%; 
   }
 
-  .sidebar .logo img {
-    width: 60px;
-    height: 70px;
-    margin-bottom: 10px;
-    position: relative;
-    top: 40px;
-    right: 30px;
-    left: 0;
+  .client-actions .action-button {
+    padding: 6px; 
+    border-radius: 6px; 
+    font-size: 12px; 
+    margin-left: 3vh; 
+  }
+
+  .client-actions .more-options {
+    transform: rotate(90deg); 
+    font-size: 16px; 
+    position: absolute; 
+    top: 8px; 
+    right: 8px;
+    cursor: pointer;
   }
 }
 </style>
