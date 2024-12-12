@@ -60,9 +60,23 @@
             <h2>{{ client.Username }}</h2>
           </div>
           <div class="client-actions">
-            <button @click="enrollToCoach(client)" class="action-button" :disabled="clientEnrollmentStatus[client.Username] == true">Enroll</button>
-            <button @click="dropCoach(client)" class="action-button" :disabled="clientEnrollmentStatus[client.Username] == false">Drop</button>
-            <button @click="viewClientPopup(client)" class="action-button">View</button>
+            <button
+              @click="enrollToCoach(client)"
+              class="action-button"
+              :disabled="clientEnrollmentStatus[client.Username] == true"
+            >
+              Enroll
+            </button>
+            <button
+              @click="dropCoach(client)"
+              class="action-button"
+              :disabled="clientEnrollmentStatus[client.Username] == false"
+            >
+              Drop
+            </button>
+            <button @click="viewClientPopup(client)" class="action-button">
+              View
+            </button>
           </div>
         </div>
       </div>
@@ -108,7 +122,7 @@ export default {
         weight: "",
         height: "",
       },
-      showClientPopup: false, 
+      showClientPopup: false,
       loading: false,
       clientEnrollmentStatus: [],
     };
@@ -118,154 +132,171 @@ export default {
     // this.checkEnrollmentStatus();
   },
   methods: {
-  async logout() {
-    this.showLogoutConfirm = false;
-    try {
-      const response = await apiClient.post("/Logout");
-      console.log(response.data);
-      if (response.data?.status?.remarks === "success") {
-        this.$router.push("/MainLogin");
-      } else {
-        this.error = response.data.message || "Logout failed";
+    async logout() {
+      this.showLogoutConfirm = false;
+      try {
+        const response = await apiClient.post("/Logout");
+        console.log(response.data);
+        if (response.data?.status?.remarks === "success") {
+          this.$router.push("/MainLogin");
+        } else {
+          this.error = response.data.message || "Logout failed";
+        }
+      } catch (error) {
+        console.error("Logout Error:", error);
+        this.error = "An error occurred while logging out. Please try again.";
       }
-    } catch (error) {
-      console.error("Logout Error:", error);
-      this.error = "An error occurred while logging out. Please try again.";
-    }
-  },
-  async fetchData() {
-    try {
-      const response = await apiClient.get("/Coaches");
-      if (
-        response.data.status.remarks === "success" &&
-        Array.isArray(response.data.payload)
-      ) {
-        this.clients = response.data.payload.map((member) => ({
-          Username: member.Username,
-          name: member.Name,
-        }));
-        await this.loadCliebntEnrollmentStatus();
-        console.log(this.clientEnrollmentStatus);
+    },
+    async fetchData() {
+      try {
+        const response = await apiClient.get("/Coaches");
+        if (
+          response.data.status.remarks === "success" &&
+          Array.isArray(response.data.payload)
+        ) {
+          this.clients = response.data.payload.map((member) => ({
+            Username: member.Username,
+            name: member.Name,
+          }));
+          await this.loadCliebntEnrollmentStatus();
+          console.log(this.clientEnrollmentStatus);
+        }
+      } catch (error) {
+        console.error("Error fetching clients:", error);
       }
-    } catch (error) {
-      console.error("Error fetching clients:", error);
-    }
-  },
-  async enrollToCoach(client) {
-    const clientDataArg = {
-      Username: client.Username
-    };
-    try {
-      const response = await apiClient.post("/Member/Enroll-Class", clientDataArg, {withCredentials: true});
-      if (response.data?.status?.remarks === "success") {
-        alert("Enrollment successful!");
-        this.checkEnrollmentStatus();
-        this.fetchData();
+    },
+    async enrollToCoach(client) {
+      const clientDataArg = {
+        Username: client.Username,
+      };
+      try {
+        const response = await apiClient.post(
+          "/Member/Enroll-Class",
+          clientDataArg,
+          { withCredentials: true }
+        );
+        if (response.data?.status?.remarks === "success") {
+          alert("Enrollment successful!");
+          this.checkEnrollmentStatus();
+          this.fetchData();
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
-    }
-  },
-  async dropCoach(client) {
-    const clientDataArg = {
-      Username: client.Username
-    }
-    try {
-      const response = await apiClient.post("/Member/Drop-Coach", clientDataArg, {withCredentials: true});
-      if (response.data?.status?.remarks === "success") {
-        alert("Drop successful!");
-        this.checkEnrollmentStatus();
-        this.fetchData();
+    },
+    async dropCoach(client) {
+      const clientDataArg = {
+        Username: client.Username,
+      };
+      try {
+        const response = await apiClient.post(
+          "/Member/Drop-Coach",
+          clientDataArg,
+          { withCredentials: true }
+        );
+        if (response.data?.status?.remarks === "success") {
+          alert("Drop successful!");
+          this.checkEnrollmentStatus();
+          this.fetchData();
+        }
+      } catch (error) {
+        console.error(error);
       }
-    }catch(error){
-      console.error(error);
-    }
-  },
-  async loadCliebntEnrollmentStatus() {
-    for(let client of this.clients){
-      const status = await this.checkEnrollmentStatus(client);
-      this.clientEnrollmentStatus[client.Username] = status;
-    }
-  },
-  async checkEnrollmentStatus(client) {
+    },
+    async loadCliebntEnrollmentStatus() {
+      for (let client of this.clients) {
+        const status = await this.checkEnrollmentStatus(client);
+        this.clientEnrollmentStatus[client.Username] = status;
+      }
+    },
+    async checkEnrollmentStatus(client) {
       if (!client || !client.Username) {
         console.error("Client or Username is undefined.");
         return false; // Default to not enrolled if there is an issue
       }
       const param = {
-        Username: client.Username
+        Username: client.Username,
       };
       try {
-        const response = await apiClient.post("/Member/isEnrolled",param,{ withCredentials: true });
+        const response = await apiClient.post("/Member/isEnrolled", param, {
+          withCredentials: true,
+        });
         if (response.data?.status?.remarks === "success") {
-          if(response.data.payload === false){
+          if (response.data.payload === false) {
             return false;
           }
-          if(response.data.payload === true){
+          if (response.data.payload === true) {
             return true;
           }
         } else {
-          console.error("Error checking enrollment status:", response.data.message);
+          console.error(
+            "Error checking enrollment status:",
+            response.data.message
+          );
           return false; // Default to not enrolled
         }
       } catch (error) {
         console.error("Error checking enrollment status:", error);
-        console.log('basta may error daw');
+        console.log("basta may error daw");
       }
     },
-  async viewClientPopup(client) {
-    const clientDataArg = {
-      Username: client.Username
-    };
-    this.showClientPopup = true; 
-    try {
-      const response = await apiClient.post("/Member/CoachesInfo", clientDataArg, {withCredentials: true});
-      if (response.data?.status?.remarks === "success") {
-        console.log(response.data);
-        this.clientDeets.name = response.data.payload[0].name;
-        this.clientDeets.Username = response.data.payload[0].Username;
-        this.clientDeets.email = response.data.payload[0].Email;
-        this.clientDeets.conNum = response.data.payload[0].ContactNo;
-        this.clientDeets.age = response.data.payload[0].Age;
-        if(response.data.payload[0].Sex === 1) this.clientDeets.sex = "Male";
-        if(response.data.payload[0].Sex === 0) this.clientDeets.sex = "Female";
-        this.clientDeets.weight = response.data.payload[0].Weight;
-        this.clientDeets.height = response.data.payload[0].Height;
+    async viewClientPopup(client) {
+      const clientDataArg = {
+        Username: client.Username,
+      };
+      this.showClientPopup = true;
+      try {
+        const response = await apiClient.post(
+          "/Member/CoachesInfo",
+          clientDataArg,
+          { withCredentials: true }
+        );
+        if (response.data?.status?.remarks === "success") {
+          console.log(response.data);
+          this.clientDeets.name = response.data.payload[0].name;
+          this.clientDeets.Username = response.data.payload[0].Username;
+          this.clientDeets.email = response.data.payload[0].Email;
+          this.clientDeets.conNum = response.data.payload[0].ContactNo;
+          this.clientDeets.age = response.data.payload[0].Age;
+          if (response.data.payload[0].Sex === 1) this.clientDeets.sex = "Male";
+          if (response.data.payload[0].Sex === 0)
+            this.clientDeets.sex = "Female";
+          this.clientDeets.weight = response.data.payload[0].Weight;
+          this.clientDeets.height = response.data.payload[0].Height;
+        }
+      } catch (error) {
+        console.error(error);
+        console.log(client.Username);
       }
-    } catch (error) {
-      console.error(error);
-      console.log(client.Username);
-    }
-  },
-  closeClientPopup() {
-    this.showClientPopup = false; // Close the client popup
-  },
-  beforeEnter(el) {
-    el.style.opacity = 0;
-  },
-  enter(el, done) {
-    el.offsetHeight;
-    el.style.transition = "opacity 0.3s ease-in-out";
-    el.style.opacity = 1;
-    done();
-  },
-  leave(el, done) {
-    el.style.transition = "opacity 0.3s ease-in-out";
-    el.style.opacity = 0;
-    done();
-  },
-  toggleSidebar() {
-    this.showSidebar = !this.showSidebar;
-  },
-  deleteClient(index) {
-    console.log(`Delete client at index ${index}`);
-  },
-  closeDropdownOnOutsideClick() {
-    this.activeDropdown = null;
-  },
+    },
+    closeClientPopup() {
+      this.showClientPopup = false; // Close the client popup
+    },
+    beforeEnter(el) {
+      el.style.opacity = 0;
+    },
+    enter(el, done) {
+      el.offsetHeight;
+      el.style.transition = "opacity 0.3s ease-in-out";
+      el.style.opacity = 1;
+      done();
+    },
+    leave(el, done) {
+      el.style.transition = "opacity 0.3s ease-in-out";
+      el.style.opacity = 0;
+      done();
+    },
+    toggleSidebar() {
+      this.showSidebar = !this.showSidebar;
+    },
+    deleteClient(index) {
+      console.log(`Delete client at index ${index}`);
+    },
+    closeDropdownOnOutsideClick() {
+      this.activeDropdown = null;
+    },
   },
 };
-
 </script>
 
 <style>
@@ -295,8 +326,9 @@ body {
   flex-direction: column;
   align-items: center;
   padding-top: 8%;
-  transition: transform 0.3s ease;
   transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 1001;
 }
 
 .sidebar.show {
@@ -328,6 +360,13 @@ body {
   text-decoration: none;
   font-weight: bold;
   transition: color 0.3s;
+}
+
+.sidebar-toggle {
+  position: absolute;
+  top: 20px;
+  left: 10px;
+  z-index: 1002; /* Above the sidebar */
 }
 
 .overlay {
@@ -508,7 +547,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  z-index: 1;
+  z-index: 0;
 }
 
 .client-box {
@@ -615,6 +654,7 @@ body {
   margin-left: 19vh;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
   text-align: left;
+  z-index: 1003;
 }
 
 .client-popup h2 {
@@ -646,16 +686,108 @@ body {
 }
 .client-actions .action-button:disabled {
   background-color: #d3d3d3; /* Light gray to indicate it's disabled */
-  color: #121111;           /* Darker gray for text */
-  cursor: not-allowed;      /* Change cursor to indicate it's not clickable */
-  transform: none;          /* Remove hover transform effect */
-  box-shadow: none;         /* Remove any shadows for a flat look */
-  opacity: 0.7;             /* Reduce opacity for a subtle effect */
+  color: #121111; /* Darker gray for text */
+  cursor: not-allowed; /* Change cursor to indicate it's not clickable */
+  transform: none; /* Remove hover transform effect */
+  box-shadow: none; /* Remove any shadows for a flat look */
+  opacity: 0.7; /* Reduce opacity for a subtle effect */
 }
 .client-actions .action-button:disabled:hover {
   background-color: #d3d3d3; /* Keep the background as gray when disabled */
-  color: #121111;           /* Keep the text color gray */
-  transform: none;          /* Ensure no transform on hover */
+  color: #121111; /* Keep the text color gray */
+  transform: none; /* Ensure no transform on hover */
 }
 
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 25vw;
+    z-index: 1000 !important;
+  }
+
+  .sidebar-toggle {
+    z-index: 1001 !important;
+  }
+  .content {
+    margin-left: 25vw;
+  }
+
+  .client-box {
+    flex: 1 1 calc(100% - 20px);
+    z-index: 10 !important;
+    position: relative;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 30vw;
+  }
+
+  .content {
+    margin-left: 30vw;
+  }
+
+  .client-box {
+    flex: 1 1 calc(100% - 20px);
+  }
+}
+
+@media (max-width: 425px) {
+  .sidebar {
+    position: absolute;
+    width: 100%;
+    height: auto;
+    transform: translateY(-100%);
+  }
+
+  .sidebar.show {
+    transform: translateY(0);
+  }
+
+  .sidebar-toggle {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1001;
+  }
+
+  .content {
+    margin-left: 0;
+    padding: 10px;
+  }
+
+  .client-box {
+    flex: 1 1 100%;
+    padding: 10px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 375px) {
+  .sidebar {
+    width: 90%;
+  }
+
+  .client-box {
+    padding: 10px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    margin-left: -35px !important;
+    width: 40vh;
+    height: 10vh!;
+    font-size: 12px;
+    z-index: 10 !important;
+  }
+}
+
+@media (max-width: 320px) {
+  .sidebar {
+    width: 100%;
+  }
+
+  .client-box {
+    padding: 6px;
+    font-size: 10px;
+  }
+}
 </style>

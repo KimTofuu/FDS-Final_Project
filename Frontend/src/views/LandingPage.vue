@@ -248,10 +248,20 @@ button:hover {
   .logo {
     height: 90px;
   }
-
   .navbar ul {
-    gap: 15px;
+    flex-direction: column;
+    position: fixed;
+    top: 12vh;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    text-align: center;
+    gap: 15vh;
+    padding: 10px 0;
+    display: none;
   }
+
 
   .header-text h1 {
     font-size: 70px;
@@ -276,7 +286,7 @@ button:hover {
 
   .logo {
     margin: 0;
-    margin-bottom: 20vh;
+    margin-bottom: 13vh!important;
     height: 10vh;
   }
 
@@ -313,12 +323,12 @@ button:hover {
   }
 
   .header-text h1 {
-    font-size: 50px;
+    font-size: 60px;
     margin-bottom: 10px;
   }
 
   .header-text h2 {
-    font-size: 55px;
+    font-size: 59px;
   }
 
   .header-text p {
@@ -339,15 +349,15 @@ button:hover {
   }
 
   .header-text h1 {
-    font-size: 40px;
-  }
-
-  .header-text h2 {
     font-size: 50px;
   }
 
+  .header-text h2 {
+    font-size: 40px;
+  }
+
   .header-text p {
-    font-size: 10px;
+    font-size: 20px;
   }
 
   button {
@@ -370,7 +380,7 @@ button:hover {
   }
 
   .header-text h2 {
-    font-size: 50px;
+    font-size: 30px;
   }
 
   .header-text p {
