@@ -95,7 +95,7 @@
 
     <transition name="fade">
       <div v-if="showEditModal" class="edit-modal" @click.self="closeEditModal">
-        <div class="modal-content">
+        <div class="modal-content ">
           <h2>Edit Profile</h2>
           <div class="form-group">
             <label for="name">Name:</label>
@@ -306,7 +306,7 @@
 
 <script scoped>
 import apiClient from "@/api/axios"; // Assuming you have an API client setup
-import moment from 'moment';
+import moment from "moment";
 
 export default {
   data() {
@@ -348,27 +348,29 @@ export default {
   },
   computed: {
     formattedSessionDate() {
-      if(this.sessionDetails.date) {
-        return moment(this.sessionDetails.date).format('YYYY-MM-DD');
-      }else{
+      if (this.sessionDetails.date) {
+        return moment(this.sessionDetails.date).format("YYYY-MM-DD");
+      } else {
         return "";
       }
-    }
+    },
   },
   methods: {
     async fetchProfile() {
       this.loadingProfile = true;
       this.profileError = null;
       try {
-        const response = await apiClient.get("/Member/ViewInfo", {withCredentials: true}); // Replace with your API endpoint
+        const response = await apiClient.get("/Member/ViewInfo", {
+          withCredentials: true,
+        }); // Replace with your API endpoint
         if (response.data?.status?.remarks === "success") {
           this.profile.name = response.data.payload[0].name;
           this.profile.conNumm = response.data.payload[0].conNum;
           this.profile.econNumm = response.data.payload[0].eConNum;
           this.profile.address = response.data.payload[0].address;
           this.profile.age = response.data.payload[0].age;
-          if(response.data.payload[0].sex === 1) this.profile.sex = "Male";
-          if(response.data.payload[0].sex === 0) this.profile.sex = "Female";
+          if (response.data.payload[0].sex === 1) this.profile.sex = "Male";
+          if (response.data.payload[0].sex === 0) this.profile.sex = "Female";
           this.profile.gender = response.data.payload[0].gender;
           this.profile.bodyType = response.data.payload[0].bodyType;
           this.profile.activityLevel = response.data.payload[0].activityLevel;
@@ -387,7 +389,7 @@ export default {
       }
     },
 
-    async updateInfo(){
+    async updateInfo() {
       this.loadingProfile = true;
       this.profileError = null;
       const updateData = {
@@ -402,10 +404,12 @@ export default {
         activityLevel: this.profile.activityLevel,
         weight: this.profile.weight,
         height: this.profile.height,
-      }
-      try{
-        const response = await apiClient.put("/Member/UpdateInfo", updateData, {withCredentials: true});
-        if(response.data.status.remarks == "success"){
+      };
+      try {
+        const response = await apiClient.put("/Member/UpdateInfo", updateData, {
+          withCredentials: true,
+        });
+        if (response.data.status.remarks == "success") {
           this.profile.name = response.data.payload[0].name;
           this.profile.conNumm = response.data.payload[0].conNum;
           this.profile.econNumm = response.data.payload[0].eConNum;
@@ -420,7 +424,7 @@ export default {
           console.log("Profile updated successfully");
           this.closeEditModal();
         }
-      }catch(error){
+      } catch (error) {
         console.log(error);
         console.error("Error updating profile:", error);
       }
@@ -473,15 +477,16 @@ export default {
         day: this.alarmDetails.day,
         time: this.alarmDetails.time,
       };
-      try{
-        const response = await apiClient.post("/Member/setAlarm", alarmData, {withCredentials: true});
-        if(response.data.status.remarks === "success"){
+      try {
+        const response = await apiClient.post("/Member/setAlarm", alarmData, {
+          withCredentials: true,
+        });
+        if (response.data.status.remarks === "success") {
           console.alert("Alarm set successfully");
         }
-      }catch(error){
+      } catch (error) {
         console.log(error);
         this.error = "An error occurred while setting alarm. Please try again.";
-
       }
       this.closeAlarmPopup();
     },
@@ -492,31 +497,42 @@ export default {
         time: this.sessionDetails.time,
         Coach_Name: this.sessionDetails.coach,
       };
-      try{
-        const response = await apiClient.post("/Member/setSession", sessionData, {withCredentials: true});
-        if(response.data.status.remarks === "success"){
+      try {
+        const response = await apiClient.post(
+          "/Member/setSession",
+          sessionData,
+          { withCredentials: true }
+        );
+        if (response.data.status.remarks === "success") {
           console.log("Session set successfully");
         }
-      }catch(error){
+      } catch (error) {
         console.log(error);
-        this.error = "An error occurred while setting session. Please try again.";
+        this.error =
+          "An error occurred while setting session. Please try again.";
       }
     },
   },
 };
 </script>
 
-
 <style>
 * {
   margin: 0;
   padding: 0;
 }
-html,
-body {
+html, body {
   height: 100%;
   font-family: "Figtree", sans-serif;
   background-color: #fff;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar-layout {
@@ -739,7 +755,7 @@ body {
   flex-direction: column;
   gap: 10px;
   width: 70vh;
-  height: 81vh;
+  height: 80vh;
   background-color: #fff;
   padding: 25px;
   border-radius: 10px;
@@ -793,7 +809,7 @@ body {
   padding: 20px;
   width: 40%;
   height: 60%;
-  z-index: 1000;
+  z-index: 1100;
   overflow: hidden;
 }
 
@@ -945,7 +961,42 @@ body {
   transform: scale(1.05);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+  .profile-container {
+    margin-left: 15%;
+    margin-top: 1%;
+    padding: 0px;
+    width: 40%;
+    height: 10%;
+    box-sizing: border-box;
+    float: left;
+   }
+  .profile-details {
+    gap: 10px;
+    width: 70vh;
+    height: 90vh !important;
+    padding: 15px;
+  }
+  .edit-modal {
+    position: fixed;
+    top: 40% !important;
+    left: 55%;
+    width: 40% !important;
+    height: 60% !important;
+    z-index: 1100;
+    overflow: auto;
+  }
+  .session-container {
+    margin-left: 60%;
+    margin-top: 1vh;
+    padding: 20px;
+    width: 50%;
+    height: 80%;
+    box-sizing: border-box;
+    float: left;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
   .sidebar-toggle {
     display: block;
   }
@@ -964,19 +1015,43 @@ body {
     margin-left: 10% !important;
     padding-left: 20px;
   }
-
-  .sidebar .logo img {
-    width: 60px;
-    height: 70px;
-    margin-bottom: 10px;
-    position: relative;
-    top: 40px;
-    right: 30px;
-    left: 0;
+  .profile-container {
+    margin-left: 15%;
+    margin-top: 1%;
+    padding: 0px;
+    width: 30%;
+    height: 10%;
+    box-sizing: border-box;
+    float: left;
+   }
+  .profile-details {
+    gap: 10px;
+    width: 50vh;
+    height: 91vh !important;
+    padding: 10px;
+  }
+  .edit-modal {
+    position: fixed;
+    top: 40% !important;
+    left: 55%;
+    width: 40% !important;
+    height: 60% !important;
+    z-index: 1100;
+    overflow: auto;
+  }
+  .session-container {
+    margin-left: 60%;
+    margin-top: 1vh;
+    padding: 20px;
+    width: 50%;
+    height: 80%;
+    box-sizing: border-box;
+    float: left;
   }
 }
 
-@media (max-width: 425px) {
+@media (min-width: 425px) and (max-width: 767px) {
+
   .sidebar {
     width: 100%;
   }
@@ -997,15 +1072,56 @@ body {
   }
 
   .content {
-    padding: 20px;
+    padding: 10px;
+    
   }
 
   .content h1 {
     font-size: 1.8rem;
   }
+  .profile-container {
+    margin-left: 18%;
+    margin-top: 5%;
+    padding: 0px;
+    width: 70%;
+    height: 110%;
+    box-sizing: border-box;
+    float: left;
+   }
+  .profile-details {
+    gap: 10px;
+    width: 50vh;
+    height: 40vh !important;
+    padding: 10px;
+    overflow-x: hidden;
+  }
+  .edit-modal {
+    position: fixed;
+    top: 40% !important;
+    left: 55%!important;
+    width: 70% !important;
+    height: 60% !important;
+    z-index: 1100;
+    overflow: auto;
+  }
+  .session-container {
+    margin-left:10%;
+    margin-top: -3vh;
+    padding: 20px;
+    width: 100%!important;
+    height: 70%!important;
+    box-sizing: border-box;
+    float: left;
+  }
+
+  .session-box button {
+    margin-left: 13vh;
+    margin-bottom: 15vh;
+  
+  }
 }
 
-@media (max-width: 375px) {
+@media (min-width: 375px) and (max-width: 424px) {
   .sidebar {
     width: 100%;
   }

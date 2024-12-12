@@ -48,7 +48,7 @@
       <div class="dashboard-content">
         <div class="bmi-box">
           <h2>BMI</h2>
-          <p>{{  BMI  }}</p>
+          <p>{{ BMI }}</p>
         </div>
         <div class="bmi-box">
           <h2>TIME</h2>
@@ -211,7 +211,7 @@ export default {
   },
 
   created() {
-    this.getData();  
+    this.getData();
     this.updateTime();
     // setInterval(this.updateTime, 1000);
   },
@@ -238,15 +238,18 @@ export default {
     },
 
     async getData() {
-      try{
-        const response = await apiClient.get("/Member/ViewInfo", {withCredentials: true});
-        if(response.data.status.remarks == "success"){
+      try {
+        const response = await apiClient.get("/Member/ViewInfo", {
+          withCredentials: true,
+        });
+        if (response.data.status.remarks == "success") {
           this.BMI = response.data.payload[0].BMI;
           this.username = response.data.payload[0].Username;
         }
-      }catch(error){
+      } catch (error) {
         console.error("Error:", error);
-        this.error = "An error occurred while calculating BMI. Please try again.";
+        this.error =
+          "An error occurred while calculating BMI. Please try again.";
       }
     },
 
@@ -260,7 +263,7 @@ export default {
           withCredentials: true,
         });
         console.log(response.data);
-        console.log(data)
+        console.log(data);
         if (response.data.status.remarks == "success") {
           this.CalorieReq.dailyCalories = response.data.payload;
         }
@@ -330,10 +333,10 @@ export default {
     },
     updateTime() {
       const now = new Date();
-      const hours = now.getHours().toString().padStart(2, '0');
-      const minutes = now.getMinutes().toString().padStart(2, '0');
-      const seconds = now.getSeconds().toString().padStart(2, '0');
-      
+      const hours = now.getHours().toString().padStart(2, "0");
+      const minutes = now.getMinutes().toString().padStart(2, "0");
+      const seconds = now.getSeconds().toString().padStart(2, "0");
+
       this.currentTime = `${hours}:${minutes}:${seconds}`;
     },
     beforeEnter(el) {
@@ -418,7 +421,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5); 
+  background: rgba(0, 0, 0, 0.5);
   z-index: 1000;
 }
 
@@ -752,5 +755,73 @@ body {
 .food-calories-modal button:hover {
   background-color: #ac0700;
   color: white;
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 250px;
+  }
+  .content {
+    margin-left: 10vh !important;
+    padding: 5vh !important;
+    flex: 1;
+    overflow: auto;
+  }
+
+  .dashboard-content {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sidebar {
+    width: 200px;
+  }
+  .content {
+    margin-left: 10vh !important;
+    padding: 5vh !important;
+    flex: 1;
+    overflow: auto;
+  }
+
+  .dashboard-content {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 425px) and (max-width: 767px) {
+  .sidebar {
+    width: 150px;
+  }
+  .content {
+    margin-left: 15%;
+  }
+  .dashboard-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 375px) and (max-width: 424px) {
+  .sidebar {
+    width: 120px;
+  }
+  .content {
+    margin-left: 12%;
+  }
+  .dashboard-content {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 320px) {
+  .sidebar {
+    width: 100px;
+  }
+  .content {
+    margin-left: 10%;
+  }
+  .dashboard-content {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
