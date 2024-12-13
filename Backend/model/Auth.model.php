@@ -56,7 +56,28 @@ class Auth implements AuthInterface{
     public function memLogin($data){
 
         $sql = "SELECT * FROM member WHERE Username=?";
-        return $this->login($sql, $data, 'member');
+        $getID = 'SELECT User_ID FROM member WHERE Username=?';
+        $isSubed = 'SELECT SubscriptionStat FROM membership_duration WHERE User_ID = ?';
+        
+        try{
+            $getID = $this->pdo->prepare($getID);
+            $isSubed = $this->pdo->prepare($isSubed);
+
+            $id = $getID->execute([$data->Username]);
+            $id = $getID->fetchColumn();
+            $result = $isSubed->execute([$id]);
+            $result = $isSubed->fetchColumn();
+
+            if ($result == 0) {
+                return $this->gm->responsePayload(null, 'failed', 'You are currently unsubscribed to a membership plan.', 403);
+            }
+
+            return $this->login($sql, $data, 'member');
+
+        }catch(PDOException $e){
+            return $this->gm->responsePayload(null, 'error', $e->getMessage(), 500);
+        }
+
     } 
 
     public function coachLogin($data){
