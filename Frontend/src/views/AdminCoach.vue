@@ -15,10 +15,12 @@
           <li><a href="/AdminMemberemail">Members Email</a></li>
           <li><a href="/AdminMembercondition">Members Condition</a></li>
           <li><a href="/AdminMembersubscription">Members Subscription</a></li>
-          <li><a href="/AdminCoach" style="color: #ac0700">Coaches Information</a></li>
+          <li>
+            <a href="/AdminCoach" style="color: #ac0700">Coaches Information</a>
+          </li>
         </ul>
       </nav>
-      <button @click="showLogoutConfirm = true" class="logout-button">
+      <button @click="showLogoutConfirm = true" class="logout-buttons">
         <img src="../assets/logout.png" alt="Logout" class="logout-img" />
         <span class="logout-text">Logout</span>
       </button>
@@ -32,7 +34,7 @@
         @enter="enter"
         @leave="leave"
       >
-        <div v-if="showLogoutConfirm" class="logout-confirmation">
+        <div v-if="showLogoutConfirm" class="logout-confirm">
           <p>Are you sure you want to logout?</p>
           <div class="button-group">
             <button @click="logout">Yes</button>
@@ -80,7 +82,9 @@
             <td>{{ coach.Height }}</td>
             <td>{{ coach.Weight }}</td>
             <td>
-                <button @click="deleteCoach(coach.User_ID)" class="action-button">Delete</button>
+              <button @click="deleteCoach(coach.User_ID)" class="action-button">
+                Delete
+              </button>
             </td>
           </tr>
         </tbody>
@@ -96,35 +100,74 @@
         <form @submit.prevent="createProfile">
           <div class="input-group">
             <label for="clientEmail">Email:</label>
-            <input type="email" id="clientEmail" v-model="coachDetails.coachEmail" required/>
+            <input
+              type="email"
+              id="clientEmail"
+              v-model="coachDetails.coachEmail"
+              required
+            />
           </div>
           <div class="input-group">
             <label for="clientUsername">Username:</label>
-            <input type="text" id="clientUsername" v-model="coachDetails.Username" required/>
+            <input
+              type="text"
+              id="clientUsername"
+              v-model="coachDetails.Username"
+              required
+            />
           </div>
           <div class="input-group">
             <label for="clientPassword">Password:</label>
-            <input type="password" id="clientPassword" v-model="coachDetails.Password" required/>
+            <input
+              type="password"
+              id="clientPassword"
+              v-model="coachDetails.Password"
+              required
+            />
           </div>
           <div class="input-group">
             <label for="clientName">Name:</label>
-            <input type="text" id="clientName" v-model="coachDetails.Name" required/>
+            <input
+              type="text"
+              id="clientName"
+              v-model="coachDetails.Name"
+              required
+            />
           </div>
           <div class="input-group">
             <label for="clientconNum">Contact Number:</label>
-            <input type="text" id="clientconNum" v-model="coachDetails.ContactNo" required/>
+            <input
+              type="text"
+              id="clientconNum"
+              v-model="coachDetails.ContactNo"
+              required
+            />
           </div>
           <div class="input-group">
             <label for="clientAddress">Address:</label>
-            <input type="text" id="clientAddress" v-model="coachDetails.Address"/>
+            <input
+              type="text"
+              id="clientAddress"
+              v-model="coachDetails.Address"
+            />
           </div>
           <div class="input-group">
             <label for="clientage">Age:</label>
-            <input type="number" id="clientage" v-model="coachDetails.Age" required/>
+            <input
+              type="number"
+              id="clientage"
+              v-model="coachDetails.Age"
+              required
+            />
           </div>
           <div class="input-group">
             <label for="clientsex">Sex:</label>
-            <select id="clientsex" v-model="coachDetails.Sex" required class="custom-dropdown">
+            <select
+              id="clientsex"
+              v-model="coachDetails.Sex"
+              required
+              class="custom-dropdown"
+            >
               <option value="" disabled selected>Select your sex</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -132,7 +175,12 @@
           </div>
           <div class="input-group">
             <label for="clientgender">Gender:</label>
-            <select id="clientgender" v-model="coachDetails.Gender" required class="custom-dropdown">
+            <select
+              id="clientgender"
+              v-model="coachDetails.Gender"
+              required
+              class="custom-dropdown"
+            >
               <option value="" disabled selected>Select your gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -148,15 +196,29 @@
           </div>
           <div class="input-group">
             <label for="clientweight">Weight:</label>
-            <input type="number" id="clientweight" v-model="coachDetails.Weight" required/>
+            <input
+              type="number"
+              id="clientweight"
+              v-model="coachDetails.Weight"
+              required
+            />
           </div>
           <div class="input-group">
             <label for="clientHeight">Height:</label>
-            <input type="number" id="clientHeight" v-model="coachDetails.Height" required/>
+            <input
+              type="number"
+              id="clientHeight"
+              v-model="coachDetails.Height"
+              required
+            />
           </div>
 
           <div class="button-group">
-            <button type="button" class="close-button" @click="toggleProfilePopup">
+            <button
+              type="button"
+              class="close-button"
+              @click="toggleProfilePopup"
+            >
               Close
             </button>
             <button type="submit" class="create-button">Create</button>
@@ -188,7 +250,7 @@ export default {
         Address: "",
         Gender: "",
         Weight: "",
-        Height: ""
+        Height: "",
       },
     };
   },
@@ -223,12 +285,12 @@ export default {
       }
     },
     async fetchData() {
-        apiClient.get("/Coaches").then((response) => {
+      apiClient.get("/Coaches").then((response) => {
         if (
-            response.data.status.remarks === "success" &&
-            Array.isArray(response.data.payload)
+          response.data.status.remarks === "success" &&
+          Array.isArray(response.data.payload)
         ) {
-            this.coaches = response.data.payload.map((coach) => ({
+          this.coaches = response.data.payload.map((coach) => ({
             User_ID: coach.User_ID,
             Username: coach.Username,
             coachEmail: coach.coachEmail,
@@ -239,20 +301,26 @@ export default {
             Height: coach.Height,
             Weight: coach.Weight,
             ContactNo: coach.ContactNo,
-            Address: coach.Address
-            }));
+            Address: coach.Address,
+          }));
         }
-        });  
+      });
     },
     async deleteCoach(coachId) {
-      try{
-        const response = await apiClient.post('/Admin/DeleteCoach', {User_ID: coachId}, {withCredentials: true} );
-        if(response.data.status.remarks === "success"){await this.fetchData();}
-      }catch(error){
+      try {
+        const response = await apiClient.post(
+          "/Admin/DeleteCoach",
+          { User_ID: coachId },
+          { withCredentials: true }
+        );
+        if (response.data.status.remarks === "success") {
+          await this.fetchData();
+        }
+      } catch (error) {
         console.error("Error deleting coach:", error);
       }
     },
-    async createProfile(){
+    async createProfile() {
       const coachData = {
         Username: this.coachDetails.Username,
         Password: this.coachDetails.Password,
@@ -264,14 +332,16 @@ export default {
         Address: this.coachDetails.Address,
         Gender: this.coachDetails.Gender,
         Height: this.coachDetails.Height,
-        Weight: this.coachDetails.Weight
-      }
-      try{
-        const response = await apiClient.post("/Create/Coach", coachData, {withCredentials: true});
-        if(response.data.status.remarks === 'success'){
+        Weight: this.coachDetails.Weight,
+      };
+      try {
+        const response = await apiClient.post("/Create/Coach", coachData, {
+          withCredentials: true,
+        });
+        if (response.data.status.remarks === "success") {
           alert("Account successfully created");
         }
-      }catch(error){
+      } catch (error) {
         console.log(error);
       }
     },
@@ -365,11 +435,11 @@ body {
   z-index: 1000;
 }
 
-.logout-button {
+.logout-buttons {
   background-color: #ac0700;
   border: none;
   cursor: pointer;
-  margin-top: 20vh !important;
+  margin-top: 8vh !important;
   padding: 5px 10px;
   border-radius: 20px;
   display: flex;
@@ -399,16 +469,16 @@ body {
   white-space: nowrap;
 }
 
-.logout-button:hover {
+.logout-buttons:hover {
   width: 15vh;
   padding: 5px 10px;
 }
 
-.logout-button:hover .logout-text {
+.logout-buttons:hover .logout-text {
   opacity: 1;
 }
 
-.logout-confirmation {
+.logout-confirm {
   position: fixed;
   top: 50%;
   left: 60%;
@@ -423,14 +493,15 @@ body {
   opacity: 0;
   pointer-events: auto;
   transition: opacity 0.3s ease-in-out;
+  z-index: 1001;
 }
 
-.logout-confirmation p {
+.logout-confirm p {
   font-size: 1.5rem;
   margin-bottom: 5%;
 }
 
-.logout-confirmation button {
+.logout-confirm button {
   padding: 0px 10px;
   border-radius: 10px;
   cursor: pointer;
@@ -443,7 +514,7 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
 }
 
-.logout-confirmation button:hover {
+.logout-confirm button:hover {
   background-color: #ac0700;
   color: #fff;
   transform: scale(1.05);
@@ -466,26 +537,6 @@ body {
   cursor: pointer;
   margin-bottom: 5px;
   transition: background-color 0.3s ease;
-}
-
-@media (max-width: 768px) {
-  .create-profile-button {
-    min-width: 100px;
-  }
-}
-
-@media (max-width: 425px) {
-  .create-profile-button {
-    margin-top: 100px!important;
-  }
-  h1{
-    font-size: 40px!important;
-  }
-}
-@media (max-width: 1440px) {
-  .create-profile-button {
-    min-width: 200px;
-  }
 }
 
 .create-profile-button:hover {
@@ -623,4 +674,100 @@ td {
 .action-button:hover {
   background: #b50a0a;
 }
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 200px; 
+  }
+  .create-profile-button {
+    font-size: 0.9rem; 
+    padding: 8px 15px;
+  }
+  table {
+    font-size: 0.9rem; 
+  }
+}
+
+@media (max-width: 768px) {
+  .create-profile-button {
+    font-size: 0.9rem!important;
+    width: 35vh!important;
+    margin-top: 10vh !important;
+  }
+  table {
+    margin-top: 50px; 
+    font-size: 0.8rem; 
+  }
+  .sidebar nav ul li {
+    margin: 20px 0; 
+  }
+  h1 {
+    font-size: 1.5rem !important; 
+  }
+}
+@media (max-width: 425px) {
+  .create-profile-button {
+    font-size: 0.9rem !important;
+    width: 7vh !important;
+    position: relative;
+    top: -3vh !important; 
+    right: 10vh!important;
+  }
+  .content h1 {
+    font-size: 1.3rem !important; 
+    margin-bottom: 0; 
+  }
+  .sidebar {
+    width: 180px;
+  }
+  table {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .create-profile-button {
+    margin-top: 80px !important;
+    font-size: 0.75rem;
+    padding: 5px 10px; 
+  }
+  h1 {
+    font-size: 1.6rem !important;
+    margin-bottom: 10px; 
+  }
+  .sidebar {
+    width: 160px;
+    overflow-y: auto; 
+  }
+  table {
+    font-size: 0.65rem;
+    padding: 5px;
+  }
+  .table-wrapper {
+    max-height: 250px; 
+    overflow-y: auto; 
+  }
+}
+
+@media (max-width: 320px) {
+  .create-profile-button {
+    margin-top: 60px !important;
+    font-size: 0.7rem;
+    padding: 4px 8px; 
+  }
+  h1 {
+    font-size: 1.4rem !important;
+    margin-bottom: 8px; 
+  }
+  .sidebar {
+    width: 140px;
+    padding-top: 5%;
+    overflow-y: auto; 
+  }
+  table {
+    font-size: 0.6rem;
+    padding: 3px; 
+  }
+}
+
 </style>

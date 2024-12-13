@@ -22,7 +22,7 @@
           <li><a href="/AdminCoach">Coaches Information</a></li>
         </ul>
       </nav>
-      <button @click="showLogoutConfirm = true" class="logout-button">
+      <button @click="showLogoutConfirm = true" class="logout-buttons">
         <img src="../assets/logout.png" alt="Logout" class="logout-img" />
         <span class="logout-text">Logout</span>
       </button>
@@ -36,7 +36,7 @@
         @enter="enter"
         @leave="leave"
       >
-        <div v-if="showLogoutConfirm" class="logout-confirmation">
+        <div v-if="showLogoutConfirm" class="logout-confirm">
           <p>Are you sure you want to logout?</p>
           <div class="button-group">
             <button @click="logout">Yes</button>
@@ -556,11 +556,11 @@ body {
   z-index: 1000;
 }
 
-.logout-button {
+.logout-buttons {
   background-color: #ac0700;
   border: none;
   cursor: pointer;
-  margin-top: 20vh !important;
+  margin-top: 8vh !important;
   padding: 5px 10px;
   border-radius: 20px;
   display: flex;
@@ -590,16 +590,16 @@ body {
   white-space: nowrap;
 }
 
-.logout-button:hover {
+.logout-buttons:hover {
   width: 15vh;
   padding: 5px 10px;
 }
 
-.logout-button:hover .logout-text {
+.logout-buttons:hover .logout-text {
   opacity: 1;
 }
 
-.logout-confirmation {
+.logout-confirm {
   position: fixed;
   top: 50%;
   left: 60%;
@@ -614,14 +614,15 @@ body {
   opacity: 0;
   pointer-events: auto;
   transition: opacity 0.3s ease-in-out;
+  z-index: 1001;
 }
 
-.logout-confirmation p {
+.logout-confirm p {
   font-size: 1.5rem;
   margin-bottom: 5%;
 }
 
-.logout-confirmation button {
+.logout-confirm button {
   padding: 0px 10px;
   border-radius: 10px;
   cursor: pointer;
@@ -634,7 +635,7 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
 }
 
-.logout-confirmation button:hover {
+.logout-confirm button:hover {
   background-color: #ac0700;
   color: #fff;
   transform: scale(1.05);
@@ -684,41 +685,41 @@ body {
   overflow: auto;
 }
 
-@media(max-width: 1024px) {
+@media (max-width: 1024px) {
   .profile-popup {
-  position: fixed;
-  top: 50%;
-  left: 56%;
-  transform: translate(-50%, -50%);
-  background-color: #fff;
-  color: #000;
-  padding: 20px;
-  border-radius: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  z-index: 1001;
-  width: 90vh;
-  height: 80vh;
-  overflow: auto;
-  max-width: 500px;
+    position: fixed;
+    top: 50%;
+    left: 56%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    color: #000;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    width: 90vh;
+    height: 80vh;
+    overflow: auto;
+    max-width: 500px;
   }
 }
 
-@media(max-width: 425px) {
+@media (max-width: 425px) {
   .profile-popup {
-  position: fixed;
-  top: 50%;
-  left: 56%;
-  transform: translate(-50%, -50%);
-  background-color: #fff;
-  color: #000;
-  padding: 20px;
-  border-radius: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  z-index: 1001;
-  width: 90vh;
-  height: 80vh;
-  overflow: auto;
-  max-width: 300px;
+    position: fixed;
+    top: 50%;
+    left: 56%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    color: #000;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    width: 90vh;
+    height: 80vh;
+    overflow: auto;
+    max-width: 300px;
   }
 }
 
@@ -763,17 +764,17 @@ body {
   .create-button {
     min-width: 100px;
   }
-  table{
+  table {
     margin-top: 80px;
   }
 }
 
 @media (max-width: 425px) {
   .create-button {
-    margin-top: 150px!important;
+    margin-top: 150px !important;
   }
-  h1{
-    font-size: 40px!important;
+  h1 {
+    font-size: 40px !important;
   }
 }
 @media (max-width: 1440px) {
@@ -835,12 +836,11 @@ body {
 }
 
 .checkbox-dropdown .checkbox-option:last-child {
-  border-bottom: none; 
+  border-bottom: none;
 }
 
-
 .checkbox-dropdown input[type="checkbox"]:checked + label {
-  color: #4caf50; 
+  color: #4caf50;
 }
 
 .table-wrapper {
