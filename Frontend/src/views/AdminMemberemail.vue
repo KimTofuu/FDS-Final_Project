@@ -20,7 +20,7 @@
           <li><a href="/AdminCoach">Coaches Information</a></li>
         </ul>
       </nav>
-      <button @click="showLogoutConfirm = true" class="logout-button">
+      <button @click="showLogoutConfirm = true" class="logout-buttons">
         <img src="../assets/logout.png" alt="Logout" class="logout-img" />
         <span class="logout-text">Logout</span>
       </button>
@@ -34,7 +34,7 @@
         @enter="enter"
         @leave="leave"
       >
-        <div v-if="showLogoutConfirm" class="logout-confirmation">
+        <div v-if="showLogoutConfirm" class="logout-confirm">
           <p>Are you sure you want to logout?</p>
           <div class="button-group">
             <button @click="logout">Yes</button>
@@ -544,11 +544,11 @@ body {
   z-index: 1000;
 }
 
-.logout-button {
+.logout-buttons {
   background-color: #ac0700;
   border: none;
   cursor: pointer;
-  margin-top: 20vh !important;
+  margin-top: 8vh !important;
   padding: 5px 10px;
   border-radius: 20px;
   display: flex;
@@ -578,16 +578,16 @@ body {
   white-space: nowrap;
 }
 
-.logout-button:hover {
+.logout-buttons:hover {
   width: 15vh;
   padding: 5px 10px;
 }
 
-.logout-button:hover .logout-text {
+.logout-buttons:hover .logout-text {
   opacity: 1;
 }
 
-.logout-confirmation {
+.logout-confirm {
   position: fixed;
   top: 50%;
   left: 60%;
@@ -602,14 +602,15 @@ body {
   opacity: 0;
   pointer-events: auto;
   transition: opacity 0.3s ease-in-out;
+  z-index: 1001;
 }
 
-.logout-confirmation p {
+.logout-confirm p {
   font-size: 1.5rem;
   margin-bottom: 5%;
 }
 
-.logout-confirmation button {
+.logout-confirm button {
   padding: 0px 10px;
   border-radius: 10px;
   cursor: pointer;
@@ -622,7 +623,7 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
 }
 
-.logout-confirmation button:hover {
+.logout-confirm button:hover {
   background-color: #ac0700;
   color: #fff;
   transform: scale(1.05);
@@ -645,28 +646,6 @@ body {
   cursor: pointer;
   margin-bottom: 5px;
   transition: background-color 0.3s ease;
-}
-@media (max-width: 768px) {
-  .create-profile-button {
-    min-width: 100px;
-  }
-  table{
-    margin-top: 80px;
-  }
-}
-
-@media (max-width: 425px) {
-  .create-profile-button {
-    margin-top: 150px!important;
-  }
-  h1{
-    font-size: 40px!important;
-  }
-}
-@media (max-width: 1440px) {
-  table {
-    margin-top: 70px!important;
-  }
 }
 
 .create-profile-button:hover {
@@ -781,12 +760,11 @@ body {
 }
 
 .checkbox-dropdown .checkbox-option:last-child {
-  border-bottom: none; 
+  border-bottom: none;
 }
 
-
 .checkbox-dropdown input[type="checkbox"]:checked + label {
-  color: #4caf50; 
+  color: #4caf50;
 }
 
 table {
@@ -832,4 +810,100 @@ td {
 .action-button:hover {
   background: #b50a0a;
 }
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 200px; 
+  }
+  .create-profile-button {
+    font-size: 0.9rem; 
+    padding: 8px 15px;
+  }
+  table {
+    font-size: 0.9rem; 
+  }
+}
+
+@media (max-width: 768px) {
+  .create-profile-button {
+    font-size: 0.9rem!important;
+    width: 10vh!important;
+    margin-top: 10vh !important;
+  }
+  table {
+    margin-top: 50px; 
+    font-size: 0.8rem; 
+  }
+  .sidebar nav ul li {
+    margin: 20px 0; 
+  }
+  h1 {
+    font-size: 1.5rem !important; 
+  }
+}
+@media (max-width: 425px) {
+  .create-profile-button {
+    font-size: 0.9rem !important;
+    width: 7vh !important;
+    position: relative;
+    top: -3vh !important; 
+    right: 10vh!important;
+  }
+  .content h1 {
+    font-size: 1.3rem !important; 
+    margin-bottom: 0; 
+  }
+  .sidebar {
+    width: 180px;
+  }
+  table {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .create-profile-button {
+    margin-top: 80px !important;
+    font-size: 0.75rem;
+    padding: 5px 10px; 
+  }
+  h1 {
+    font-size: 1.6rem !important;
+    margin-bottom: 10px; 
+  }
+  .sidebar {
+    width: 160px;
+    overflow-y: auto; 
+  }
+  table {
+    font-size: 0.65rem;
+    padding: 5px;
+  }
+  .table-wrapper {
+    max-height: 250px; 
+    overflow-y: auto; 
+  }
+}
+
+@media (max-width: 320px) {
+  .create-profile-button {
+    margin-top: 60px !important;
+    font-size: 0.7rem;
+    padding: 4px 8px; 
+  }
+  h1 {
+    font-size: 1.4rem !important;
+    margin-bottom: 8px; 
+  }
+  .sidebar {
+    width: 140px;
+    padding-top: 5%;
+    overflow-y: auto; 
+  }
+  table {
+    font-size: 0.6rem;
+    padding: 3px; 
+  }
+}
+
 </style>
