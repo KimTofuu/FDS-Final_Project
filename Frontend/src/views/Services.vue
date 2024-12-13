@@ -2,7 +2,7 @@
   <div id="header">
     <div class="container">
       <div class="header-container">
-        <router-link to="/LandingPage">
+        <router-link to="/">
           <img src="../assets/logo.png" alt="Logo" class="logo" />
         </router-link>
         <nav class="navbar">
@@ -438,9 +438,9 @@ body {
 
 @media (max-width: 320px) {
   .logo {
-    height:80px;
+    height: 80px;
     margin: 0;
-    margin-bottom: 10vh!important;
+    margin-bottom: 10vh !important;
   }
 
   .navbartoggle {

@@ -2,7 +2,7 @@
   <div id="header">
     <div class="container">
       <div class="header-container">
-        <router-link to="/LandingPage">
+        <router-link to="/">
           <img src="../assets/logo.png" alt="Logo" class="logo" />
         </router-link>
         <nav class="navbar">
@@ -91,6 +91,7 @@ export default {
   padding: 0;
   font-family: "Figtree";
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 html {
@@ -100,6 +101,7 @@ html {
 body {
   background: #080808;
   color: #fff;
+    overflow: hidden;
 }
 
 #header {
@@ -155,7 +157,6 @@ body {
   max-height: 6vh;
   cursor: pointer;
 }
-
 
 .navbar li {
   margin: 20px;

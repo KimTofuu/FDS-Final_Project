@@ -1,7 +1,7 @@
 <template>
   <div id="bg">
     <header>
-      <router-link to="/LandingPage">
+      <router-link to="/">
         <img src="../assets/logo.png" alt="Logo" class="logo" />
       </router-link>
       <nav class="navbar">
@@ -12,7 +12,7 @@
           alt="Menu"
         />
         <ul :class="{ visible: navbarVisible }">
-          <li><router-link to="/LandingPage">HOME</router-link></li>
+          <li><router-link to="/">HOME</router-link></li>
           <li><router-link to="/AboutUs">ABOUT US</router-link></li>
           <li><router-link to="/Services">SERVICES</router-link></li>
           <li><router-link to="/OurTeam">OUR TEAM</router-link></li>
