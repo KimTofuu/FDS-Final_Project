@@ -760,7 +760,7 @@ body {
   background-color: #28a745;
   color: #fff;
 }
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .create-button {
     min-width: 100px;
   }
@@ -781,7 +781,7 @@ body {
   table {
     margin-top: 30px;
   }
-}
+} */
 
 .create-button:hover {
   background-color: #ffffff;
