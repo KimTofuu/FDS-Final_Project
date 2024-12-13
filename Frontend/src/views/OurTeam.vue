@@ -2,7 +2,7 @@
   <div id="header">
     <div class="container">
       <div class="header-container">
-        <router-link to="/LandingPage">
+        <router-link to="/">
           <img src="../assets/logo.png" alt="Logo" class="logo" />
         </router-link>
         <nav class="navbar">
@@ -12,7 +12,8 @@
             src="../assets/navbartoggle.png"
             alt="Menu"
           />
-          <ul :class="{ visible: navbarVisible }">            <li><router-link to="/">HOME</router-link></li>
+          <ul :class="{ visible: navbarVisible }">
+            <li><router-link to="/">HOME</router-link></li>
             <li><router-link to="/AboutUs">ABOUT US</router-link></li>
             <li><router-link to="/Services">SERVICES</router-link></li>
             <li><router-link to="/OurTeam">OUR TEAM</router-link></li>
@@ -159,7 +160,7 @@ body {
 
 .navbar li {
   margin: 20px;
-  margin-bottom:12vh;
+  margin-bottom: 12vh;
 }
 
 .navbar a {
@@ -297,7 +298,7 @@ body {
   }
 
   .sub-title {
-    font-size: 40px; 
+    font-size: 40px;
     margin-bottom: 3vh;
     margin-top: -19vh;
     margin-left: 10vh;
@@ -364,7 +365,7 @@ body {
   }
 
   .sub-title {
-    font-size: 24px; 
+    font-size: 24px;
     margin-bottom: 28vh;
     margin-top: -19vh;
     margin-left: 5vh;
@@ -418,7 +419,7 @@ body {
   }
 
   .sub-title {
-    font-size: 20px; 
+    font-size: 20px;
     margin-bottom: 28vh;
     margin-top: -19vh;
     margin-left: 5vh;
@@ -440,7 +441,7 @@ body {
     align-items: center;
     margin-top: 10px;
   }
-  
+
   .logo {
     margin: 0;
     margin-top: 5vh !important;
@@ -468,21 +469,20 @@ body {
   }
 
   .sub-title {
-    font-size: 20px; 
+    font-size: 20px;
     margin-bottom: 28vh;
     margin-top: -15vh;
     margin-left: 7vh;
   }
 
   .work-list {
-    grid-template-columns:1fr !important;
+    grid-template-columns: 1fr !important;
     width: 40vh;
     height: 60vh !important;
     gap: 10px;
     margin-top: -20vh;
-    margin-left: 5vh!important;
+    margin-left: 5vh !important;
   }
-
 
   .work img {
     border-radius: 5px;
@@ -528,5 +528,4 @@ body {
     font-size: 12px;
   }
 }
-
 </style>

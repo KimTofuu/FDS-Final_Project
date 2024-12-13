@@ -2,7 +2,7 @@
   <div id="header">
     <div class="container">
       <div class="header-container">
-        <router-link to="/LandingPage">
+        <router-link to="/">
           <img src="../assets/logo.png" alt="Logo" class="logo" />
         </router-link>
         <nav class="navbar">
@@ -182,14 +182,14 @@ body {
 
 .contact-icon {
   color: white;
-  font-size: 18px; 
-  margin-right: 8px; 
+  font-size: 18px;
+  margin-right: 8px;
   vertical-align: middle;
 }
 
 .contact-text {
   color: white;
-  font-size: 2.5vh; 
+  font-size: 2.5vh;
   margin-left: 5px;
 }
 @keyframes float {
@@ -346,7 +346,7 @@ body {
 
   .contact-text {
     font-size: 2.9vh; /* Slightly smaller for tablets */
-  } 
+  }
 }
 
 @media (max-width: 768px) {
@@ -460,8 +460,8 @@ body {
     display: flex;
   }
   .contact-left {
-    text-align: left; 
-    padding: 0 5%; 
+    text-align: left;
+    padding: 0 5%;
   }
 
   .contact-left h1.sub-title {
@@ -471,8 +471,8 @@ body {
 
   .contact-left p {
     font-size: 12px;
-    line-height: 1.5; 
-    margin-bottom: 8px; 
+    line-height: 1.5;
+    margin-bottom: 8px;
   }
 
   .social-icons {
@@ -486,7 +486,7 @@ body {
   }
 
   .btn {
-    padding: 8px 20px; 
+    padding: 8px 20px;
     font-size: 14px;
   }
 
@@ -506,7 +506,7 @@ body {
     flex-direction: column;
     align-items: center;
     margin-top: 10px;
-    text-align: center; 
+    text-align: center;
   }
 
   .logo {
@@ -517,9 +517,9 @@ body {
   .navbartoggle {
     width: 30px;
     height: 30px;
-    margin: 0 auto; 
+    margin: 0 auto;
     position: relative;
-    top: 0; 
+    top: 0;
   }
 
   .navbar ul {
@@ -563,12 +563,12 @@ body {
   }
 
   .social-icons a {
-    font-size: 20px; 
+    font-size: 20px;
     margin: 5px;
   }
 
   .btn {
-    padding: 10px 25px; 
+    padding: 10px 25px;
     font-size: 14px;
   }
 
@@ -617,7 +617,7 @@ body {
   }
 
   .navbar a {
-    font-size: 12px; 
+    font-size: 12px;
   }
 
   .contact-text {
@@ -631,11 +631,11 @@ body {
 
   .contact-left p {
     font-size: 11px;
-    margin-top: 10px; 
+    margin-top: 10px;
   }
 
   .social-icons a {
-    font-size: 18px; 
+    font-size: 18px;
     margin: 5px;
   }
 
